@@ -895,7 +895,7 @@ p#book-tags {
 /* Inner circle containing the arrow */
 .scroll-arrow {
   position: relative;
-  z-index: 2;
+  z-index: 201;
   width: 40px;
   height: 40px;
   border-radius: 50%;
