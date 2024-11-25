@@ -196,8 +196,7 @@ body {
     padding: 10px;
     cursor: pointer;
     border: none;
-    background-color: aqua; 
-   
+    background-color: #f0f0f0;   
     color: black;
     border-radius: 7px;
     transition: background-color 0.3s, color 0.3s; 
@@ -539,7 +538,7 @@ p#book-tags {
   height: 100%;
   overflow: hidden;
   opacity: 0; 
-  animation: fadeInVideo 1s forwards 3s; 
+  animation: fadeInVideo 1s forwards 1s; 
 } 
 
  #background-video {
@@ -890,7 +889,7 @@ p#book-tags {
   border-radius: 50%;
   background: conic-gradient(#4caf50 0%, #ddd 0%);
   transition: background 0.3s ease;
-  z-index: 1;
+  z-index: 200;
 }
 
 /* Inner circle containing the arrow */
@@ -1162,7 +1161,7 @@ p#book-tags {
 }
 
 .clear-search-btn {
-  background-color: gold;  
+  /* background-color: gold;   */
   color: #ffffff;
   border-radius: 50%;
   cursor: pointer;
@@ -1177,7 +1176,7 @@ p#book-tags {
 }
 
 .clear-search-btn:hover {
-  background-color: #e6ac00;
+  /* background-color: #e6ac00; */
   box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
   transform: scale(1.1);
 }
@@ -1386,10 +1385,20 @@ p#book-tags {
   transform: translate(-50%, 50%);
 }
 
+.indicator.active::before { 
+  content: ''; 
+  position: absolute; 
+  top: -2px; left: -2px; 
+  width: calc(100% + 4px); 
+  height: calc(100% + 4px); 
+  border: 1px inset gold; 
+  border-radius: 50%; 
+  box-sizing: border-box;  
+}
+
 .indicator.active {
-  background-color: #ff7a00; 
-  /* transform: scale(1.5) translate(-50%, -50%); */
-  transform: scale(1.5) ;
+  background-color: #ff7a00;   
+  transform: scale(1.2) ;
   box-shadow: 0 0 10px rgba(255, 122, 0, 0.8), 0 0 20px rgba(255, 122, 0, 0.5);
 }
 
@@ -1490,10 +1499,12 @@ p#book-tags {
   }
 
   .indicator:nth-child(2) {
-      left: 0; 
+    left: 0;
+    top: -50%; 
   }
 
   .indicator:nth-child(3) {
-      left: 50%; 
+    left: 50%;
+    bottom: 6px;
   }
 }
