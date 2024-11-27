@@ -2,10 +2,14 @@ const URLAPI = 'https://script.google.com/macros/s/AKfycbxFZwSOjMbKYn6J81HYdcK0Y
 //const URLAPI = 'https://script.google.com/macros/s/AKfycbxGXnRt_9VFqY9K8-j3Jdx7uMOfbYxAg6ug5mt7Uim5i_wuDUg4I1J0iLpblKB9xp0zIQ/exec';
 const globalURL = 'https://anjibarik.github.io/do/#/BookList/1';
 let books = []; // Global variable
+let filteredBooks = []
 let fieldState = {};
 let aggregatedData = [];
 
 const bookList = document.getElementById('book-list');
+
+const paginationContainer = document.getElementById('pagination');
+
 const loadingSpinner = document.getElementById('loading-spinner');
 const themeToggle = document.getElementById('theme-toggle');
 const seeMoreButton = document.getElementById('see-more-btn');
@@ -30,80 +34,145 @@ const bookRatingElem = document.getElementById('book-rating');
 const closeModalButton = document.getElementById('close-modal');
 const modal = document.getElementById('modal');
 const searchInput = document.getElementById('search-input');
+const noResultsMessage = document.getElementById('no-results-message');
+const sortButtons = document.querySelectorAll('.sort-button:not(#catalog-button)');
 const clearButton = document.getElementById('clear-search-btn');
 const positions = document.querySelectorAll('.position');
 const indicators = document.querySelectorAll('.indicator');
 const mainImage = document.getElementById('main-image');
 const descriptionParagraph = document.querySelector('.description-container p'); 
 let selectedSection = null;
-let selectedPartition = null;  
+let selectedPartition = null; 
+let currentIndex = 0;
+let userInteracted = false;
+const delay = 3000;
+let autoRotateInterval;
+let isLoading = false;
 
+const ITEMS_PER_PAGE_LARGE_SCREEN = 20;
+const ITEMS_PER_PAGE_MEDIUM_SCREEN = 10;
+const ITEMS_PER_PAGE_SMALL_SCREEN = 5;
+const LARGE_SCREEN_WIDTH = 1200;
+const MEDIUM_SCREEN_WIDTH = 700;
+let currentPage = 1; 
+let itemsPerPage = 1;
+ 
+searchInput.value = ''
 
-document.addEventListener('DOMContentLoaded', () => {
+const floatingButton = document.createElement('button');
+floatingButton.classList.add('floating-button');
+floatingButton.textContent = 'GET FIRST DIBS!';
+document.body.appendChild(floatingButton); 
 
-  // Set the first element to be active by default
-  updateActiveState(0);
-  
-  const floatingButton = document.createElement('button');
-  floatingButton.classList.add('floating-button');
-  floatingButton.textContent = 'GET FIRST DIBS!';
-  document.body.appendChild(floatingButton);  
-  
-  loadingSpinner.style.display = 'none';
-
-  //Click handler for the "See More" button
-  seeMoreButton.addEventListener('click', (e) => {
-    e.preventDefault();
-
-    loadingSpinner.style.display = 'block'; 
-
-    // Start loading data
-    fetchBooks()
-      .then(() => {
-        mainHeader.style.display = 'none';       
-        floatingButton.classList.add('show');
-        filtersSection.style.display = 'flex';
-      })
-      .catch((error) => {
-        console.error("Error loading data:", error);
-      })
-      .finally(() => {
-        loadingSpinner.style.display = 'none'; 
-      });
-  });
-
-  // Click handler for floating button
-  floatingButton.addEventListener('click', () => {
-    window.location.href = globalURL;
-  });
-
+floatingButton.addEventListener('click', () => {
+  window.location.href = globalURL; 
 });
-
-positions.forEach((position, index) => {
-  position.addEventListener('click', () => {
-      updateActiveState(index);
-  });
-});
-
 
 function updateActiveState(index) {
-  // delete active classes for everyone
   positions.forEach((pos) => pos.classList.remove('active'));
   indicators.forEach((ind) => ind.classList.remove('active'));
 
-  // Add active classes to the current one
   positions[index].classList.add('active');
   indicators[index].classList.add('active');
 
- 
   const selectedPosition = positions[index];
-  const imageSrc = selectedPosition.querySelector('.position-circle img').src; 
-  const description = selectedPosition.dataset.description; 
+  const imageSrc = selectedPosition.querySelector('.position-circle img').src;
+  const description = selectedPosition.dataset.description;
 
-  // Rewrite only the necessary parts
-  mainImage.src = imageSrc; 
-  descriptionParagraph.textContent = description; 
+  mainImage.src = imageSrc;
+  descriptionParagraph.textContent = description;
 }
+
+function startAutoRotate() {
+  autoRotateInterval = setInterval(() => {
+    if (!userInteracted) {
+      currentIndex = (currentIndex + 1) % positions.length;
+      updateActiveState(currentIndex);
+    }
+  }, delay);
+}
+
+function stopAutoRotate() {
+  clearInterval(autoRotateInterval);
+}
+
+function setupPositionClicks() {
+  positions.forEach((position, index) => {
+    position.addEventListener('click', () => {
+      userInteracted = true;
+      currentIndex = index;
+      updateActiveState(index);
+      setTimeout(() => {
+        userInteracted = false;
+      }, delay);
+    });
+  });
+}
+
+// Function for removing event handlers for positions
+function removePositionListeners() {
+  positions.forEach((position, index) => {
+    position.removeEventListener('click', () => {
+      userInteracted = true;
+      currentIndex = index;
+      updateActiveState(index);
+      setTimeout(() => {
+        userInteracted = false;
+      }, delay);
+    });
+  });
+}
+
+function setupSeeMoreButton() {
+  seeMoreButton.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (isLoading) return; 
+    isLoading = true; 
+
+    stopAutoRotate(); 
+    positions.forEach((pos) => pos.classList.remove('active')); 
+    indicators.forEach((ind) => ind.classList.remove('active'));
+
+    loadingSpinner.style.display = 'block';
+
+    // Loading Data
+    fetchBooks()
+      .then(() => {
+        mainHeader.style.display = 'none'; 
+        filtersSection.style.display = 'flex'; 
+        bookList.style.display = 'flex'; 
+        paginationContainer.style.display = 'flex'; 
+        floatingButton.style.display = 'block';
+
+        updateSortButtonsVisibility();
+
+        removePositionListeners(); 
+      })
+      .catch((error) => {
+        console.error('Error loading data:', error);
+      })
+      .finally(() => {
+        loadingSpinner.style.display = 'none'; 
+        isLoading = false; 
+      });
+  });
+}
+
+// Function for removing the "See More" button handler
+function removeSeeMoreListener() {
+  seeMoreButton.removeEventListener('click', setupSeeMoreButton);
+}
+
+// Initialization function
+function initialize() {
+  updateActiveState(currentIndex); 
+  startAutoRotate(); 
+  setupPositionClicks(); 
+  setupSeeMoreButton(); 
+}
+
+document.addEventListener('DOMContentLoaded', initialize);
   
   // Smooth scrolling up
   scrollToTopButton.addEventListener('click', () => {
@@ -137,8 +206,7 @@ function updateActiveState(index) {
     }
   } 
 
-// Open Closing a modal window
- 
+// Open Closing a modal window 
 function openModal(modal) {
   modal.style.display = 'block';
 }
@@ -196,8 +264,7 @@ window.showMoreInfo = function(bookId) {
     return;
   }
 
-  // Update modal content elements  
-
+  // Update modal content elements
   if (bookID) bookID.textContent = `ID: ${bookId}`;
   if (bookTitleElem) bookTitleElem.textContent = book.title;
   if (bookDescriptionElem) bookDescriptionElem.textContent = book.description || 'No description';
@@ -497,7 +564,8 @@ function expandSectionIfPartitionSelected() {
 function filterBooksBySection(section) {
   selectedSection = section;
   selectedPartition = null;
-  const filteredBooks = books.filter(book => book.section === section);
+  filteredBooks = books.filter(book => book.section === section);  
+  updateSortButtonsVisibility()
   displayBooks(filteredBooks, fieldState);
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
@@ -506,9 +574,10 @@ function filterBooksBySection(section) {
 function filterBooks(section, partition) {
   selectedSection = section;
   selectedPartition = partition;
-  const filteredBooks = books.filter(book => {
+  filteredBooks = books.filter(book => {
     return book.section === section && (partition === 'Without subsection' ? !book.partition : book.partition === partition);
-  });
+  });  
+  updateSortButtonsVisibility()
   displayBooks(filteredBooks, fieldState);
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
@@ -592,7 +661,7 @@ async function fetchBooks() {
     fieldState = data.data.sheet2Data?.[0] || {};
     //console.log(books)
     //console.log(fieldState)
-
+    filteredBooks = books
     if (fieldState.idprice) {
       const formDataReviews = new FormData();
       formDataReviews.append('isReviews', 1);
@@ -606,9 +675,8 @@ async function fetchBooks() {
       const dataReviews = await responseReviews.json();
 
       if (!dataReviews.success) throw new Error(dataReviews.message || 'Failed to fetch review data');
-      //console.log(dataReviews)
-      aggregatedData = dataReviews.data || [];
-      //console.log('Aggregated Data (Reviews):', aggregatedData);
+      
+      aggregatedData = dataReviews.data || [];     
      
     }
 
@@ -686,13 +754,41 @@ function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-function displayBooks(books, fieldState) {
-  bookList.innerHTML = ''; // Clear previous book cards
+function calculateItemsPerPage() {
+  const screenWidth = window.innerWidth;
+  if (screenWidth > LARGE_SCREEN_WIDTH) {
+    itemsPerPage = ITEMS_PER_PAGE_LARGE_SCREEN;
+  } else if (screenWidth > MEDIUM_SCREEN_WIDTH) {
+    itemsPerPage = ITEMS_PER_PAGE_MEDIUM_SCREEN;
+  } else {
+    itemsPerPage = ITEMS_PER_PAGE_SMALL_SCREEN;
+  }
+}
 
-  books.forEach(book => {
+
+// Window resize listener
+window.addEventListener('resize', () => {
+  calculateItemsPerPage(); 
+  currentPage = 1; 
+  displayBooks(filteredBooks, fieldState); 
+});
+
+// First initialization
+calculateItemsPerPage();
+displayBooks(books, fieldState);
+
+
+function displayBooks(books, fieldState) {
+  bookList.innerHTML = ''; 
+  
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedBooks = books.slice(startIndex, endIndex);
+  
+  paginatedBooks.forEach(book => {
     const bookElement = document.createElement('div');
     bookElement.classList.add('shelf-element');
-    bookElement.setAttribute('data-sorted', book.sorted || ''); // Set data-sorted attribute
+    bookElement.setAttribute('data-sorted', book.sorted || '');
     bookElement.setAttribute('data-id', book.id);
     let bookPrice = book.price ? `${book.price} ${fieldState.payment || '$'}` : 'Price not specified';
     if (book.saleprice && book.saleprice.trim() !== '') {
@@ -702,26 +798,23 @@ function displayBooks(books, fieldState) {
       `;
     }
 
-    // Image processing    
-  let firstImage = 
-  (book.imagepublic && typeof book.imagepublic === 'string' && book.imagepublic.trim() !== '')
-    ? `img/publik/${book.imagepublic.trim()}`
-  : (book.imageblockpublic && typeof book.imageblockpublic === 'string' && book.imageblockpublic.trim() !== '')
-    ? `img/publik/${book.imageblockpublic.split(',').map(img => img.trim()).find(img => img !== '') || ''}`
-  : (book.image && typeof book.image === 'string' && book.image.trim() !== '')
-    ? book.image.trim()
-  : (book.imageblock && typeof book.imageblock === 'string' && book.imageblock.trim() !== '')
-    ? book.imageblock.split(',').map(img => img.trim()).find(img => img !== '') || ''
-  : 'img/imageNotFound.png';
+    let firstImage =
+      (book.imagepublic && typeof book.imagepublic === 'string' && book.imagepublic.trim() !== '')
+        ? `img/publik/${book.imagepublic.trim()}`
+        : (book.imageblockpublic && typeof book.imageblockpublic === 'string' && book.imageblockpublic.trim() !== '')
+          ? `img/publik/${book.imageblockpublic.split(',').map(img => img.trim()).find(img => img !== '') || ''}`
+          : (book.image && typeof book.image === 'string' && book.image.trim() !== '')
+            ? book.image.trim()
+            : (book.imageblock && typeof book.imageblock === 'string' && book.imageblock.trim() !== '')
+              ? book.imageblock.split(',').map(img => img.trim()).find(img => img !== '') || ''
+              : 'img/imageNotFound.png';
 
     const bookId = book.id ? `<div class="book-id">ID: ${book.id}</div>` : '';
 
-    // Rating Data Processing
     const productRating = aggregatedData.find(
       (item) => `${item.ID_Price}` === `${fieldState.idprice}` && `${item.ID_Product}` === `${book.id}`
     );
 
-    // Render star rating
     const renderStars = (averageRating) => {
       const fullStars = Math.floor(averageRating);
       const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
@@ -734,7 +827,7 @@ function displayBooks(books, fieldState) {
           ${Array(emptyStars).fill().map(() => '<span class="star">★</span>').join('')}
         </span>
       `;
-    };    
+    };
 
     const ratingDisplay = productRating
       ? `  
@@ -743,12 +836,10 @@ function displayBooks(books, fieldState) {
           <span class="review-count">${productRating.Review_Count} </span>
         </div>        
       `
-      : ''; // Empty if no rating data is found
+      : '';
 
-    // Render only size and color tags
     const sizeColorDisplay = renderSizeColorTags(book, fieldState);
 
-    // Badge icon handling
     let badgeIcon = '';
     if (book.sorted === 'new') {
       badgeIcon = `<img src="img/new.png" class="art-icon" alt="New Cart">`;
@@ -758,7 +849,6 @@ function displayBooks(books, fieldState) {
       badgeIcon = `<img src="img/popular.png" class="art-icon" alt="Popular Cart">`;
     }
 
-    // HTML for each book card
     bookElement.innerHTML = `
      <div class="id-rating"> ${bookId}  ${ratingDisplay}</div>
       <div class="img-container"> 
@@ -774,6 +864,45 @@ function displayBooks(books, fieldState) {
 
     bookList.appendChild(bookElement);
   });
+
+  renderPagination(books, fieldState);
+}
+
+function renderPagination(books, fieldState) {
+  const paginationContainer = document.getElementById('pagination');
+  paginationContainer.innerHTML = ''; 
+
+  const totalPages = Math.ceil(books.length / itemsPerPage);
+
+  // Show pagination only if there are more than 1 pages
+  if (totalPages <= 1) return;
+
+  for (let i = 1; i <= totalPages; i++) {
+    const pageButton = document.createElement('button');
+    pageButton.textContent = i;
+    pageButton.classList.add('page-btn');
+    if (i === currentPage) pageButton.classList.add('active');
+
+    pageButton.addEventListener('click', () => {
+      currentPage = i;
+      displayBooks(books, fieldState);
+    });
+
+    paginationContainer.appendChild(pageButton);
+  }
+
+  // "Show all" button
+  const showAllButton = document.createElement('button');
+  showAllButton.textContent = 'Show All';
+  showAllButton.classList.add('show-all-btn');
+  showAllButton.addEventListener('click', () => {
+    itemsPerPage = books.length;
+    currentPage = 1;
+    displayBooks(books, fieldState);
+    paginationContainer.innerHTML = ''; 
+  });
+
+  paginationContainer.appendChild(showAllButton);
 }
 
 // Helper function for rendering only size and color tags
@@ -799,46 +928,63 @@ function renderSizeColorTags(book, fieldState) {
     .join('');
 }
 
-// Function for sorting books by type
-function sortBy(type) {
-  const books = Array.from(bookList.children);
-  
-  const sortedBooks = books.sort((a, b) => {
-    const aType = a.getAttribute('data-sorted'); 
-    const bType = b.getAttribute('data-sorted');
-    
-    if (aType === type && bType !== type) return -1;
-    if (aType !== type && bType === type) return 1;
-    return 0;
-  });
+function updateSortButtonsVisibility() {
+ 
+  const availableTypes = new Set(filteredBooks.map(book => book.sorted));
+  sortButtons.forEach(button => {
+    const buttonType = button.getAttribute('data-type');
 
-  // Update the DOM to display sorted books
-  bookList.innerHTML = '';
-  sortedBooks.forEach(book => bookList.appendChild(book));
-}
-
-
-// Function to sort by price
-function sortByPrice(direction) {
-  const books = Array.from(bookList.children);
-  const sortedBooks = books.sort((a, b) => {
-    // We extract prices from .book-price elements and reduce them to numbers
-    const priceA = extractPrice(a.querySelector('.book-price').textContent);
-    const priceB = extractPrice(b.querySelector('.book-price').textContent);
-
-    // Sort in ascending or descending order depending on direction
-    if (direction === 'low') {
-      return priceA - priceB;
-    } else if (direction === 'high') {
-      return priceB - priceA;
+    if (buttonType === 'low-price' || buttonType === 'high-price') {
+      // Price buttons are shown only if there are more than 1 products
+      button.style.display = filteredBooks.length > 1 ? 'inline-block' : 'none';
+    } else {
+      // Show the button if the type exists
+      if (availableTypes.has(buttonType)) {
+        button.style.display = 'inline-block';
+      } else {
+        button.style.display = 'none';
+      }
     }
-    return 0;
   });
 
-  //Clearing the list and adding sorted books
-  bookList.innerHTML = '';
-  sortedBooks.forEach(book => bookList.appendChild(book));
+  // The "Categories" button is always visible
+  catalogButton.style.display = 'inline-block';
 }
+
+function sortBy(type) {  
+  const sortedBooks = [...filteredBooks].sort((a, b) => {    
+    if (a.type === type && b.type !== type) return -1;
+    if (a.type !== type && b.type === type) return 1;
+    return 0; 
+  });
+  
+  displayBooks(sortedBooks, fieldState);
+}
+
+
+function sortByPrice(order) {  
+  const sortedBooks = [...filteredBooks].sort((a, b) => {
+    return order === 'low' ? a.price - b.price : b.price - a.price;
+  });
+  
+  displayBooks(sortedBooks, fieldState);
+}
+
+sortButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const type = button.getAttribute('data-type');
+
+    if (type === 'low-price') {
+      sortByPrice('low');
+    } else if (type === 'high-price') {
+      sortByPrice('high');
+    } else {
+      sortBy(type);
+    }
+  });
+});
+
+updateSortButtonsVisibility();
 
 // Helper function to extract a numeric value from a price string
 function extractPrice(priceText) {
@@ -874,30 +1020,25 @@ clearButton.addEventListener('click', clearSearch);
     }
   } 
 
+
 function searchBooks() {
-  const searchQuery = searchInput.value.toLowerCase();
-  const books = Array.from(bookList.children); 
+  const searchQuery = searchInput.value.toLowerCase();  
   let resultsFound = false;  // Variable to track if any books match the search
 
-  books.forEach(bookElement => {
-    const bookTitle = bookElement.querySelector('.book-name').textContent.toLowerCase();
-    const bookId = bookElement.getAttribute('data-id'); // Use data-id attribute for ID
-    
-    if (bookTitle.includes(searchQuery) || (bookId && bookId.includes(searchQuery))) {
-      bookElement.style.display = 'block'; 
-      resultsFound = true; // If there's a match, set resultsFound to true
-    } else {
-      bookElement.style.display = 'none'; 
-    }
-  });
-
-  // Show the "Oops, nothing found" message if no books match the search
-  const noResultsMessage = document.getElementById('no-results-message');
-  if (!resultsFound) {
-    noResultsMessage.style.display = 'block';
-  } else {
-    noResultsMessage.style.display = 'none';
-  }
+  const searchBooks = books.filter(book =>
+    book.title.toLowerCase().includes(searchQuery) ||
+    book.id.toLowerCase().includes(searchQuery)
+  );
+  if (searchBooks.length>0){
+  displayBooks(searchBooks, fieldState);
+  noResultsMessage.style.display = 'none';
+  bookList.style.display = 'flex'; 
+    paginationContainer.style.display = 'flex';
+  }else {
+    noResultsMessage.style.display = 'flex';
+    bookList.style.display = 'none'; 
+    paginationContainer.style.display = 'none';
+  } 
 }
 
 // Event handler for search field with debounce
@@ -908,13 +1049,7 @@ function clearSearch() {
   searchInput.value = '';
   checkInput();
   searchInput.focus();
-  const books = Array.from(bookList.children);
-  books.forEach(bookElement => {
-    bookElement.style.display = 'block';
-  });
-
-  // Hide the "Oops" message when the search is cleared
-  const noResultsMessage = document.getElementById('no-results-message');
+  displayBooks(filteredBooks, fieldState); 
   noResultsMessage.style.display = 'none';
 }
 

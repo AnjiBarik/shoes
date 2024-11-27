@@ -100,13 +100,13 @@
     </div> 
       
     
-  <div class="search-container">  
-  <button class="sort-button" onclick="sortBy('new')"><img class="social-icon" src="img/new.png" alt="sort_by_new"></button>
-    <button class="sort-button" onclick="sortBy('popular')"><img class="social-icon" src="img/popular.png" alt="favorite"></button>
-    <button class="sort-button" onclick="sortBy('sale')"><img class="social-icon" src="img/discont.png" alt="discont"></button>
-    <button class="sort-button" onclick="sortByPrice('low')"><img class="social-icon" src="img/up_sort.png" alt="up_sort"></button>
-    <button class="sort-button" onclick="sortByPrice('high')"><img class="social-icon" src="img/down_sort.png" alt="down_sort"></button>
-  </div>
+    <div class="search-container">  
+      <button class="sort-button" data-type="new"><img class="social-icon" src="img/new.png" alt="sort_by_new"></button>
+      <button class="sort-button" data-type="popular"><img class="social-icon" src="img/popular.png" alt="favorite"></button>
+      <button class="sort-button" data-type="sale"><img class="social-icon" src="img/discont.png" alt="discont"></button>
+      <button class="sort-button" data-type="low-price"><img class="social-icon" src="img/up_sort.png" alt="up_sort"></button>
+      <button class="sort-button" data-type="high-price"><img class="social-icon" src="img/down_sort.png" alt="down_sort"></button>
+    </div>
   </section>
   <div id="no-results-message" style="display: none;">Oops, nothing found. Try again.</div>
   <div id="current-filter"></div>
@@ -127,7 +127,8 @@
   </div>
 
   <!-- Book Card Container -->
-  <section id="book-list" class="book-list"></section>  
+  <section id="book-list" class="book-list"></section>
+  <div id="pagination" class="pagination"></div>  
 
   <!-- Modal window -->
   <div id="modal" class="modal">

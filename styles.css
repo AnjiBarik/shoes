@@ -1508,3 +1508,62 @@ p#book-tags {
     bottom: 6px;
   }
 }
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  display: none;
+  flex-wrap: wrap;
+  margin: 5px;
+}
+
+.page-btn {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: 7px;
+  padding: 10px 15px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 14px;  
+}
+
+.page-btn:hover {
+  background-color:var(--gradient);  
+  color: var(--modal-text);
+}
+
+.page-btn.active {
+  color: #fff;
+  border: 1px solid;
+  font-weight: bold;
+  background-color: #1b7b28;
+  background-image: var(--button-background);
+  background-size: var(--button-background-size);
+}
+
+.show-all-btn {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  padding: 10px 20px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;  
+}
+
+.show-all-btn:hover {
+  background-color:var(--gradient);  
+  color: var(--modal-text);
+}
+
+#no-results-message {
+  justify-content: center;
+  align-items: center;
+  height: 10vh;
+  display: none;
+}
