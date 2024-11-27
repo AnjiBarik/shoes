@@ -802,6 +802,12 @@ function handleResize() {
       itemsPerPage = newItemsPerPage; 
       currentPage = 1; 
       displayBooks(filteredBooks, fieldState); 
+      
+      bookList.scrollIntoView({
+        behavior: 'smooth', 
+        block: 'start',     
+      });
+      
     }
   }
 }
