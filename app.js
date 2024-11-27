@@ -7,9 +7,7 @@ let fieldState = {};
 let aggregatedData = [];
 
 const bookList = document.getElementById('book-list');
-
 const paginationContainer = document.getElementById('pagination');
-
 const loadingSpinner = document.getElementById('loading-spinner');
 const themeToggle = document.getElementById('theme-toggle');
 const seeMoreButton = document.getElementById('see-more-btn');
@@ -658,9 +656,7 @@ async function fetchBooks() {
     books = data.data.sheet1Data
     ? data.data.sheet1Data.filter((book) => book && book.Visibility !== '0')
     : [];
-    fieldState = data.data.sheet2Data?.[0] || {};
-    //console.log(books)
-    //console.log(fieldState)
+    fieldState = data.data.sheet2Data?.[0] || {};    
     filteredBooks = books
     if (fieldState.idprice) {
       const formDataReviews = new FormData();
@@ -753,29 +749,6 @@ function renderTags(book, fieldState) {
 function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
-
-// function calculateItemsPerPage() {
-//   const screenWidth = window.innerWidth;
-//   if (screenWidth > LARGE_SCREEN_WIDTH) {
-//     itemsPerPage = ITEMS_PER_PAGE_LARGE_SCREEN;
-//   } else if (screenWidth > MEDIUM_SCREEN_WIDTH) {
-//     itemsPerPage = ITEMS_PER_PAGE_MEDIUM_SCREEN;
-//   } else {
-//     itemsPerPage = ITEMS_PER_PAGE_SMALL_SCREEN;
-//   }
-// }
-
-
-// // Window resize listener
-// window.addEventListener('resize', () => {
-//   calculateItemsPerPage(); 
-//   currentPage = 1; 
-//   displayBooks(filteredBooks, fieldState); 
-// });
-
-// // First initialization
-// calculateItemsPerPage();
-// displayBooks(books, fieldState);
 
 let previousWidth = window.innerWidth; 
 let previousItemsPerPage = itemsPerPage; 
