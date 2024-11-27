@@ -754,27 +754,68 @@ function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-function calculateItemsPerPage() {
-  const screenWidth = window.innerWidth;
+// function calculateItemsPerPage() {
+//   const screenWidth = window.innerWidth;
+//   if (screenWidth > LARGE_SCREEN_WIDTH) {
+//     itemsPerPage = ITEMS_PER_PAGE_LARGE_SCREEN;
+//   } else if (screenWidth > MEDIUM_SCREEN_WIDTH) {
+//     itemsPerPage = ITEMS_PER_PAGE_MEDIUM_SCREEN;
+//   } else {
+//     itemsPerPage = ITEMS_PER_PAGE_SMALL_SCREEN;
+//   }
+// }
+
+
+// // Window resize listener
+// window.addEventListener('resize', () => {
+//   calculateItemsPerPage(); 
+//   currentPage = 1; 
+//   displayBooks(filteredBooks, fieldState); 
+// });
+
+// // First initialization
+// calculateItemsPerPage();
+// displayBooks(books, fieldState);
+
+let previousWidth = window.innerWidth; 
+let previousItemsPerPage = itemsPerPage; 
+
+function calculateItemsPerPage(screenWidth) {
   if (screenWidth > LARGE_SCREEN_WIDTH) {
-    itemsPerPage = ITEMS_PER_PAGE_LARGE_SCREEN;
+    return ITEMS_PER_PAGE_LARGE_SCREEN;
   } else if (screenWidth > MEDIUM_SCREEN_WIDTH) {
-    itemsPerPage = ITEMS_PER_PAGE_MEDIUM_SCREEN;
+    return ITEMS_PER_PAGE_MEDIUM_SCREEN;
   } else {
-    itemsPerPage = ITEMS_PER_PAGE_SMALL_SCREEN;
+    return ITEMS_PER_PAGE_SMALL_SCREEN;
   }
 }
 
+function handleResize() {
+  const currentWidth = window.innerWidth;
+  
+  if (currentWidth !== previousWidth) {
+    previousWidth = currentWidth; 
+    const newItemsPerPage = calculateItemsPerPage(currentWidth);
+    
+    if (newItemsPerPage !== previousItemsPerPage) {
+      previousItemsPerPage = newItemsPerPage; 
+      itemsPerPage = newItemsPerPage; 
+      currentPage = 1; 
+      displayBooks(filteredBooks, fieldState); 
+    }
+  }
+}
 
-// Window resize listener
+// Debounce resize event
+let resizeTimeout;
 window.addEventListener('resize', () => {
-  calculateItemsPerPage(); 
-  currentPage = 1; 
-  displayBooks(filteredBooks, fieldState); 
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(handleResize, 150); 
 });
 
 // First initialization
-calculateItemsPerPage();
+previousItemsPerPage = calculateItemsPerPage(window.innerWidth);
+itemsPerPage = previousItemsPerPage;
 displayBooks(books, fieldState);
 
 
