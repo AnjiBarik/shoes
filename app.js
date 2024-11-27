@@ -933,6 +933,10 @@ function renderPagination(books, fieldState) {
     pageButton.addEventListener('click', () => {
       currentPage = i;
       displayBooks(books, fieldState);
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth', 
+      });
     });
 
     paginationContainer.appendChild(pageButton);
@@ -947,6 +951,10 @@ function renderPagination(books, fieldState) {
     currentPage = 1;
     displayBooks(books, fieldState);
     paginationContainer.innerHTML = ''; 
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth', 
+    });
   });
 
   paginationContainer.appendChild(showAllButton);
