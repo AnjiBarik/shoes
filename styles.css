@@ -48,6 +48,16 @@
   --modal-text: rgba(202, 198, 191, 0.87);
 }
 
+/* General style for shine animation */
+ .shine-effect:hover::before { 
+  opacity: 1; animation: shine 0.6s ease forwards;
+ } 
+ /* Animation for a shiny wave */
+  @keyframes shine { 
+    0% { left: -150%; } 
+    100% { left: 150%; }
+  }
+
 body {
   font-family: Arial, sans-serif;
   margin: 10px;
@@ -222,20 +232,7 @@ body {
     color: var(--button-bg); 
   }
   
-  .sort-button:hover::before {
-    opacity: 1; 
-    animation: shine 0.6s ease forwards; 
-  }
-  
-  /* Animation for a shiny wave */
-  @keyframes shine {
-    0% {
-      left: -150%; 
-    }
-    100% {
-      left: 150%; 
-    }
-  }  
+  .sort-button:hover.shine-effect::before { opacity: 1; animation: shine 0.6s ease forwards; }
  
   
   /* Adaptability */
@@ -318,19 +315,7 @@ body {
     transition: none;
   }
   
-  .show-more-btn:hover::before {
-    opacity: 1; 
-    animation: shine 0.6s ease forwards; 
-  }  
-  
-  @keyframes shine {
-    0% {
-      left: -150%; 
-    }
-    100% {
-      left: 150%; 
-    }
-  }  
+  .show-more-btn:hover.shine-effect::before { opacity: 1; animation: shine 0.6s ease forwards; }
   
   .modal-content #book-modal-img {
     height: 320px;

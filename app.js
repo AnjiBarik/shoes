@@ -1,8 +1,8 @@
 const URLAPI = 'https://script.google.com/macros/s/AKfycbxFZwSOjMbKYn6J81HYdcK0Y8MM2YH4tYjBjRha_sLgPrmpjEOpjUYccq5zAJQVt1RD/exec';
 //const URLAPI = 'https://script.google.com/macros/s/AKfycbxGXnRt_9VFqY9K8-j3Jdx7uMOfbYxAg6ug5mt7Uim5i_wuDUg4I1J0iLpblKB9xp0zIQ/exec';
 const globalURL = 'https://anjibarik.github.io/do/#/BookList/1';
-let books = []; // Global variable
-let filteredBooks = []
+let books = []; 
+let filteredBooks = [];
 let fieldState = {};
 let aggregatedData = [];
 
@@ -55,7 +55,7 @@ const MEDIUM_SCREEN_WIDTH = 700;
 let currentPage = 1; 
 let itemsPerPage = 1;
  
-searchInput.value = ''
+searchInput.value = '';
 
 const floatingButton = document.createElement('button');
 floatingButton.classList.add('floating-button');
@@ -170,15 +170,18 @@ function initialize() {
   setupSeeMoreButton(); 
 }
 
+// Function for smooth scrolling to the top of the page
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+}
+
 document.addEventListener('DOMContentLoaded', initialize);
   
   // Smooth scrolling up
-  scrollToTopButton.addEventListener('click', () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  });
+   scrollToTopButton.addEventListener('click', scrollToTop);  
 
    // Scroll event handler
    window.addEventListener('scroll', updateScrollProgress);
@@ -774,23 +777,14 @@ function handleResize() {
       previousItemsPerPage = newItemsPerPage; 
       itemsPerPage = newItemsPerPage; 
       currentPage = 1; 
-      displayBooks(filteredBooks, fieldState); 
-      
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-      
+      displayBooks(filteredBooks, fieldState);       
+      scrollToTop();      
     }
   }
 }
 
 // Debounce resize event
-let resizeTimeout;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(handleResize, 150); 
-});
+ window.addEventListener('resize', debounce(handleResize, 150));
 
 // First initialization
 previousItemsPerPage = calculateItemsPerPage(window.innerWidth);
@@ -906,10 +900,7 @@ function renderPagination(books, fieldState) {
     pageButton.addEventListener('click', () => {
       currentPage = i;
       displayBooks(books, fieldState);
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth', 
-      });
+      scrollToTop();
     });
 
     paginationContainer.appendChild(pageButton);
@@ -924,10 +915,7 @@ function renderPagination(books, fieldState) {
     currentPage = 1;
     displayBooks(books, fieldState);
     paginationContainer.innerHTML = ''; 
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth', 
-    });
+    scrollToTop();
   });
 
   paginationContainer.appendChild(showAllButton);
@@ -1058,9 +1046,9 @@ function searchBooks() {
     book.id.toLowerCase().includes(searchQuery)
   );
   if (searchBooks.length>0){
-  displayBooks(searchBooks, fieldState);
-  noResultsMessage.style.display = 'none';
-  bookList.style.display = 'flex'; 
+    displayBooks(searchBooks, fieldState);
+    noResultsMessage.style.display = 'none';
+    bookList.style.display = 'flex'; 
     paginationContainer.style.display = 'flex';
   }else {
     noResultsMessage.style.display = 'flex';
@@ -1079,6 +1067,8 @@ function clearSearch() {
   searchInput.focus();
   displayBooks(filteredBooks, fieldState); 
   noResultsMessage.style.display = 'none';
+  bookList.style.display = 'flex'; 
+  paginationContainer.style.display = 'flex';
 }
 
 
