@@ -1003,7 +1003,7 @@ p#book-tags {
   overflow: hidden; 
 }
 
-#section-list li.active::before,
+/* #section-list li.active::before,
 #partition-list li.active::before {
   content: '';
   position: absolute;
@@ -1015,7 +1015,7 @@ p#book-tags {
   opacity: 0; 
   transform: skewX(-45deg); 
   transition: none;
-}
+} */
 
 #section-list li.active:hover::before,
 #partition-list li.active:hover::before {

@@ -463,6 +463,7 @@ function renderSections() {
     }
 
     li.addEventListener('click', () => {
+     // if (target.closest('.toggle')) return; //
       selectedSection = section;
       selectedPartition = null;
       filterBooksBySection(section);
@@ -1036,50 +1037,52 @@ clearButton.addEventListener('click', clearSearch);
     }
   } 
 
-function searchBooks() { 
-  const searchQuery = searchInput.value ? searchInput.value.trim().toLowerCase() : ''; 
+  let previousPage = currentPage; 
+
+  function searchBooks() { 
+      const searchQuery = searchInput.value ? searchInput.value.trim().toLowerCase() : ''; 
   
-  if (!searchQuery) {     
-      displayBooks(books, fieldState);
-      noResultsMessage.style.display = 'none';
-      bookList.style.display = 'flex';
-      paginationContainer.style.display = 'flex';
-      return;
+      if (!searchQuery || searchQuery === "") { 
+          currentPage = previousPage; 
+          displayBooks(books, fieldState);
+          noResultsMessage.style.display = 'none';
+          bookList.style.display = 'flex';
+          paginationContainer.style.display = 'flex';          
+          return;
+      }
+  
+      const searchBooks = books.filter(book => 
+          book.title.toLowerCase().includes(searchQuery) || 
+          book.id.toLowerCase().includes(searchQuery)
+      );
+  
+      if (searchBooks.length > 0) {
+          previousPage = currentPage; 
+          currentPage = 1; 
+          displayBooks(searchBooks, fieldState);
+          noResultsMessage.style.display = 'none';
+          bookList.style.display = 'flex';
+          paginationContainer.style.display = 'flex';          
+      } else {
+          currentPage = previousPage; 
+          noResultsMessage.style.display = 'flex';
+          bookList.style.display = 'none';
+          paginationContainer.style.display = 'none';          
+      }
   }
-
-  const searchBooks = books.filter(book => 
-      book.title.toLowerCase().includes(searchQuery) || 
-      book.id.toLowerCase().includes(searchQuery)
-  );
-
-  if (searchBooks.length > 0) {
-      currentPage = 1; 
-      displayBooks(searchBooks, fieldState);
+  
+  // Event handler for search field with debounce
+  searchInput.addEventListener('input', debounce(searchBooks, 300));
+  
+  // Function to reset search and display all books
+  function clearSearch() {  
+      searchInput.value = '';
+      currentPage = previousPage; 
+      displayBooks(books, fieldState); 
       noResultsMessage.style.display = 'none';
-      bookList.style.display = 'flex';
-      paginationContainer.style.display = 'flex';
-  } else {
-      noResultsMessage.style.display = 'flex';
-      bookList.style.display = 'none';
-      paginationContainer.style.display = 'none';
+      bookList.style.display = 'flex'; 
+      paginationContainer.style.display = 'flex';      
   }
-}
-
-
-// Event handler for search field with debounce
-searchInput.addEventListener('input', debounce(searchBooks, 300));
-
-// Function to reset search and display all books
-function clearSearch() {  
-  searchInput.value = '';
-  checkInput();
-  searchInput.focus();
-  displayBooks(filteredBooks, fieldState); 
-  noResultsMessage.style.display = 'none';
-  bookList.style.display = 'flex'; 
-  paginationContainer.style.display = 'flex';
-}
-
 
 // Contact form
 const contactForm = document.getElementById('contactForm');
