@@ -873,7 +873,7 @@ function displayBooks(books, fieldState) {
       </div>    
       <div class="book-name">${book.title}</div>
       <div class="book-price">${bookPrice}</div>     
-      <button class="show-more-btn" onclick="showMoreInfo(${book.id})">Learn more</button>  
+      <button class="show-more-btn shine-effect" onclick="showMoreInfo(${book.id})">Learn more</button>  
     `;
 
     bookList.appendChild(bookElement);
@@ -1036,26 +1036,35 @@ clearButton.addEventListener('click', clearSearch);
     }
   } 
 
+function searchBooks() { 
+  const searchQuery = searchInput.value ? searchInput.value.trim().toLowerCase() : ''; 
+  
+  if (!searchQuery) {     
+      displayBooks(books, fieldState);
+      noResultsMessage.style.display = 'none';
+      bookList.style.display = 'flex';
+      paginationContainer.style.display = 'flex';
+      return;
+  }
 
-function searchBooks() {
-  const searchQuery = searchInput.value.toLowerCase();  
-  let resultsFound = false;  // Variable to track if any books match the search
-
-  const searchBooks = books.filter(book =>
-    book.title.toLowerCase().includes(searchQuery) ||
-    book.id.toLowerCase().includes(searchQuery)
+  const searchBooks = books.filter(book => 
+      book.title.toLowerCase().includes(searchQuery) || 
+      book.id.toLowerCase().includes(searchQuery)
   );
-  if (searchBooks.length>0){
-    displayBooks(searchBooks, fieldState);
-    noResultsMessage.style.display = 'none';
-    bookList.style.display = 'flex'; 
-    paginationContainer.style.display = 'flex';
-  }else {
-    noResultsMessage.style.display = 'flex';
-    bookList.style.display = 'none'; 
-    paginationContainer.style.display = 'none';
-  } 
+
+  if (searchBooks.length > 0) {
+      currentPage = 1; 
+      displayBooks(searchBooks, fieldState);
+      noResultsMessage.style.display = 'none';
+      bookList.style.display = 'flex';
+      paginationContainer.style.display = 'flex';
+  } else {
+      noResultsMessage.style.display = 'flex';
+      bookList.style.display = 'none';
+      paginationContainer.style.display = 'none';
+  }
 }
+
 
 // Event handler for search field with debounce
 searchInput.addEventListener('input', debounce(searchBooks, 300));

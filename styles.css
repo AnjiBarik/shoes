@@ -48,16 +48,6 @@
   --modal-text: rgba(202, 198, 191, 0.87);
 }
 
-/* General style for shine animation */
- .shine-effect:hover::before { 
-  opacity: 1; animation: shine 0.6s ease forwards;
- } 
- /* Animation for a shiny wave */
-  @keyframes shine { 
-    0% { left: -150%; } 
-    100% { left: 150%; }
-  }
-
 body {
   font-family: Arial, sans-serif;
   margin: 10px;
@@ -230,10 +220,7 @@ body {
   
   .sort-button:hover {
     color: var(--button-bg); 
-  }
-  
-  .sort-button:hover.shine-effect::before { opacity: 1; animation: shine 0.6s ease forwards; }
- 
+  } 
   
   /* Adaptability */
   @media (max-width: 400px) {
@@ -313,9 +300,7 @@ body {
     opacity: 0; 
     transform: skewX(-45deg); 
     transition: none;
-  }
-  
-  .show-more-btn:hover.shine-effect::before { opacity: 1; animation: shine 0.6s ease forwards; }
+  }  
   
   .modal-content #book-modal-img {
     height: 320px;
@@ -1552,3 +1537,33 @@ p#book-tags {
   height: 10vh;
   display: none;
 }
+
+@keyframes shine {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+
+.shine-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 300%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transform: skewX(-45deg);
+  transition: none;
+}
+
+.shine-effect:hover::before {
+  opacity: 1;
+  animation: shine 0.6s ease forwards;
+}
+
+
