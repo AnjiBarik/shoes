@@ -1003,19 +1003,20 @@ p#book-tags {
   overflow: hidden; 
 }
 
-/* #section-list li.active::before,
+#section-list li.active::before,
 #partition-list li.active::before {
   content: '';
   position: absolute;
   top: 0;
-  left: -150%; 
-  width: 300%; 
+  left: -100%; 
+  width: 200%; 
   height: 100%;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0)); 
-  opacity: 0; 
-  transform: skewX(-45deg); 
-  transition: none;
-} */
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transform: skewX(-45deg);
+  transition: opacity 0.3s ease; /* Removing animation conflict */
+}
+
 
 #section-list li.active:hover::before,
 #partition-list li.active:hover::before {
@@ -1025,10 +1026,10 @@ p#book-tags {
 
 @keyframes shine {
   0% {
-    left: -150%; 
+    left: -100%; 
   }
   100% {
-    left: 150%; 
+    left: 100%; 
   }
 }
 

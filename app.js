@@ -462,12 +462,13 @@ function renderSections() {
       });
     }
 
-    li.addEventListener('click', () => {
-     // if (target.closest('.toggle')) return; //
+    li.addEventListener('click', (event) => {
+      if (event.target.classList.contains('toggle')) return; 
       selectedSection = section;
       selectedPartition = null;
-      filterBooksBySection(section);
+      filterBooksBySection(section);  
     });
+    
 
     sectionList.appendChild(li);
   });
@@ -483,9 +484,9 @@ function togglePartitions(liElement, section) {
 
   if (!toggle) return;
 
-  if (existingContainer) {
-    existingContainer.remove();
-    toggle.textContent = '+';
+if (existingContainer ) {
+  existingContainer.remove();
+  toggle.textContent = '+';
   } else {
     const partitionContainer = document.createElement('ul');
     partitionContainer.classList.add('partition-container');
@@ -557,7 +558,8 @@ function expandSectionIfPartitionSelected() {
       const toggle = item.querySelector('.toggle');
 
       if (toggle && toggle.textContent === '+') {
-        toggle.click(); // Expand section
+        //toggle.click(); // Expand section
+        togglePartitions(item, sectionName);
       }
     }
   });
