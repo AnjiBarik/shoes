@@ -557,8 +557,7 @@ function expandSectionIfPartitionSelected() {
     if (sectionName === selectedSection) {
       const toggle = item.querySelector('.toggle');
 
-      if (toggle && toggle.textContent === '+') {
-        //toggle.click(); // Expand section
+      if (toggle && toggle.textContent === '+') {        
         togglePartitions(item, sectionName);
       }
     }
@@ -794,96 +793,116 @@ previousItemsPerPage = calculateItemsPerPage(window.innerWidth);
 itemsPerPage = previousItemsPerPage;
 displayBooks(books, fieldState);
 
-
 function displayBooks(books, fieldState) {
-  bookList.innerHTML = ''; 
-  
+  const bookList = document.getElementById('book-list');
+  const bookTemplate = document.getElementById('book-card-template');
+  bookList.innerHTML = '';
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedBooks = books.slice(startIndex, endIndex);
-  
+
   paginatedBooks.forEach(book => {
-    const bookElement = document.createElement('div');
-    bookElement.classList.add('shelf-element');
-    bookElement.setAttribute('data-sorted', book.sorted || '');
-    bookElement.setAttribute('data-id', book.id);
-    let bookPrice = book.price ? `${book.price} ${fieldState.payment || '$'}` : 'Price not specified';
-    if (book.saleprice && book.saleprice.trim() !== '') {
-      bookPrice = `       
-        <span class="sale-price">${book.price} ${fieldState.payment || '$'}</span>
-        <span class="original-price">${book.saleprice} ${fieldState.payment || '$'}</span>
-      `;
-    }
+    const bookElement = bookTemplate.content.cloneNode(true);
+    const shelfElement = bookElement.querySelector('.shelf-element');
+    shelfElement.setAttribute('data-sorted', book.sorted || '');
+    shelfElement.setAttribute('data-id', book.id);
 
-    let firstImage =
-      (book.imagepublic && typeof book.imagepublic === 'string' && book.imagepublic.trim() !== '')
-        ? `img/publik/${book.imagepublic.trim()}`
-        : (book.imageblockpublic && typeof book.imageblockpublic === 'string' && book.imageblockpublic.trim() !== '')
-          ? `img/publik/${book.imageblockpublic.split(',').map(img => img.trim()).find(img => img !== '') || ''}`
-          : (book.image && typeof book.image === 'string' && book.image.trim() !== '')
-            ? book.image.trim()
-            : (book.imageblock && typeof book.imageblock === 'string' && book.imageblock.trim() !== '')
-              ? book.imageblock.split(',').map(img => img.trim()).find(img => img !== '') || ''
-              : 'img/imageNotFound.png';
+    // Set Book ID
+    const bookId = book.id ? `ID: ${book.id}` : '';
+    bookElement.querySelector('.book-id').textContent = bookId;
 
-    const bookId = book.id ? `<div class="book-id">ID: ${book.id}</div>` : '';
-
+    // Set Rating
     const productRating = aggregatedData.find(
-      (item) => `${item.ID_Price}` === `${fieldState.idprice}` && `${item.ID_Product}` === `${book.id}`
+      item => `${item.ID_Price}` === `${fieldState.idprice}` && `${item.ID_Product}` === `${book.id}`
     );
-
-    const renderStars = (averageRating) => {
-      const fullStars = Math.floor(averageRating);
-      const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
-      const emptyStars = 5 - fullStars - halfStar;
-
-      return `
-        <span class="rating-stars">
-          ${Array(fullStars).fill().map(() => '<span class="star filled">★</span>').join('')}
-          ${halfStar ? '<span class="star half-filled">★</span>' : ''}
-          ${Array(emptyStars).fill().map(() => '<span class="star">★</span>').join('')}
-        </span>
-      `;
-    };
-
     const ratingDisplay = productRating
-      ? `  
-        <div class="rating-stars">     
-          ${renderStars(productRating.Average_Rating)}
-          <span class="review-count">${productRating.Review_Count} </span>
-        </div>        
-      `
+      ? renderStars(productRating.Average_Rating) +
+        `<span class="review-count">${productRating.Review_Count}</span>`
       : '';
+    bookElement.querySelector('.rating-stars').innerHTML = ratingDisplay;
 
-    const sizeColorDisplay = renderSizeColorTags(book, fieldState);
+    // Set Image
+    const firstImage = getFirstImage(book);   
+    const img = bookElement.querySelector('.img-container img');
+    img.src = firstImage;
+    img.alt = book.title;
 
-    let badgeIcon = '';
-    if (book.sorted === 'new') {
-      badgeIcon = `<img src="img/new.png" class="art-icon" alt="New Cart">`;
-    } else if (book.sorted === 'sale') {
-      badgeIcon = `<img src="img/discont.png" class="art-icon" alt="Discount Cart">`;
-    } else if (book.sorted === 'popular') {
-      badgeIcon = `<img src="img/popular.png" class="art-icon" alt="Popular Cart">`;
+    // Set Title
+    bookElement.querySelector('.book-name').textContent = book.title;
+
+    // Set Price
+    const priceContainer = bookElement.querySelector('.book-price');
+    priceContainer.innerHTML = book.saleprice && book.saleprice.trim() !== ''
+      ? `<span class="sale-price">${book.price} ${fieldState.payment || '$'}</span>
+         <span class="original-price">${book.saleprice} ${fieldState.payment || '$'}</span>`
+      : `${book.price || 'Price not specified'} ${fieldState.payment || '$'}`;
+
+    // Set Button Action
+    const showMoreBtn = bookElement.querySelector('.show-more-btn');
+    showMoreBtn.setAttribute('onclick', `showMoreInfo(${book.id})`);
+
+    // Add badge if applicable
+    const badgeIcon = getBadgeIcon(book.sorted);
+    if (badgeIcon) {
+      const imgContainer = bookElement.querySelector('.img-container');
+      imgContainer.insertAdjacentHTML('afterbegin', badgeIcon);
     }
 
-    bookElement.innerHTML = `
-     <div class="id-rating"> ${bookId}  ${ratingDisplay}</div>
-      <div class="img-container"> 
-        ${badgeIcon}     
-       <img src="${firstImage}" alt="${book.title}" loading="lazy" onerror="this.onerror=null;this.src='img/imageNotFound.png';">
-        
-        ${sizeColorDisplay ? `<div class="book-size-color">${sizeColorDisplay}</div>` : ''}          
-      </div>    
-      <div class="book-name">${book.title}</div>
-      <div class="book-price">${bookPrice}</div>     
-      <button class="show-more-btn shine-effect" onclick="showMoreInfo(${book.id})">Learn more</button>  
-    `;
+   // Update size and color display if available
+   const sizeColorDiv = bookElement.querySelector('.book-size-color');
+   const sizeColorDisplay = renderSizeColorTags(book, fieldState);  
+   
+   if (sizeColorDisplay) {
+     sizeColorDiv.innerHTML = sizeColorDisplay; 
+     sizeColorDiv.classList.add('visible'); 
+   } else {
+     sizeColorDiv.classList.remove('visible'); 
+   }
 
+    // Append to list
     bookList.appendChild(bookElement);
   });
 
   renderPagination(books, fieldState);
 }
+
+function renderStars(averageRating) {
+  const fullStars = Math.floor(averageRating);
+  const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
+  const emptyStars = 5 - fullStars - halfStar;
+
+  return `
+    ${Array(fullStars).fill().map(() => '<span class="star filled">★</span>').join('')}
+    ${halfStar ? '<span class="star half-filled">★</span>' : ''}
+    ${Array(emptyStars).fill().map(() => '<span class="star">★</span>').join('')}
+  `;
+}
+
+function getFirstImage(book) {
+  const getFirstValidImage = (images, prefix = '') =>
+    images?.split(',').map(img => img.trim()).find(img => img) ? `${prefix}${images.split(',').map(img => img.trim()).find(img => img)}` : '';
+
+  return (
+    (book.imagepublic && `img/publik/${book.imagepublic.trim()}`) ||
+    getFirstValidImage(book.imageblockpublic, 'img/publik/') ||
+    (book.image && book.image.trim()) ||
+    getFirstValidImage(book.imageblock) ||
+    'img/imageNotFound.png'
+  );
+}
+
+function getBadgeIcon(sorted) {
+  if (sorted === 'new') {
+    return `<img src="img/new.png" class="art-icon" alt="New Cart">`;
+  } else if (sorted === 'sale') {
+    return `<img src="img/discont.png" class="art-icon" alt="Discount Cart">`;
+  } else if (sorted === 'popular') {
+    return `<img src="img/popular.png" class="art-icon" alt="Popular Cart">`;
+  }
+  return '';
+}
+
 
 function renderPagination(books, fieldState) {
   const paginationContainer = document.getElementById('pagination');

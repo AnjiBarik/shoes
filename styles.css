@@ -124,7 +124,12 @@ body {
     background-color: azure;
     border-radius: 7px;
     padding: 1px 7px;
-    opacity: 0.8
+    opacity: 0.8;
+    display: none;
+  }
+
+  .book-size-color.visible {
+    display: block;
   }
 
   .book-size-color p {
@@ -195,15 +200,26 @@ body {
   .sort-button {
     padding: 10px;
     cursor: pointer;
-    border: none;
-    background-color: #f0f0f0;   
-    color: black;
+    border: none;    
+    background-color: var(--background);
+    color: var(--text);
     border-radius: 7px;
     transition: background-color 0.3s, color 0.3s; 
     margin: 5px;
     position: relative; 
     overflow: hidden; 
   }
+
+  /* Icons: regular theme */
+.social-icon {
+  filter: none; /* No inversion for light theme */
+}
+
+/* Icons: dark theme */
+[data-theme="dark"] .social-icon {
+  filter: invert(1);
+}
+
   
   .sort-button::before {
     content: '';
@@ -939,8 +955,7 @@ p#book-tags {
   z-index: 1000;
 }
 
-#current-filter {
-  /* color: blue; */
+#current-filter {  
   text-decoration: underline;
   cursor: pointer;
   padding: 5px 30px; 
@@ -1131,8 +1146,7 @@ p#book-tags {
   box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
 }
 
-.clear-search-btn {
-  /* background-color: gold;   */
+.clear-search-btn {  
   color: #ffffff;
   border-radius: 50%;
   cursor: pointer;
@@ -1146,8 +1160,7 @@ p#book-tags {
   position: relative;
 }
 
-.clear-search-btn:hover {
-  /* background-color: #e6ac00; */
+.clear-search-btn:hover {  
   box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
   transform: scale(1.1);
 }

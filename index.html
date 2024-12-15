@@ -60,7 +60,7 @@
           <div class="main-circle">
               <img src="img/publik/sneakers.jpg" alt="Main Image" id="main-image">
           </div>
-          <!-- Индикаторы -->
+          <!-- Indicators -->
           <div class="indicators">
               <span class="indicator active"></span>
               <span class="indicator"></span>
@@ -129,6 +129,23 @@
   <!-- Book Card Container -->
   <section id="book-list" class="book-list"></section>
   <div id="pagination" class="pagination"></div>  
+
+  <!-- Template for Book Card -->
+<template id="book-card-template">
+  <div class="shelf-element" data-sorted="" data-id="">
+    <div class="id-rating">
+      <div class="book-id"></div>
+      <div class="rating-stars"></div>
+    </div>
+    <div class="img-container">
+      <img src="" alt="" loading="lazy" onerror="this.onerror=null;this.src='img/imageNotFound.png';">
+      <div class="book-size-color"></div>
+    </div>
+    <div class="book-name"></div>
+    <div class="book-price"></div>
+    <button class="show-more-btn shine-effect" onclick="">Learn more</button>
+  </div>
+</template>
 
   <!-- Modal window -->
   <div id="modal" class="modal">
