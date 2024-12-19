@@ -170,15 +170,16 @@ body {
   .sale-price {
     font-weight: bold;
     margin-right: 8px;
+    text-shadow: 0 0 5px #21ce6da8;
     animation: colorChange 2s infinite alternate; 
   }
   
   @keyframes colorChange {
     0% {
-      color: #007bff; 
+      color: #5151cd; 
     }
     100% {
-      color: #8ae38a;
+      color: #0c960c;
     }
   }
   
@@ -283,6 +284,21 @@ body {
     text-decoration: none;
     cursor: pointer;
   }
+
+  .view-reviews-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 15px;
+    display: none;
+  }
+  .view-reviews-btn:hover {
+    background-color: #0056b3;
+  }
+  
   
   /* "More details" button */
   .show-more-btn {
@@ -413,9 +429,9 @@ body {
 .id-rating {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
-  padding: 1px;
+  padding: 2px 15px;
 }
 
 p#book-tags {
@@ -511,6 +527,7 @@ p#book-tags {
 
 .logo {
   height: 40px;
+  border-radius: 7px;
 }
 
 
@@ -851,7 +868,7 @@ p#book-tags {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  border: 2px solid ;
+  border: 2px solid #333 ;
   background-color: transparent;
   display: none;
   justify-content: center;
@@ -1112,8 +1129,10 @@ p#book-tags {
   font-size: 14px;
   border-radius: 20px;
   border: 2px solid #d4d4d4;
-  background-color: #ffffff;
-  color: #333333;
+  /* background-color: #ffffff;
+  color: #333333; */
+  background-color: var(--background);
+  color: var(--text);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
@@ -1122,9 +1141,7 @@ p#book-tags {
   position: absolute;
   top: 50%;
   left: 15px;
-  transform: translateY(-50%);
-  color: #999999;
-  /* font-style: italic; */
+  transform: translateY(-50%);  
   transition: all 0.3s ease;
   pointer-events: none;
 }
@@ -1133,7 +1150,7 @@ p#book-tags {
 .search-input:focus + .search-placeholder {
   top: 0;
   left: 15px;
-  background-color: #ffffff;
+  background-color: #ffffff;  
   padding: 0 5px;
   color: black;
   font-size: 12px;
@@ -1184,14 +1201,14 @@ p#book-tags {
 
 .header-lending { 
   display: flex;
-  background-color: #fff;
+  /* background-color: #fff;
   border-radius: 55px 150px;
   padding: 15px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  gap: 30px;
+  gap: 30px; */
   z-index: 100;
   opacity: 0.9;
-  width: 600px;
+  /* width: 600px; */
 }
 
 .column-left {
@@ -1210,6 +1227,7 @@ p#book-tags {
   gap: 5px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  color: aqua;
 }
 
 .position:hover {
@@ -1581,3 +1599,53 @@ p#book-tags {
 }
 
 
+
+.hidden {
+  display: none;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+.sort-buttons {
+  margin: 10px 0;
+  display: flex;
+  gap: 10px;
+}
+
+#reviews-container {
+  margin-top: 20px;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+.review {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.review-rating {
+  margin: 5px 0;
+}
+
+.review-text {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.star {
+  color: #ccc;
+}
+
+.star.filled {
+  color: gold;
+}

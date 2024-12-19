@@ -3,9 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Promo Site for Books</title>
+  <title>Promo Site</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <!-- Define elements with data attributes for URLs -->
+  <div id="config" 
+   data-url-api="https://script.google.com/macros/s/AKfycbxFZwSOjMbKYn6J81HYdcK0Y8MM2YH4tYjBjRha_sLgPrmpjEOpjUYccq5zAJQVt1RD/exec" 
+   data-global-url="https://anjibarik.github.io/do/#/BookList/1">
+  </div>
 </head>
 <body>
 
@@ -163,7 +168,18 @@
       <p id="book-description"></p>
       <p id="book-author"></p>
       <p class="book-price" id="book-price"></p>
-      <p id="book-tags"></p>     
+      <p id="book-tags"></p>   
+      
+      <button id="view-reviews-btn" class="show-more-btn shine-effect" >View Reviews</button>
+
+      <div id="reviews-section" class="hidden">
+        <div class="sort-buttons">
+          <button id="sort-newest" class="show-more-btn shine-effect">Sort by Newest</button>
+          <button id="sort-oldest" class="show-more-btn shine-effect">Sort by Oldest</button>
+        </div>
+        <div id="reviews-container"></div>
+      </div>      
+  
     </div>
   </div>
 
