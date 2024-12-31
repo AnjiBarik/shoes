@@ -514,13 +514,10 @@ if (fullscreenBtn) {
 
       // Copy the image into the new container
       const fullscreenImage = img.cloneNode();
-      fullscreenImage.classList.add('fullscreen-image');
-      
-      // Add a close button for exiting fullscreen mode
-      const closeButton = document.createElement('div');
-      closeButton.id = 'close-fullscreen-btn';
-      closeButton.classList.add('close-fullscreen');
-      closeButton.innerHTML = '&times;';
+      fullscreenImage.classList.add('fullscreen-image');      
+      const closeButtonTemplate = document.getElementById('close-fullscreen-template');
+      const closeButton = closeButtonTemplate.firstElementChild.cloneNode(true);
+      // Attach click handler to the close button
       closeButton.onclick = function() {
         document.body.removeChild(fullscreenContainer); // Remove the fullscreen container
       };
@@ -577,15 +574,17 @@ function updateCurrentFilterDisplay() {
 function resetFilters() {
   selectedSection = null;
   selectedPartition = null;
+  filteredBooks = books
   displayBooks(books, fieldState);
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
+  updateSortButtonsVisibility()
 }
 
 function renderSections() {
   sectionList.innerHTML = '';   
   const showAllItem = document.createElement('li');
-  showAllItem.textContent = ' Show all';
+  showAllItem.textContent = 'Show all';
   showAllItem.classList.add('section-item');
   if (!selectedSection && !selectedPartition) {
     showAllItem.classList.add('active'); 
@@ -597,29 +596,36 @@ function renderSections() {
 
   uniqueSections.forEach(section => {
     const li = document.createElement('li');
-    li.innerHTML = `<div class="section-toggle">${section} ${
-      hasPartitions(section) ? '<span class="toggle">+</span>' : ''
-    }</div>`;
+    li.innerHTML = `
+      <div class="section-toggle">
+        ${section}
+        ${hasPartitions(section) ? getToggleIconHTML() : ''}
+      </div>`;
     li.classList.add('section-item');
 
-    const toggle = li.querySelector('.toggle');
-    if (toggle) {
-      toggle.addEventListener('click', (e) => {
+    const toggleIcon = li.querySelector('.toggle-icon');
+    if (toggleIcon) {
+      toggleIcon.addEventListener('click', (e) => {
         e.stopPropagation();
         togglePartitions(li, section);
       });
     }
 
     li.addEventListener('click', (event) => {
-      if (event.target.classList.contains('toggle')) return; 
+      if (event.target.classList.contains('toggle-icon')) return; 
       selectedSection = section;
       selectedPartition = null;
       filterBooksBySection(section);  
     });
     
-
     sectionList.appendChild(li);
   });
+}
+
+// Helper function to get the toggle icon HTML from the template
+function getToggleIconHTML() {
+  const template = document.getElementById('toggle-icon-template');
+  return template ? template.innerHTML : ''; // Return the HTML content of the template
 }
 
 function hasPartitions(section) {
@@ -627,15 +633,19 @@ function hasPartitions(section) {
 }
 
 function togglePartitions(liElement, section) {
-  const toggle = liElement.querySelector('.toggle');
+  const toggle = liElement.querySelector('.toggle-icon');
   const existingContainer = liElement.querySelector('.partition-container');
 
   if (!toggle) return;
 
-if (existingContainer ) {
-  existingContainer.remove();
-  toggle.textContent = '+';
+  if (existingContainer) {
+    // Remove the partition container
+    existingContainer.remove();
+
+    // Reset toggle icon to its original state
+    toggle.classList.remove('rotated');
   } else {
+    // Create a new container for partitions
     const partitionContainer = document.createElement('ul');
     partitionContainer.classList.add('partition-container');
 
@@ -649,7 +659,7 @@ if (existingContainer ) {
       partitionLi.classList.add('partition-item');
 
       if (section === selectedSection && partition === selectedPartition) {
-        partitionLi.classList.add('active'); 
+        partitionLi.classList.add('active');
       }
 
       partitionLi.addEventListener('click', (e) => {
@@ -663,7 +673,9 @@ if (existingContainer ) {
     });
 
     liElement.appendChild(partitionContainer);
-    toggle.textContent = '-';
+
+    // Rotate toggle icon to indicate expanded state
+    toggle.classList.add('rotated');
   }
 }
 
@@ -701,11 +713,13 @@ function expandSectionIfPartitionSelected() {
   const sectionItems = document.querySelectorAll('.section-item');
 
   sectionItems.forEach(item => {
-    const sectionName = item.textContent.trim().split(' ')[0]; // Get section name
-    if (sectionName === selectedSection) {
-      const toggle = item.querySelector('.toggle');
+    const sectionToggle = item.querySelector('.section-toggle'); // Ensure this exists
+    if (!sectionToggle) return; // Skip if not found
 
-      if (toggle && toggle.textContent === '+') {        
+    const sectionName = sectionToggle.textContent.trim().split(' ')[0]; // Get section name
+    if (sectionName === selectedSection) {
+      const toggleIcon = item.querySelector('.toggle-icon'); // Ensure this exists
+      if (toggleIcon && !toggleIcon.classList.contains('rotated')) {
         togglePartitions(item, sectionName);
       }
     }
@@ -1037,16 +1051,16 @@ function getFirstImage(book) {
 }
 
 function getBadgeIcon(sorted) {
+  const badgeIcons = document.getElementById('badge-icons');
   if (sorted === 'new') {
-    return `<img src="img/new.png" class="art-icon" alt="New Cart">`;
+    return badgeIcons.querySelector('#icon-new').innerHTML;
   } else if (sorted === 'sale') {
-    return `<img src="img/discont.png" class="art-icon" alt="Discount Cart">`;
+    return badgeIcons.querySelector('#icon-sale').innerHTML;
   } else if (sorted === 'popular') {
-    return `<img src="img/popular.png" class="art-icon" alt="Popular Cart">`;
+    return badgeIcons.querySelector('#icon-popular').innerHTML;
   }
   return '';
 }
-
 
 function renderPagination(books, fieldState) {
   const paginationContainer = document.getElementById('pagination');
@@ -1195,7 +1209,7 @@ clearButton.addEventListener('click', clearSearch);
   function checkInput() {
     if (searchInput.value || searchInput === document.activeElement) {
       searchInput.classList.add('active');
-      clearButton.style.display = 'inline-block';
+      clearButton.style.display = 'flex';
     } else {
       searchInput.classList.remove('active');
       clearButton.style.display = 'none';
@@ -1249,13 +1263,19 @@ clearButton.addEventListener('click', clearSearch);
       paginationContainer.style.display = 'flex';      
   }
 
-// Contact form
+
+// Form elements
 const contactForm = document.getElementById('contactForm');
 const formResponse = document.getElementById('formResponse');
 const emailField = document.getElementById('email');
 const messageField = document.getElementById('message');
-const submitBtn = document.getElementById('submitBtn'); // Form Validation
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;    
+const submitBtn = document.getElementById('submitBtn');
+const contactModal = document.getElementById('contact-modal');
+const closeModalContact = document.getElementById('close-modal-contact');
+const contactToggleButton = document.querySelector('.contact-toggle');
+
+// Form Validation
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const validateForm = () => {
     const isEmailValid = emailPattern.test(emailField.value.trim());
@@ -1285,12 +1305,12 @@ function safeWriteStorage(key, value) {
     }
 }
 
+// Handle form submission
 contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     submitBtn.disabled = true;
     formResponse.textContent = '';
 
-    // Spam Protection
     const now = Date.now();
     const oneMinute = 60 * 1000;
     let submissions = safeReadStorage('submissions');
@@ -1343,14 +1363,22 @@ contactForm.addEventListener('submit', async (e) => {
     }
 });
 
-// Toggle contact form visibility
-document.querySelector('.contact-toggle').addEventListener('click', function() {
-    var contactFormSection = document.querySelector('.contact-form-section');
-    if (contactFormSection.style.display === 'none' || contactFormSection.style.display === '') {
-        contactFormSection.style.display = 'flex';
-        this.textContent = '- Hide Contact Form';
-    } else {
-        contactFormSection.style.display = 'none';
-        this.textContent = '+ Show Contact Form';
+// Toggle contact form visibility and open modal
+contactToggleButton.addEventListener('click', function() {
+    contactModal.style.display = 'block';  // Show the modal
+    this.textContent = '- Hide Contact Form';
+});
+
+// Close the modal when clicking the close button (img inside span)
+closeModalContact.addEventListener('click', function() {
+    contactModal.style.display = 'none';  // Hide the modal
+    contactToggleButton.textContent = '+ Show Contact Form';
+});
+
+// Close the modal if the user clicks anywhere outside the modal content
+window.addEventListener('click', function(event) {
+    if (event.target === contactModal) {
+        contactModal.style.display = 'none';
+        contactToggleButton.textContent = '+ Show Contact Form';
     }
 });

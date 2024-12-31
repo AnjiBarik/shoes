@@ -93,24 +93,26 @@
 
   <!-- Sorting panel -->
   <section class="filters">
-    <button id="catalog-button" class="sort-button shine-effect"><img class="social-icon" src="img/category.png" alt="catalog">Categories</button>
-   
-   
+    <button id="catalog-button" class="sort-button shine-effect"><img class="social-icon" src="img/icon/category.png" alt="catalog">Categories</button>    
+
     <div class="search-container">
       <div class="input-wrapper">       
-        <input type="text" id="search-input" class="search-input" required  />
-        <label for="search-input" class="search-placeholder" translate="no">🔍 Search by ID or title</label>
+        <input type="text" id="search-input" class="search-input" required />
+        <label for="search-input" class="search-placeholder" translate="no">
+          <img src="img/icon/search.png" alt="Search" class="social-icon"> Search by ID or title
+        </label>
       </div>
-      <button id="clear-search-btn" class="clear-search-btn" >❌</button>
-    </div> 
-      
+      <button id="clear-search-btn" class="sort-button clear-search-btn">
+        <img src="img/icon/cancel.png" alt="Clear" class="social-icon">
+      </button>
+    </div>     
     
     <div class="search-container">  
-      <button class="sort-button shine-effect" data-type="new"><img class="social-icon" src="img/new.png" alt="sort_by_new"></button>
-      <button class="sort-button shine-effect" data-type="popular"><img class="social-icon" src="img/popular.png" alt="favorite"></button>
-      <button class="sort-button shine-effect" data-type="sale"><img class="social-icon" src="img/discont.png" alt="discont"></button>
-      <button class="sort-button shine-effect" data-type="low-price"><img class="social-icon" src="img/up_sort.png" alt="up_sort"></button>
-      <button class="sort-button shine-effect" data-type="high-price"><img class="social-icon" src="img/down_sort.png" alt="down_sort"></button>
+      <button class="sort-button shine-effect" data-type="new"><img class="social-icon" src="img/icon/new.png" alt="sort_by_new"></button>
+      <button class="sort-button shine-effect" data-type="popular"><img class="social-icon" src="img/icon/popular.png" alt="favorite"></button>
+      <button class="sort-button shine-effect" data-type="sale"><img class="social-icon" src="img/icon/discont.png" alt="discont"></button>
+      <button class="sort-button shine-effect" data-type="low-price"><img class="social-icon" src="img/icon/up_sort.png" alt="up_sort"></button>
+      <button class="sort-button shine-effect" data-type="high-price"><img class="social-icon" src="img/icon/down_sort.png" alt="down_sort"></button>
     </div>
   </section>
   <div id="no-results-message" style="display: none;">Oops, nothing found. Try again.</div>
@@ -119,21 +121,46 @@
   <!-- Catalog Modal window -->
   <div id="catalog-modal" class="modal">
     <div class="modal-content-section">
-      <span id="close-catalog-modal" class="close">&times;</span>
+      <span id="close-catalog-modal" class="close">
+        <img src="img/icon/cancel.png" alt="Close" class="social-icon">
+      </span>
+      
       <div class="book-list">
-      <img class="social-icon" src="img/category.png" alt="catalog">
-      <h2>Categories</h2>
+       <img class="social-icon" src="img/icon/category.png" alt="catalog">
+       <h2>Categories</h2>
       </div>      
+      
       <ul id="section-list" class="section-list"></ul>
+      
       <div id="partition-list-container" class="partition-list-container">        
         <ul id="partition-list" class="partition-list"></ul>
       </div>
+    
     </div>
   </div>
+
+  <!-- Template for the Toggle Icon in Sections -->
+<script type="text/template" id="toggle-icon-template">
+  <img src="img/icon/upmenu.png" alt="Toggle" class="toggle-icon social-icon">
+</script>
 
   <!-- Book Card Container -->
   <section id="book-list" class="book-list"></section>
   <div id="pagination" class="pagination"></div>  
+
+  <!-- Badge Icons -->
+<div id="badge-icons" class="hidden">
+  <span id="icon-new">
+    <img src="img/icon/new.png" class="art-icon" alt="New Cart">
+  </span>
+  <span id="icon-sale">
+    <img src="img/icon/discont.png" class="art-icon" alt="Discount Cart">
+  </span>
+  <span id="icon-popular">
+    <img src="img/icon/popular.png" class="art-icon" alt="Popular Cart">
+  </span>
+</div>
+
 
   <!-- Template for Book Card -->
 <template id="book-card-template">
@@ -155,7 +182,9 @@
   <!-- Modal window -->
   <div id="modal" class="modal">
     <div class="modal-content">
-      <span id="close-modal" class="close">&times;</span>
+      <span id="close-modal" class="close">
+        <img src="img/icon/cancel.png" alt="Close" class="social-icon">
+      </span>
       <div class="id-rating">
        <div id="book-ID" class="book-id"></div>
        <span class="rating-stars" id="book-rating" ></span>
@@ -163,7 +192,16 @@
       <h2 class="book-name id="book-title"></h2>
      
       <img id="book-modal-img" src="" alt="Book Image" />
-      <div id="fullscreen-btn" class="fullscreen-icon">🔍</div>      
+      <div id="fullscreen-btn" class="fullscreen-icon">
+        <img src="img/icon/search.png" alt="Search" class="social-icon">
+      </div>  
+  <!-- Fullscreen Close Button Template -->
+  <div id="close-fullscreen-template" class="hidden">
+    <div id="close-fullscreen-btn" class="close-fullscreen">
+     <img src="img/icon/cancel.png" alt="Close" class="social-icon">
+    </div>
+  </div>
+    
       <div id="image-gallery" class="image-gallery"></div>
       <p id="book-description"></p>
       <p id="book-author"></p>
@@ -186,12 +224,12 @@
  <!-- Floating up arrow button -->
  <div id="scroll-to-top-btn" class="scroll-to-top-btn">
   <div class="scroll-progress"></div>
-  <div class="scroll-arrow">   
+   <div class="scroll-arrow">   
     <svg width="24" height="24" viewBox="0 0 24 24">
       <path d="M7.41 16.16L12 11.58l4.59 4.58L18 13.72l-6-6-6 6z"/>
     </svg>   
-  </div>
-</div>
+   </div>
+ </div>
 
 
   <footer class="footer">
@@ -207,12 +245,11 @@
             <p>We are a company focused on providing the best services for you. Our mission is to improve your experience through innovation and care.</p>
         </div>
         <div>
-        <div class="social-icons">
-         
-            <a href="#" class="social-icon"><img src="img/inst.png" alt="Instagram"></a>
-            <a href="#" class="social-icon"><img src="img/face.png" alt="Facebook"></a>
-            <a href="#" class="social-icon"><img src="img/tik.png" alt="TikTok"></a>
-            <a href="#" class="social-icon"><img src="img/you.png" alt="YouTube"></a>
+        <div class="social-icons">         
+            <a href="#" class="social-icon"><img src="img/icon/inst.png" alt="Instagram"></a>
+            <a href="#" class="social-icon"><img src="img/icon/face.png" alt="Facebook"></a>
+            <a href="#" class="social-icon"><img src="img/icon/tik.png" alt="TikTok"></a>
+            <a href="#" class="social-icon"><img src="img/icon/you.png" alt="YouTube"></a>
           </div> 
             <!-- Contact Information -->
              <div class="contact-info">
@@ -220,24 +257,37 @@
               <p><a href="mailto:info@company.com">Email: info@company.com</a></p>
               <p><a href="https://maps.google.com/?q=1234+Imaginary+St,+Imaginetown" target="_blank" rel="noopener">Address: 1234 Imaginary St, Imaginetown</a></p>
              </div>
-        </div>
-        <div class="contact-section">
-            <h3>Contact Us</h3>
-            <button class="contact-toggle">+ Show Contact Form</button>
-            <div class="contact-form-section" style="display: none;">
-                <h4>Contact Me</h4>
-                <form id="contactForm">
-                    <label for="email">Your Email:</label>
-                    <input type="email" id="email" name="email" required>
+        </div>       
 
-                    <label for="message">Message:</label>
-                    <textarea id="message" name="message" required></textarea>
+ <!-- Contact Section -->
+<div class="contact-section">
+  <h3>Contact Us</h3>
+  <button class="contact-toggle">+ Show Contact Form</button>
 
-                    <button type="submit" id="submitBtn" disabled>Send Message</button>
-                    <p id="formResponse"></p>
-                </form>
-            </div>
-        </div>
+  <!-- Modal for Contact Form -->
+  <div id="contact-modal" class="modal">
+      <div class="modal-content-center">
+          <!-- Close button with image -->
+          <span id="close-modal-contact" class="close">
+              <img src="img/icon/cancel.png" alt="Close" class="social-icon">
+          </span>
+          <div class="contact-form-section">
+              <h4>Contact Me</h4>
+              <form id="contactForm">
+                  <label for="email">Your Email:</label>
+                  <input type="email" id="email" name="email" required>
+
+                  <label for="message">Message:</label>
+                  <textarea id="message" name="message" required></textarea>
+
+                  <button type="submit" id="submitBtn" disabled>Send Message</button>
+                  <p id="formResponse"></p>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
     </div>
 </footer>
 
