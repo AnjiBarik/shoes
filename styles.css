@@ -360,7 +360,7 @@ body {
     height: 70px;
     margin: 5px;
     cursor: pointer;
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
     border-radius: 4px;
     transition: transform 0.2s;
   } 
@@ -527,8 +527,9 @@ p#book-tags {
 }
 
 .logo {
-  height: 40px;
-  border-radius: 7px;
+  height: 50px;  
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
 }
 
 
@@ -543,6 +544,7 @@ p#book-tags {
   overflow: hidden;
   opacity: 0; 
   animation: fadeInVideo 1s forwards 1s; 
+  border-radius: 15px;
 } 
 
  #background-video {
@@ -550,7 +552,7 @@ p#book-tags {
   height: 100%;
   object-fit: cover;
   border-radius: 15px;
-  filter: blur(5px) brightness(50%); 
+  filter: blur(15px) brightness(50%); 
 }
 
 @keyframes bgToVideo {
@@ -823,6 +825,8 @@ p#book-tags {
 
 .footer-logo {
   width: 70px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
 }
 
 .footer-link {
@@ -1070,7 +1074,7 @@ p#book-tags {
 
 .partition-container { 
     width: 80%;
-    padding: 5px 100px;    
+    padding: 5px;    
 }
 
 .partition-container li {
@@ -1187,20 +1191,15 @@ p#book-tags {
 }
 
 .clear-search-btn {  
-  /* color: #ffffff; */
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
-  border: none;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  display: none;  
+  border: none;  
+  display: none;
   z-index: 1;
   right: 30px;
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
+  position: relative;  
+  background: var(--background);
 }
 
 .clear-search-btn:hover {  
@@ -1279,6 +1278,7 @@ p#book-tags {
   height: 70px;
   object-fit: cover;
   border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .position p {
