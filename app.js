@@ -1168,6 +1168,8 @@ function sortByPrice(order) {
 
 sortButtons.forEach(button => {
   button.addEventListener('click', () => {
+    sortButtons.forEach(btn => btn.classList.remove('selected'));    
+    button.classList.add('selected');
     const type = button.getAttribute('data-type');
 
     if (type === 'low-price') {
@@ -1277,12 +1279,34 @@ const contactToggleButton = document.querySelector('.contact-toggle');
 // Form Validation
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Validate input lengths and email format
 const validateForm = () => {
-    const isEmailValid = emailPattern.test(emailField.value.trim());
-    const isMessageValid = messageField.value.trim() !== '';
-    submitBtn.disabled = !(isEmailValid && isMessageValid);
+  const isEmailValid = emailPattern.test(emailField.value.trim()) &&
+      emailField.value.trim().length >= 1 &&
+      emailField.value.trim().length <= 256;
+
+  const isMessageValid = messageField.value.trim().length >= 1 && 
+      messageField.value.trim().length <= 256;
+
+  submitBtn.disabled = !(isEmailValid && isMessageValid);
 };
 
+// Show alerts on blur events for individual fields
+emailField.addEventListener('blur', () => {
+  const emailValue = emailField.value.trim();
+  if (!emailPattern.test(emailValue) || emailValue.length < 1 || emailValue.length > 256) {
+      alert('Please enter a valid email address between 1 and 256 characters.');
+  }
+});
+
+messageField.addEventListener('blur', () => {
+  const messageValue = messageField.value.trim();
+  if (messageValue.length < 1 || messageValue.length > 256) {
+      alert('Message must be between 1 and 256 characters.');
+  }
+});
+
+// Attach input validation
 emailField.addEventListener('input', validateForm);
 messageField.addEventListener('input', validateForm);
 
@@ -1307,7 +1331,8 @@ function safeWriteStorage(key, value) {
 
 // Handle form submission
 contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    e.preventDefault();   
+
     submitBtn.disabled = true;
     formResponse.textContent = '';
 
@@ -1366,19 +1391,19 @@ contactForm.addEventListener('submit', async (e) => {
 // Toggle contact form visibility and open modal
 contactToggleButton.addEventListener('click', function() {
     contactModal.style.display = 'block';  // Show the modal
-    this.textContent = '- Hide Contact Form';
+    this.textContent = 'Hide Contact Form';    
 });
 
 // Close the modal when clicking the close button (img inside span)
 closeModalContact.addEventListener('click', function() {
     contactModal.style.display = 'none';  // Hide the modal
-    contactToggleButton.textContent = '+ Show Contact Form';
+    contactToggleButton.textContent = 'Show Contact Form';    
 });
 
 // Close the modal if the user clicks anywhere outside the modal content
 window.addEventListener('click', function(event) {
     if (event.target === contactModal) {
         contactModal.style.display = 'none';
-        contactToggleButton.textContent = '+ Show Contact Form';
+        contactToggleButton.textContent = 'Show Contact Form';        
     }
 });

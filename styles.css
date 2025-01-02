@@ -211,6 +211,13 @@ body {
     overflow: hidden; 
   }
 
+  .sort-button.selected {
+    border: 2px solid;
+    border-radius: 7px;
+    padding: 8px; 
+  }
+  
+
   /* Icons: regular theme */
 .social-icon {
   filter: none; /* No inversion for light theme */
@@ -276,10 +283,9 @@ body {
     color: var(--modal-text); 
     margin: 10% auto;
     padding: 20px;
-    border: 1px solid #888;
-    border-radius: 7px;
-    width: 50%; 
-    max-width: 600px; 
+    border: 2px solid #888;
+    border-radius: 15px;
+    width: 400px;     
   }
 
   .close {
@@ -384,7 +390,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6); 
+  background-color: rgba(0, 0, 0, 0.9); 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -404,6 +410,7 @@ body {
   position: absolute;
   top: 30px;
   right: 20px;   
+  cursor: pointer;
 }
 
 /* Style for the full screen button */
@@ -626,6 +633,12 @@ p#book-tags {
   transition: all 0.3s ease; 
 }
 
+.close-fullscreen-icon {  
+  width: 30px;
+  height: 30px;  
+  filter: invert(1);
+}
+
 .social-icon img {
   max-width: 100%;
   height: auto;
@@ -787,6 +800,7 @@ p#book-tags {
   margin-bottom: 10px;
   padding: 8px;
   font-size: 1rem;  
+  max-width: 380px;
 }
 
 .contact-form-section button {
