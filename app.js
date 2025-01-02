@@ -1125,6 +1125,8 @@ function renderSizeColorTags(book, fieldState) {
 }
 
 function updateSortButtonsVisibility() {
+
+  sortButtons.forEach(btn => btn.classList.remove('selected'));
  
   const availableTypes = new Set(filteredBooks.map(book => book.sorted));
   sortButtons.forEach(button => {
@@ -1249,7 +1251,8 @@ clearButton.addEventListener('click', clearSearch);
           noResultsMessage.style.display = 'flex';
           bookList.style.display = 'none';
           paginationContainer.style.display = 'none';          
-      }
+      }      
+      updateSortButtonsVisibility();
   }
   
   // Event handler for search field with debounce
@@ -1262,7 +1265,8 @@ clearButton.addEventListener('click', clearSearch);
       displayBooks(books, fieldState); 
       noResultsMessage.style.display = 'none';
       bookList.style.display = 'flex'; 
-      paginationContainer.style.display = 'flex';      
+      paginationContainer.style.display = 'flex';        
+      updateSortButtonsVisibility();    
   }
 
 
