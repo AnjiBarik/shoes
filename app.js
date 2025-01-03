@@ -160,9 +160,7 @@ function setupSeeMoreButton() {
         bookList.style.display = 'flex'; 
         paginationContainer.style.display = 'flex'; 
         floatingButton.style.display = 'block';
-
-        updateSortButtonsVisibility();
-
+        updateSortButtonsVisibility(filteredBooks);
         removePositionListeners(); 
       })
       .catch((error) => {
@@ -578,7 +576,7 @@ function resetFilters() {
   displayBooks(books, fieldState);
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
-  updateSortButtonsVisibility()
+  updateSortButtonsVisibility(filteredBooks)
 }
 
 function renderSections() {
@@ -730,7 +728,8 @@ function filterBooksBySection(section) {
   selectedSection = section;
   selectedPartition = null;
   filteredBooks = books.filter(book => book.section === section);  
-  updateSortButtonsVisibility()
+  updateSortButtonsVisibility(filteredBooks);
+  currentPage = 1;
   displayBooks(filteredBooks, fieldState);
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
@@ -742,7 +741,8 @@ function filterBooks(section, partition) {
   filteredBooks = books.filter(book => {
     return book.section === section && (partition === 'Without subsection' ? !book.partition : book.partition === partition);
   });  
-  updateSortButtonsVisibility()
+  updateSortButtonsVisibility(filteredBooks);
+  currentPage = 1;
   displayBooks(filteredBooks, fieldState);
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
@@ -959,11 +959,9 @@ function displayBooks(books, fieldState) {
   const bookList = document.getElementById('book-list');
   const bookTemplate = document.getElementById('book-card-template');
   bookList.innerHTML = '';
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedBooks = books.slice(startIndex, endIndex);
-
   paginatedBooks.forEach(book => {
     const bookElement = bookTemplate.content.cloneNode(true);
     const shelfElement = bookElement.querySelector('.shelf-element');
@@ -1067,7 +1065,6 @@ function renderPagination(books, fieldState) {
   paginationContainer.innerHTML = ''; 
 
   const totalPages = Math.ceil(books.length / itemsPerPage);
-
   // Show pagination only if there are more than 1 pages
   if (totalPages <= 1) return;
 
@@ -1080,7 +1077,7 @@ function renderPagination(books, fieldState) {
     pageButton.addEventListener('click', () => {
       currentPage = i;
       displayBooks(books, fieldState);
-      scrollToTop();
+      scrollToTop();     
     });
 
     paginationContainer.appendChild(pageButton);
@@ -1124,10 +1121,9 @@ function renderSizeColorTags(book, fieldState) {
     .join('');
 }
 
-function updateSortButtonsVisibility() {
+function updateSortButtonsVisibility(filteredBooks) {
 
-  sortButtons.forEach(btn => btn.classList.remove('selected'));
- 
+  sortButtons.forEach(btn => btn.classList.remove('selected')); 
   const availableTypes = new Set(filteredBooks.map(book => book.sorted));
   sortButtons.forEach(button => {
     const buttonType = button.getAttribute('data-type');
@@ -1184,7 +1180,7 @@ sortButtons.forEach(button => {
   });
 });
 
-updateSortButtonsVisibility();
+//updateSortButtonsVisibility(filteredBooks);
 
 // Helper function to extract a numeric value from a price string
 function extractPrice(priceText) {
@@ -1245,14 +1241,16 @@ clearButton.addEventListener('click', clearSearch);
           displayBooks(searchBooks, fieldState);
           noResultsMessage.style.display = 'none';
           bookList.style.display = 'flex';
-          paginationContainer.style.display = 'flex';          
+          paginationContainer.style.display = 'flex'; 
+          updateSortButtonsVisibility(searchBooks)
+
       } else {
           currentPage = previousPage; 
           noResultsMessage.style.display = 'flex';
           bookList.style.display = 'none';
           paginationContainer.style.display = 'none';          
       }      
-      updateSortButtonsVisibility();
+      //updateSortButtonsVisibility();
   }
   
   // Event handler for search field with debounce
@@ -1266,7 +1264,7 @@ clearButton.addEventListener('click', clearSearch);
       noResultsMessage.style.display = 'none';
       bookList.style.display = 'flex'; 
       paginationContainer.style.display = 'flex';        
-      updateSortButtonsVisibility();    
+      updateSortButtonsVisibility(books);    
   }
 
 
@@ -1286,10 +1284,10 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Validate input lengths and email format
 const validateForm = () => {
   const isEmailValid = emailPattern.test(emailField.value.trim()) &&
-      emailField.value.trim().length >= 1 &&
+      emailField.value.trim().length >= 5 &&
       emailField.value.trim().length <= 256;
 
-  const isMessageValid = messageField.value.trim().length >= 1 && 
+  const isMessageValid = messageField.value.trim().length >= 5 && 
       messageField.value.trim().length <= 256;
 
   submitBtn.disabled = !(isEmailValid && isMessageValid);
@@ -1298,15 +1296,15 @@ const validateForm = () => {
 // Show alerts on blur events for individual fields
 emailField.addEventListener('blur', () => {
   const emailValue = emailField.value.trim();
-  if (!emailPattern.test(emailValue) || emailValue.length < 1 || emailValue.length > 256) {
-      alert('Please enter a valid email address between 1 and 256 characters.');
+  if (!emailPattern.test(emailValue) || emailValue.length < 6 || emailValue.length > 256) {
+      alert('Please enter a valid email address between 5 and 256 characters.');
   }
 });
 
 messageField.addEventListener('blur', () => {
   const messageValue = messageField.value.trim();
-  if (messageValue.length < 1 || messageValue.length > 256) {
-      alert('Message must be between 1 and 256 characters.');
+  if (messageValue.length < 6 || messageValue.length > 256) {
+      alert('Message must be between 5 and 256 characters.');
   }
 });
 

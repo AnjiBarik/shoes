@@ -90,8 +90,8 @@ body {
   }
   
   .shelf-element {   
-    border: 1px solid #ddd;
-    border-radius: 7px;
+    /* border: 1px solid #ddd; */
+    border-radius: 15px;
     width: 100%;
     max-width: 340px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -213,7 +213,7 @@ body {
 
   .sort-button.selected {
     border: 2px solid;
-    border-radius: 7px;
+    border-radius: 15px;
     padding: 8px; 
   }
   
@@ -271,11 +271,11 @@ body {
     background-color: var(--modal-bg);
     color: var(--modal-text);   
     padding: 20px;
-    border: 1px solid #888;
+    /* border: 1px solid #888; */
     width: 80%;
     max-width: 500px;
     margin: 10px 1px 5% auto;
-    border-radius: 7px;
+    border-radius: 15px;
   }
 
   .modal-content-center{
@@ -958,10 +958,10 @@ p#book-tags {
   background-color: var(--modal-bg);
   margin: 170px auto auto 5px;
   padding: 20px;
-  border: 1px solid #888;
+  /* border: 1px solid #888; */
   width: 80%;
   max-width: 400px;
-  border-radius: 10px;
+  border-radius: 15px;
 }
 
 .close {
@@ -1001,7 +1001,7 @@ p#book-tags {
 }
 
 #current-filter:hover {
-  color: blue; 
+  color: #00aaff; 
 }
 
 .section-item {
@@ -1321,7 +1321,7 @@ p#book-tags {
   margin: auto;
   box-shadow: inset 1px 5px 50px rgba(68, 114, 79, 0.79);
   opacity: 0.9;
-  background: #2c955f29;
+  background: #e3cbcbd4;
 }
 
 
@@ -1334,7 +1334,7 @@ p#book-tags {
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 15px 15px rgba(15, 15, 15, 0.65);
+  box-shadow: 0 15px 15px rgb(199, 125, 30);
 }
 
 .main-circle img { 
@@ -1518,7 +1518,7 @@ p#book-tags {
 
   .description-container {
       position: relative;
-      bottom: auto;
+      bottom: 40px;
       right: auto;
       max-width: 90%; 
       padding: 10px;
@@ -1532,8 +1532,8 @@ p#book-tags {
       transform: translate(-50%, -50%);
       display: flex;
       justify-content: center;
-      width: 100%; */
-      visibility: hidden;
+      width: 100%; */      
+      display: none;
   }
 
   .see-more-button{
@@ -1541,6 +1541,10 @@ p#book-tags {
     right: 20px;
     position: fixed;
     z-index: 100;
+  }
+
+  .indicator {
+    display: none;
   }
 
   /* .indicator {
@@ -1579,7 +1583,7 @@ p#book-tags {
   background-color: var(--button-bg);
   color: var(--button-text);
   border: none;
-  border-radius: 7px;
+  /* border-radius: 7px; */
   padding: 10px 15px;
   margin: 5px;
   cursor: pointer;
@@ -1593,7 +1597,7 @@ p#book-tags {
 
 .page-btn.active {
   color: #fff;
-  border: 1px solid;
+  /* border: 1px solid; */
   font-weight: bold;
   background-color: #1b7b28;
   background-image: var(--button-background);
