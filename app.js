@@ -1224,7 +1224,8 @@ clearButton.addEventListener('click', clearSearch);
   
       if (!searchQuery || searchQuery === "") { 
           currentPage = previousPage; 
-          displayBooks(books, fieldState);
+          displayBooks(filteredBooks, fieldState);
+          updateSortButtonsVisibility(filteredBooks);
           noResultsMessage.style.display = 'none';
           bookList.style.display = 'flex';
           paginationContainer.style.display = 'flex';          
@@ -1261,11 +1262,11 @@ clearButton.addEventListener('click', clearSearch);
       searchInput.value = '';
       searchBooks = [];
       currentPage = previousPage; 
-      displayBooks(books, fieldState); 
+      displayBooks(filteredBooks, fieldState); 
       noResultsMessage.style.display = 'none';
       bookList.style.display = 'flex'; 
       paginationContainer.style.display = 'flex';        
-      updateSortButtonsVisibility(books);    
+      updateSortButtonsVisibility(filteredBooks);    
   }
 
 
