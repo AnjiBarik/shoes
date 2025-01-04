@@ -14,6 +14,8 @@ let books = [];
 let filteredBooks = [];
 let fieldState = {};
 let aggregatedData = [];
+let sortedBooks = [];
+let searchBooks = [];
 
 const bookList = document.getElementById('book-list');
 const paginationContainer = document.getElementById('pagination');
@@ -355,16 +357,14 @@ if (viewReviewsBtn) {
       viewReviewsBtn.style.display = 'block';
       viewReviewsBtn.disabled = false;
       viewReviewsBtn.textContent = 'Refresh Reviews🔄';
-
-      //console.log('Using cached reviews:', reviewCache[cacheKey]);
+     
       displayCachedReviews(reviewCache[cacheKey]); // Display cached reviews
 
       // On button click, fetch fresh reviews and update the cache
       viewReviewsBtn.onclick = async () => {
         viewReviewsBtn.disabled = true; // Disable button while fetching
         const reviews = await loadAndDisplayReviews(bookId, idPrice);
-        if (reviews.length > 0) {
-          //console.log('Updated reviews:', reviews);
+        if (reviews.length > 0) {         
           reviewCache[cacheKey] = reviews; // Update cache
           displayCachedReviews(reviews); // Display updated reviews
         }
@@ -380,8 +380,7 @@ if (viewReviewsBtn) {
       viewReviewsBtn.onclick = async () => {
         viewReviewsBtn.disabled = true; // Disable button while fetching
         const reviews = await loadAndDisplayReviews(bookId, idPrice);
-        if (reviews.length > 0) {
-          //console.log('Loaded reviews:', reviews);
+        if (reviews.length > 0) {         
           reviewCache[cacheKey] = reviews; // Cache the reviews
           displayCachedReviews(reviews);
         }
@@ -412,8 +411,7 @@ async function loadAndDisplayReviews(bookId, idPrice) {
   formData.append('idPrice', idPrice);
   formData.append('idProduct', bookId);
 
-  try {
-    //console.log('Fetching product reviews...');
+  try {    
     const response = await fetch(URLAPI, {
       method: 'POST',
       body: formData,
@@ -932,17 +930,22 @@ function calculateItemsPerPage(screenWidth) {
 
 function handleResize() {
   const currentWidth = window.innerWidth;
-  
+
   if (currentWidth !== previousWidth) {
-    previousWidth = currentWidth; 
+    previousWidth = currentWidth;
     const newItemsPerPage = calculateItemsPerPage(currentWidth);
-    
+
     if (newItemsPerPage !== previousItemsPerPage) {
-      previousItemsPerPage = newItemsPerPage; 
-      itemsPerPage = newItemsPerPage; 
-      currentPage = 1; 
-      displayBooks(filteredBooks, fieldState);       
-      scrollToTop();      
+      previousItemsPerPage = newItemsPerPage;
+      itemsPerPage = newItemsPerPage;
+      currentPage = 1;
+      
+      let booksToDisplay = searchBooks.length ? searchBooks :
+                          sortedBooks.length ? sortedBooks :
+                          filteredBooks.length ? filteredBooks : [];
+      
+      displayBooks(booksToDisplay, fieldState);
+      scrollToTop();
     }
   }
 }
@@ -1146,7 +1149,7 @@ function updateSortButtonsVisibility(filteredBooks) {
 }
 
 function sortBy(type) {  
-  const sortedBooks = [...filteredBooks].sort((a, b) => {    
+  sortedBooks = [...filteredBooks].sort((a, b) => {    
     if (a.type === type && b.type !== type) return -1;
     if (a.type !== type && b.type === type) return 1;
     return 0; 
@@ -1157,10 +1160,10 @@ function sortBy(type) {
 
 
 function sortByPrice(order) {  
-  const sortedBooks = [...filteredBooks].sort((a, b) => {
+  sortedBooks = [...filteredBooks].sort((a, b) => {
     return order === 'low' ? a.price - b.price : b.price - a.price;
   });
-  
+ 
   displayBooks(sortedBooks, fieldState);
 }
 
@@ -1179,8 +1182,6 @@ sortButtons.forEach(button => {
     }
   });
 });
-
-//updateSortButtonsVisibility(filteredBooks);
 
 // Helper function to extract a numeric value from a price string
 function extractPrice(priceText) {
@@ -1218,7 +1219,7 @@ clearButton.addEventListener('click', clearSearch);
 
   let previousPage = currentPage; 
 
-  function searchBooks() { 
+  function searchBooksBy() { 
       const searchQuery = searchInput.value ? searchInput.value.trim().toLowerCase() : ''; 
   
       if (!searchQuery || searchQuery === "") { 
@@ -1230,7 +1231,7 @@ clearButton.addEventListener('click', clearSearch);
           return;
       }
   
-      const searchBooks = books.filter(book => 
+      searchBooks = books.filter(book => 
           book.title.toLowerCase().includes(searchQuery) || 
           book.id.toLowerCase().includes(searchQuery)
       );
@@ -1249,16 +1250,16 @@ clearButton.addEventListener('click', clearSearch);
           noResultsMessage.style.display = 'flex';
           bookList.style.display = 'none';
           paginationContainer.style.display = 'none';          
-      }      
-      //updateSortButtonsVisibility();
+      }       
   }
   
   // Event handler for search field with debounce
-  searchInput.addEventListener('input', debounce(searchBooks, 300));
+  searchInput.addEventListener('input', debounce(searchBooksBy, 300));
   
   // Function to reset search and display all books
   function clearSearch() {  
       searchInput.value = '';
+      searchBooks = [];
       currentPage = previousPage; 
       displayBooks(books, fieldState); 
       noResultsMessage.style.display = 'none';

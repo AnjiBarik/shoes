@@ -89,8 +89,7 @@ body {
     padding: 5px;
   }
   
-  .shelf-element {   
-    /* border: 1px solid #ddd; */
+  .shelf-element {     
     border-radius: 15px;
     width: 100%;
     max-width: 340px;
@@ -365,8 +364,7 @@ body {
     max-height: 100px;
     height: 70px;
     margin: 5px;
-    cursor: pointer;
-    /* border: 1px solid #ccc; */
+    cursor: pointer;    
     border-radius: 4px;
     transition: transform 0.2s;
   } 
@@ -378,9 +376,39 @@ body {
   /* Basic Image Gallery Style */
   .image-gallery {
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     gap: 5px;
     margin-top: 10px;
+    overflow-x: auto;
+    max-width: 80%;
+  }
+
+  
+::-webkit-scrollbar {
+  width: 10px; 
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; 
+  border-radius: 10px;
+}
+
+  ::-webkit-scrollbar-thumb {
+    animation: scrollbar-glow 1s infinite alternate;
+  }
+  
+  @keyframes scrollbar-glow {
+    0% {
+      background: #888;
+    }
+    100% {
+      background: #fff;
+    }
   }
 
   /* Style for the background and fullscreen container */
@@ -1149,6 +1177,7 @@ p#book-tags {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin: 5px 0;
   /* padding: 10px; */
 }
 
@@ -1582,8 +1611,7 @@ p#book-tags {
 .page-btn {
   background-color: var(--button-bg);
   color: var(--button-text);
-  border: none;
-  /* border-radius: 7px; */
+  border: none;  
   padding: 10px 15px;
   margin: 5px;
   cursor: pointer;
@@ -1596,8 +1624,7 @@ p#book-tags {
 }
 
 .page-btn.active {
-  color: #fff;
-  /* border: 1px solid; */
+  color: #fff;  
   font-weight: bold;
   background-color: #1b7b28;
   background-image: var(--button-background);
