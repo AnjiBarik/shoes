@@ -1266,7 +1266,9 @@ clearButton.addEventListener('click', clearSearch);
       noResultsMessage.style.display = 'none';
       bookList.style.display = 'flex'; 
       paginationContainer.style.display = 'flex';        
-      updateSortButtonsVisibility(filteredBooks);    
+      updateSortButtonsVisibility(filteredBooks); 
+      clearButton.style.display = 'none'; 
+      searchInput.classList.remove('active');     
   }
 
 

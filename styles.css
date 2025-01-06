@@ -242,7 +242,7 @@ body {
   }
   
   .sort-button:hover {
-    color: var(--button-bg); 
+    color: var(--text); 
   } 
   
   /* Adaptability */
@@ -1229,7 +1229,7 @@ p#book-tags {
 
 .search-input:focus {
   outline: none;
-  border-color: black;
+  border-color: var(--text);
   box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
 }
 
