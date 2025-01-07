@@ -36,7 +36,7 @@
   --button-background-size: cover; 
   --button-background-position: center;
   --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
+  --main-circle-shadow: 0 0 0 rgba(0, 0, 0, 0);
   --gradient: linear-gradient(to bottom, #323272, #4444c3, #a8a8dc, #5151cd);
 }
 
@@ -1366,7 +1366,21 @@ p#book-tags {
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 15px 15px rgb(199, 125, 30);
+  transition: box-shadow 0.3s ease;
+  box-shadow: var(--main-circle-shadow);
+  /* box-shadow: 0 15px 15px rgb(199, 125, 30); */
+}
+
+.main-circle.shadow-down {
+  --main-circle-shadow: 0 15px 15px rgba(255, 122, 0, 1);
+}
+
+.main-circle.shadow-right {
+  --main-circle-shadow: 15px 0 15px rgba(255, 122, 0, 1);
+}
+
+.main-circle.shadow-up {
+  --main-circle-shadow: 0 -15px 15px rgba(255, 122, 0, 1);
 }
 
 .main-circle img { 
@@ -1632,6 +1646,7 @@ p#book-tags {
   background-color: #1b7b28;
   background-image: var(--button-background);
   background-size: var(--button-background-size);
+  box-shadow: var(--box-shadow);
 }
 
 .show-all-btn {

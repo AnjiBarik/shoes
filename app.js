@@ -48,6 +48,7 @@ const sortButtons = document.querySelectorAll('.sort-button:not(#catalog-button)
 const clearButton = document.getElementById('clear-search-btn');
 const positions = document.querySelectorAll('.position');
 const indicators = document.querySelectorAll('.indicator');
+const mainCircle = document.querySelector('.main-circle');
 const mainImage = document.getElementById('main-image');
 const descriptionParagraph = document.querySelector('.description-container p'); 
 const viewReviewsBtn = document.getElementById('view-reviews-btn');
@@ -99,6 +100,16 @@ function updateActiveState(index) {
 
   mainImage.src = imageSrc;
   descriptionParagraph.textContent = description;
+  // Update the shadow on the main circle based on the active position
+  mainCircle.classList.remove('shadow-down', 'shadow-right', 'shadow-up'); // Remove all shadow classes
+
+  if (index === 0) {
+   mainCircle.classList.add('shadow-down'); 
+  } else if (index === 1) {
+   mainCircle.classList.add('shadow-right'); 
+  } else if (index === 2) {
+   mainCircle.classList.add('shadow-up'); 
+  }
 }
 
 function startAutoRotate() {
@@ -1127,16 +1138,20 @@ function renderSizeColorTags(book, fieldState) {
     .join('');
 }
 
-function updateSortButtonsVisibility(filteredBooks) {
-
+function updateSortButtonsVisibility(filtersBooks) {
+  if (!Array.isArray(filtersBooks) || filtersBooks === undefined || filtersBooks.length === 0) { 
+    sortButtons.forEach(button => button.style.display = 'none'); 
+    catalogButton.style.display = 'inline-block';
+    return; 
+  }
   sortButtons.forEach(btn => btn.classList.remove('selected')); 
-  const availableTypes = new Set(filteredBooks.map(book => book.sorted));
+  const availableTypes = new Set(filtersBooks.map(book => book.sorted));
   sortButtons.forEach(button => {
     const buttonType = button.getAttribute('data-type');
 
     if (buttonType === 'low-price' || buttonType === 'high-price') {
       // Price buttons are shown only if there are more than 1 products
-      button.style.display = filteredBooks.length > 1 ? 'inline-block' : 'none';
+      button.style.display = filtersBooks.length > 1 ? 'inline-block' : 'none';
     } else {
       // Show the button if the type exists
       if (availableTypes.has(buttonType)) {
@@ -1149,24 +1164,21 @@ function updateSortButtonsVisibility(filteredBooks) {
 
   // The "Categories" button is always visible
   catalogButton.style.display = 'inline-block';
-}
 
 function sortBy(type) {  
-  sortedBooks = [...filteredBooks].sort((a, b) => {    
+  sortedBooks = [...filtersBooks].sort((a, b) => {    
     if (a.type === type && b.type !== type) return -1;
     if (a.type !== type && b.type === type) return 1;
     return 0; 
   });
-  
   displayBooks(sortedBooks, fieldState);
 }
 
 
 function sortByPrice(order) {  
-  sortedBooks = [...filteredBooks].sort((a, b) => {
+  sortedBooks = [...filtersBooks].sort((a, b) => {
     return order === 'low' ? a.price - b.price : b.price - a.price;
-  });
- 
+  }); 
   displayBooks(sortedBooks, fieldState);
 }
 
@@ -1185,6 +1197,7 @@ sortButtons.forEach(button => {
     }
   });
 });
+}
 
 // Helper function to extract a numeric value from a price string
 function extractPrice(priceText) {
@@ -1225,45 +1238,58 @@ clearButton.addEventListener('click', () => {
     }
   } 
 
-  let previousPage = currentPage; 
+  let previousPage = currentPage;   
 
-  function searchBooksBy() { 
-      const searchQuery = searchInput.value ? searchInput.value.trim().toLowerCase() : ''; 
+  function searchBooksBy() {
+    const searchQuery = searchInput.value ? searchInput.value.trim().toLowerCase() : '';
   
-      if (!searchQuery || searchQuery === "") { 
-          currentPage = previousPage; 
-          displayBooks(filteredBooks, fieldState);
-          updateSortButtonsVisibility(filteredBooks); 
-          noResultsMessage.style.display = 'none';
-          bookList.style.display = 'flex';
-          paginationContainer.style.display = 'flex'; 
-          currentFilter.style.display = 'block';          
-          return;
-      }
+    if (!searchQuery || searchQuery === "") {
+      resetToPreviousState();
+      return;
+    }
   
-      searchBooks = books.filter(book => 
-          book.title.toLowerCase().includes(searchQuery) || 
-          book.id.toLowerCase().includes(searchQuery)
-      );
+    const searchBooks = books.filter(book =>
+      book.title.toLowerCase().includes(searchQuery) || 
+      book.id.toLowerCase().includes(searchQuery)
+    );
   
-      if (searchBooks.length > 0) {
-          previousPage = currentPage; 
-          currentPage = 1; 
-          displayBooks(searchBooks, fieldState);
-          noResultsMessage.style.display = 'none';
-          bookList.style.display = 'flex';
-          paginationContainer.style.display = 'flex';
-          currentFilter.style.display = 'none';
-          updateSortButtonsVisibility(searchBooks)
-
-      } else {
-          currentPage = previousPage; 
-          noResultsMessage.style.display = 'flex';
-          bookList.style.display = 'none';
-          currentFilter.style.display = 'none';
-          paginationContainer.style.display = 'none';          
-      }       
+    if (searchBooks.length > 0) {
+      updateStateWithSearchResults(searchBooks);
+    } else {
+      showNoResults();
+    }
   }
+  
+  function resetToPreviousState() {
+    currentPage = previousPage;
+    displayBooks(filteredBooks, fieldState);
+    updateSortButtonsVisibility(filteredBooks);
+    noResultsMessage.style.display = 'none';
+    bookList.style.display = 'flex';
+    paginationContainer.style.display = 'flex';
+    currentFilter.style.display = 'block';
+  }
+  
+  function updateStateWithSearchResults(searchBooks) {
+    previousPage = currentPage;
+    currentPage = 1;
+    displayBooks(searchBooks, fieldState);
+    noResultsMessage.style.display = 'none';
+    bookList.style.display = 'flex';
+    paginationContainer.style.display = 'flex';
+    currentFilter.style.display = 'none';
+    updateSortButtonsVisibility(searchBooks);
+  }
+  
+  function showNoResults() {
+    currentPage = previousPage;
+    noResultsMessage.style.display = 'flex';
+    bookList.style.display = 'none';
+    paginationContainer.style.display = 'none';
+    currentFilter.style.display = 'none';
+    updateSortButtonsVisibility([]);
+  }
+  
   
   // Event handler for search field with debounce
   searchInput.addEventListener('input', debounce(searchBooksBy, 300));
@@ -1278,7 +1304,7 @@ clearButton.addEventListener('click', () => {
       paginationContainer.style.display = 'flex';        
       updateSortButtonsVisibility(filteredBooks); 
       clearButton.style.display = 'none'; 
-      searchInput.classList.remove('active');  
+      searchInput.classList.remove('active'); 
       currentFilter.style.display = 'block'; 
   }
 
