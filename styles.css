@@ -35,6 +35,8 @@
   --button-background: url('img/fon.png');
   --button-background-size: cover; 
   --button-background-position: center;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
   --gradient: linear-gradient(to bottom, #323272, #4444c3, #a8a8dc, #5151cd);
 }
 
@@ -46,6 +48,7 @@
   --button-text: #f5f5f5;
   --modal-bg: #333333; 
   --modal-text: rgba(202, 198, 191, 0.87);
+  --box-shadow: 0 4px 8px rgba(15, 233, 171, 0.6);
 }
 
 body {
@@ -93,7 +96,7 @@ body {
     border-radius: 15px;
     width: 100%;
     max-width: 340px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--box-shadow);
     overflow: hidden;
     transition: transform 0.3s ease;
     padding: 5px;
@@ -242,7 +245,7 @@ body {
   }
   
   .sort-button:hover {
-    color: var(--text); 
+    color: var(--button-bg); 
   } 
   
   /* Adaptability */
@@ -563,7 +566,7 @@ p#book-tags {
 
 .logo {
   height: 50px;  
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--box-shadow);
   border-radius: 50%;
 }
 
@@ -675,7 +678,7 @@ p#book-tags {
 
 .social-icon img:hover {
   color: #ff6600; 
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+  box-shadow: var(--box-shadow); 
   transform: scale(1.1); 
   transition: box-shadow 0.3s ease, transform 0.3s ease; 
 }
@@ -702,7 +705,7 @@ p#book-tags {
   border: none;
   border-radius: 30px;
   text-decoration: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--box-shadow);
   opacity: 0;
   transform: translateY(100%);
   animation: slideInBottom 1s ease forwards 0.5s; /* 0.5s delay for synchronization */
@@ -735,7 +738,7 @@ p#book-tags {
   border: none;
   border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(77, 96, 54, 0.36);
+  box-shadow: var(--box-shadow);
   display: none; 
 }
 
@@ -867,7 +870,7 @@ p#book-tags {
 
 .footer-logo {
   width: 70px; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--box-shadow);
   border-radius: 50%;
 }
 
@@ -922,7 +925,7 @@ p#book-tags {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(77, 96, 54, 0.36);
+  box-shadow: var(--box-shadow);
 }
 
 #scroll-to-top-btn:hover {
@@ -963,7 +966,7 @@ p#book-tags {
   position: sticky;
   top: 0; 
   z-index: 1000;  
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+  /* box-shadow: var(--box-shadow);  */
   border-radius: 15px;  
   background-color: var(--background);
 }
@@ -1196,7 +1199,7 @@ p#book-tags {
   color: #333333; */
   background-color: var(--background);
   color: var(--text);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--box-shadow);
   transition: all 0.3s ease;
 }
 
@@ -1230,7 +1233,7 @@ p#book-tags {
 .search-input:focus {
   outline: none;
   border-color: var(--text);
-  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
+  box-shadow: var(--box-shadow);
 }
 
 .clear-search-btn {  
@@ -1246,7 +1249,7 @@ p#book-tags {
 }
 
 .clear-search-btn:hover {  
-  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
+  box-shadow: var(--box-shadow);
   transform: scale(1.1);
 }
 

@@ -1236,7 +1236,8 @@ clearButton.addEventListener('click', () => {
           updateSortButtonsVisibility(filteredBooks); 
           noResultsMessage.style.display = 'none';
           bookList.style.display = 'flex';
-          paginationContainer.style.display = 'flex';          
+          paginationContainer.style.display = 'flex'; 
+          currentFilter.style.display = 'block';          
           return;
       }
   
@@ -1251,13 +1252,15 @@ clearButton.addEventListener('click', () => {
           displayBooks(searchBooks, fieldState);
           noResultsMessage.style.display = 'none';
           bookList.style.display = 'flex';
-          paginationContainer.style.display = 'flex'; 
+          paginationContainer.style.display = 'flex';
+          currentFilter.style.display = 'none';
           updateSortButtonsVisibility(searchBooks)
 
       } else {
           currentPage = previousPage; 
           noResultsMessage.style.display = 'flex';
           bookList.style.display = 'none';
+          currentFilter.style.display = 'none';
           paginationContainer.style.display = 'none';          
       }       
   }
@@ -1276,6 +1279,7 @@ clearButton.addEventListener('click', () => {
       updateSortButtonsVisibility(filteredBooks); 
       clearButton.style.display = 'none'; 
       searchInput.classList.remove('active');  
+      currentFilter.style.display = 'block'; 
   }
 
 
