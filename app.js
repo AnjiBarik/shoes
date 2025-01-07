@@ -571,7 +571,8 @@ function resetFilters() {
   selectedSection = null;
   selectedPartition = null;
   filteredBooks = books
-  displayBooks(books, fieldState);
+  displayBooks(filteredBooks, fieldState);
+  clearSearch()
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
   updateSortButtonsVisibility(filteredBooks)
@@ -729,6 +730,7 @@ function filterBooksBySection(section) {
   updateSortButtonsVisibility(filteredBooks);
   currentPage = 1;
   displayBooks(filteredBooks, fieldState);
+  clearSearch()
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
 }
@@ -742,6 +744,7 @@ function filterBooks(section, partition) {
   updateSortButtonsVisibility(filteredBooks);
   currentPage = 1;
   displayBooks(filteredBooks, fieldState);
+  clearSearch()
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
   expandSectionIfPartitionSelected(); //Expand section
@@ -843,7 +846,7 @@ async function fetchBooks() {
 
     document.querySelector('.filters').style.display = 'flex';
 
-    displayBooks(books, fieldState);
+    displayBooks(filteredBooks, fieldState);
   } catch (error) {
     console.error('Error fetching books:', error);
   } finally {
@@ -956,7 +959,7 @@ function handleResize() {
 // First initialization
 previousItemsPerPage = calculateItemsPerPage(window.innerWidth);
 itemsPerPage = previousItemsPerPage;
-displayBooks(books, fieldState);
+displayBooks(filteredBooks, fieldState);
 
 function displayBooks(books, fieldState) {
   const bookList = document.getElementById('book-list');
@@ -1093,7 +1096,7 @@ function renderPagination(books, fieldState) {
   showAllButton.addEventListener('click', () => {
     itemsPerPage = books.length;
     currentPage = 1;
-    displayBooks(books, fieldState);
+    displayBooks(filteredBooks, fieldState);
     paginationContainer.innerHTML = ''; 
     scrollToTop();
   });
@@ -1205,7 +1208,12 @@ function debounce(func, delay) {
 searchInput.addEventListener('input', checkInput);
 searchInput.addEventListener('focus', checkInput);
 searchInput.addEventListener('blur', checkInput);
-clearButton.addEventListener('click', clearSearch);
+// Restore the previous page before clearing the search
+clearButton.addEventListener('click', () => {
+  currentPage = previousPage;
+  clearSearch();
+});
+
 
   function checkInput() {
     if (searchInput.value || searchInput === document.activeElement) {
@@ -1225,7 +1233,7 @@ clearButton.addEventListener('click', clearSearch);
       if (!searchQuery || searchQuery === "") { 
           currentPage = previousPage; 
           displayBooks(filteredBooks, fieldState);
-          updateSortButtonsVisibility(filteredBooks);
+          updateSortButtonsVisibility(filteredBooks); 
           noResultsMessage.style.display = 'none';
           bookList.style.display = 'flex';
           paginationContainer.style.display = 'flex';          
@@ -1260,15 +1268,14 @@ clearButton.addEventListener('click', clearSearch);
   // Function to reset search and display all books
   function clearSearch() {  
       searchInput.value = '';
-      searchBooks = [];
-      currentPage = previousPage; 
+      searchBooks = [];  
       displayBooks(filteredBooks, fieldState); 
       noResultsMessage.style.display = 'none';
       bookList.style.display = 'flex'; 
       paginationContainer.style.display = 'flex';        
       updateSortButtonsVisibility(filteredBooks); 
       clearButton.style.display = 'none'; 
-      searchInput.classList.remove('active');     
+      searchInput.classList.remove('active');  
   }
 
 
