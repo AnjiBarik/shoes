@@ -214,9 +214,10 @@ body {
   }
 
   .sort-button.selected {
-    border: 2px solid;
+    border: 2px solid var(--text);
     border-radius: 15px;
-    padding: 8px; 
+    padding: 8px;
+    box-shadow: var(--box-shadow); 
   }
   
 
