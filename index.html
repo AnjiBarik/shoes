@@ -8,8 +8,9 @@
   <link rel="stylesheet" href="styles.css">
   <!-- Define elements with data attributes for URLs -->
   <div id="config" 
-   data-url-api="https://script.google.com/macros/s/AKfycbxFZwSOjMbKYn6J81HYdcK0Y8MM2YH4tYjBjRha_sLgPrmpjEOpjUYccq5zAJQVt1RD/exec" 
-   data-global-url="https://anjibarik.github.io/do/#/BookList/1">
+   
+   data-url-api="https://script.google.com/macros/s/AKfycbxGXnRt_9VFqY9K8-j3Jdx7uMOfbYxAg6ug5mt7Uim5i_wuDUg4I1J0iLpblKB9xp0zIQ/exec" 
+   data-global-url="https://anjibarik.github.io/do/#/BookList/4">
   </div>
 </head>
 <body>
@@ -45,15 +46,15 @@
           </div>
           <p>For every day</p>
       </div>
-      <div class="position" data-description="Achievement" data-image="image2.jpg">
+      <div class="position" data-description="Education" data-image="image2.jpg">
           <div class="position-circle">
-              <img src="img/publik/sneakerswhite2.jpg" alt="Back">
+              <img src="img/publik/bookreact.jpg" alt="Back">
           </div>
-          <p>For sports</p>
+          <p>For education</p>
       </div>
       <div class="position" data-description="Happiness" data-image="image3.jpg">
           <div class="position-circle">
-              <img src="img/publik/cwomenshoeswite.jpg" alt="Side">
+              <img src="img/publik/headphonesblack.jpg" alt="Side">
           </div>
           <p>For wonderful moments</p>
       </div>
@@ -76,7 +77,7 @@
       <div class="description-container">
           <h1>Trendy shoes for all ages</h1>
           <p>Product details of your favorite shoes, colors, and other details are here. This makes it easier for you to take a closer look.</p>
-          <a href="https://anjibarik.github.io/do/#/BestShoeStore/1" class="btn">Explore more</a>
+          <a href="https://anjibarik.github.io/do/#/BestShoeStore/4" class="btn">Explore more</a>
       </div>
   </div>
   <a href="#" id="see-more-btn" class="see-more-button">🛒View catalog</a>  
@@ -179,47 +180,70 @@
   </div>
 </template>
 
-  <!-- Modal window -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span id="close-modal" class="close">
-        <img src="img/icon/cancel.png" alt="Close" class="social-icon">
-      </span>
-      <div class="id-rating">
-       <div id="book-ID" class="book-id"></div>
-       <span class="rating-stars" id="book-rating" ></span>
-      </div>
-      <h2 class="book-name id="book-title"></h2>
-     
-      <img id="book-modal-img" src="" alt="Book Image" />
-      <div id="fullscreen-btn" class="fullscreen-icon">
-        <img src="img/icon/search.png" alt="Search" class="social-icon">
-      </div>  
-  <!-- Fullscreen Close Button Template -->
+  <!-- Modal Window -->
+<div id="modal" class="modal">
+  
+
+  <div class="modal-content">
+
+    <!-- Sticky Navigation Menu -->
+  <div id="modal-menu" class="modal-menu">
+
+    <div id="book-ID" class="book-id"></div>
+
+    <div class="menu-item" data-target="Main Info">Main Info</div>    
+    <div class="menu-item" data-target="Details">Details</div>    
+    <div class="menu-item" data-target="Reviews">Reviews</div>
+  
+
+    <span id="close-modal" class="close">
+      <img src="img/icon/cancel.png" alt="Close" class="social-icon">
+    </span>      
+
+  </div>
+
+    <!-- Book Info Sections -->
+     <div id="Main Info">
+    <div class="id-rating">     
+      <span class="rating-stars" id="book-rating"></span>
+    </div>
+    
+    <img id="book-modal-img" src="" alt="Book Image" />
+    <div id="fullscreen-btn" class="fullscreen-icon">
+      <img src="img/icon/search.png" alt="Search" class="social-icon">
+    </div>
+    <!-- Fullscreen Close Button Template -->
   <div id="close-fullscreen-template" class="hidden">
     <div id="close-fullscreen-btn" class="close-fullscreen">
      <img src="img/icon/cancel.png" alt="Close" class="close-fullscreen-icon">
     </div>
   </div>
-    
-      <div id="image-gallery" class="image-gallery"></div>
-      <p id="book-description"></p>
-      <p id="book-author"></p>
-      <p class="book-price" id="book-price"></p>
-      <p id="book-tags"></p>   
-      
-      <button id="view-reviews-btn" class="show-more-btn shine-effect" >View Reviews</button>
 
-      <div id="reviews-section" class="hidden">
-        <div class="sort-buttons">
-          <button id="sort-newest" class="show-more-btn shine-effect">Sort by Newest</button>
-          <button id="sort-oldest" class="show-more-btn shine-effect">Sort by Oldest</button>
-        </div>
-        <div id="reviews-container"></div>
-      </div>      
-  
+    <div id="image-gallery" class="image-gallery"></div>
+    <h2 class="book-name" id="book-title"></h2>
+    <p id="book-tags"></p>
+    <p id="book-author"></p>
+    <p class="book-price" id="book-price"></p>
+    <p id="book-short-description"></p>
+    </div>
+    <div id="Details">
+    <p id="book-over-tags"></p>
+    <p id="book-description"></p>
+    </div>
+    <div id="Reviews"></div>
+    <!-- Reviews Section -->
+    <button id="view-reviews-btn" class="show-more-btn shine-effect">View Reviews</button>
+    <div id="reviews-section" class="hidden">
+      <div class="sort-buttons">
+        <button id="sort-newest" class="show-more-btn shine-effect">Sort by Newest</button>
+        <button id="sort-oldest" class="show-more-btn shine-effect">Sort by Oldest</button>
+      </div>
+      <div id="reviews-container"></div>
     </div>
   </div>
+  </div>
+</div>
+
 
  <!-- Floating up arrow button -->
  <div id="scroll-to-top-btn" class="scroll-to-top-btn">

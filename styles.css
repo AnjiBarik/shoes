@@ -178,10 +178,10 @@ body {
   
   @keyframes colorChange {
     0% {
-      color: #5151cd; 
+      color: aqua;
     }
     100% {
-      color: #0c960c;
+      color: green;
     }
   }
   
@@ -217,7 +217,7 @@ body {
     border: 2px solid var(--text);
     border-radius: 15px;
     padding: 8px;
-    box-shadow: var(--box-shadow); 
+    box-shadow: var(--box-shadow);
   }
   
 
@@ -583,7 +583,7 @@ p#book-tags {
   overflow: hidden;
   opacity: 0; 
   animation: fadeInVideo 1s forwards 1s; 
-  border-radius: 15px;
+  /* border-radius: 15px; */
 } 
 
  #background-video {
@@ -1386,6 +1386,8 @@ p#book-tags {
 
 .main-circle img { 
   object-fit: cover;
+  width: 300px;
+  height: 300px;
 }
 
 .description-container {
@@ -1720,6 +1722,7 @@ button:disabled {
 
 #reviews-container {
   margin-top: 20px;
+  margin-bottom: 20px;
   border-top: 1px solid #ddd;
   padding-top: 10px;
 }
@@ -1752,3 +1755,54 @@ button:disabled {
 .star.filled {
   color: gold;
 }
+
+/* Sticky Navigation Menu */
+#Main\ Info {
+  padding-top: 50px;
+}
+
+.modal-menu {
+  position: sticky;
+  top: 0;
+  background-color: var(--modal-bg);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* border-bottom: 1px solid #ddd; */
+  padding: 10px 0 5px;
+  color: var(--text);  
+}
+
+
+.menu-item {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px 10px;
+  color: var(--text);
+}
+
+.menu-item:hover {
+  color: #007bff;
+}
+
+.menu-item.active {
+  text-decoration: underline;
+}
+
+
+/* Hidden Reviews Section */
+.hidden {
+  display: none;
+}
+
+
+#book-over-tags {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+

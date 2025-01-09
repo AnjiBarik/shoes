@@ -31,10 +31,12 @@ const closeCatalogModal = document.getElementById('close-catalog-modal');
 const sectionList = document.getElementById('section-list');
 const currentFilter = document.getElementById('current-filter');
 const bookTitleElem = document.getElementById('book-title');
+const bookshortDescriptionElem = document.getElementById('book-short-description');
 const bookDescriptionElem = document.getElementById('book-description');
 const bookAuthorElem = document.getElementById('book-author');
 const bookPriceElem = document.getElementById('book-price');
 const bookTagsElem = document.getElementById('book-tags');
+const bookOverTagsElem = document.getElementById('book-over-tags');
 const imageGallery = document.getElementById('image-gallery');
 const bookModalImg = document.getElementById('book-modal-img');
 const modalElem = document.getElementById('modal');
@@ -66,8 +68,8 @@ const delay = 3000;
 let autoRotateInterval;
 let isLoading = false;
 
-const ITEMS_PER_PAGE_LARGE_SCREEN = 20;
-const ITEMS_PER_PAGE_MEDIUM_SCREEN = 10;
+const ITEMS_PER_PAGE_LARGE_SCREEN = 10;
+const ITEMS_PER_PAGE_MEDIUM_SCREEN = 7;
 const ITEMS_PER_PAGE_SMALL_SCREEN = 5;
 const LARGE_SCREEN_WIDTH = 1200;
 const MEDIUM_SCREEN_WIDTH = 700;
@@ -287,28 +289,91 @@ window.addEventListener('keydown', handleEscapeKey);
 
 
 // Main function to display book details in a modal
-window.showMoreInfo = function(bookId) {  
-  const book = books.find(b => b.id == bookId);     
+window.showMoreInfo = function (bookId) {
+  const book = books.find(b => b.id == bookId);
   if (!book) {
     console.error('Book not found for ID:', bookId);
     return;
   }
+  
 
   // Update modal content elements
   if (bookID) bookID.textContent = `ID: ${bookId}`;
-  if (bookTitleElem) bookTitleElem.textContent = book.title;
-  if (bookDescriptionElem) bookDescriptionElem.textContent = book.description || 'No description';
-  if (bookAuthorElem) bookAuthorElem.textContent = `Author: ${book.author || 'Unknown'}`;  
-  if (bookPriceElem) { if (book.saleprice && book.saleprice.trim() !== '')
-     { bookPriceElem.innerHTML = `
-      <span class="sale-price">${book.price} ${fieldState.payment || '$'}</span>
-      <span class="original-price">${book.saleprice} ${fieldState.payment || '$'}</span> `; }
-  else { bookPriceElem.textContent = `Price: ${book.price ? `${book.price} ${fieldState.payment}` : 'Price not specified'}`; } }
-  if (bookTagsElem) bookTagsElem.innerHTML = renderTags(book, fieldState);   
+  if (bookTitleElem) bookTitleElem.textContent = `${book.title || ''}`;
 
+  // Display tags for size and color first
+  if (bookTagsElem) bookTagsElem.innerHTML = renderSizeColorTags(book, fieldState);
+
+  if (bookAuthorElem) bookAuthorElem.textContent = `Author: ${book.author || ''}`;
+
+  // Display price information
+  if (bookPriceElem) {
+    if (book.saleprice && book.saleprice.trim() !== '') {
+      bookPriceElem.innerHTML = `
+        <span class="sale-price">${book.price} ${fieldState.payment || '$'}</span>
+        <span class="original-price">${book.saleprice} ${fieldState.payment || '$'}</span>
+      `;
+    } else {
+      bookPriceElem.textContent = `Price: ${book.price ? `${book.price} ${fieldState.payment}` : 'Price not specified'}`;
+    }
+  }
+
+  // Display short description
+  if (bookshortDescriptionElem) {
+    bookshortDescriptionElem.textContent = book.shortDescription || '';
+  }
+
+  // Display tags 
+  if (bookOverTagsElem) bookOverTagsElem.innerHTML = renderTags(book, fieldState);
+
+  // Display full description
+  if (bookDescriptionElem) {
+    bookDescriptionElem.textContent = book.description || '';
+  }
+
+  // Clear and populate the image gallery
+  if (imageGallery) {
+    imageGallery.innerHTML = '';
+
+    const images =
+      (book.imageblockpublic && typeof book.imageblockpublic === 'string' && book.imageblockpublic.trim() !== '')
+        ? book.imageblockpublic.split(',')
+            .map(img => img.trim())
+            .filter(img => img !== '')
+            .map(img => `img/publik/${img}`)
+        : (book.imageblock && typeof book.imageblock === 'string' && book.imageblock.trim() !== '')
+        ? book.imageblock.split(',')
+            .map(img => img.trim())
+            .filter(img => img !== '')
+        : [];
+
+    images.forEach((image, index) => {
+      const img = document.createElement('img');
+      img.src = image.trim();
+      img.alt = `Book Image ${index + 1}`;
+      img.classList.add('image-option');
+
+      // Checking image loading
+      img.onerror = function () {
+        this.onerror = null;
+        this.src = 'img/imageNotFound.png';
+      };
+      img.onclick = () => changeImage(image.trim());
+      imageGallery.appendChild(img);
+    });
+
+    // Set the first image if available
+    if (bookModalImg && images.length > 0) {
+      bookModalImg.src = images[0].trim();
+      bookModalImg.onerror = function () {
+        this.onerror = null;
+        this.src = 'img/imageNotFound.png';
+      };
+    }
+  }
+
+  // Display rating and reviews
   const productRating = findProductRating(aggregatedData, fieldState.idprice, book.id);
-
-  // Display Rating and Review Count if rating data is available
   if (bookRatingElem) {
     bookRatingElem.innerHTML = productRating
       ? `
@@ -318,101 +383,101 @@ window.showMoreInfo = function(bookId) {
       : ''; // Display a message if no rating data is found
   }
 
-  // Clear and populate the image gallery
-  if (imageGallery) {
-    imageGallery.innerHTML = '';    
-  
-const images = 
-(book.imageblockpublic && typeof book.imageblockpublic === 'string' && book.imageblockpublic.trim() !== '')
-    ? book.imageblockpublic.split(',')
-        .map(img => img.trim())
-        .filter(img => img !== '')
-        .map(img => `img/publik/${img}`)
-: (book.imageblock && typeof book.imageblock === 'string' && book.imageblock.trim() !== '')
-    ? book.imageblock.split(',')
-        .map(img => img.trim())
-        .filter(img => img !== '')
-: [];
+  // Configure reviews button
+  if (viewReviewsBtn) {
+    const idPrice = fieldState.idprice;
+    const cacheKey = `${idPrice}-${bookId}`;
 
-    images.forEach((image, index) => {
-      const img = document.createElement('img');     
-      img.src = image.trim();
-      img.alt = `Book Image ${index + 1}`;
-      img.classList.add('image-option');
-      //Checking image loading
-      img.onerror = function() {
-        this.onerror = null;
-        this.src = 'img/imageNotFound.png';
-      };
-      img.onclick = () => changeImage(image.trim());
-      imageGallery.appendChild(img);
-    });
-  
-    // Set the first image if available
-    if (bookModalImg && images.length > 0) {
-      bookModalImg.src = images[0].trim();
-      bookModalImg.onerror = function() {
-        this.onerror = null;
-        this.src = 'img/imageNotFound.png';
-      };
-    }
-  } 
-
-if (viewReviewsBtn) {
-  const idPrice = fieldState.idprice;
-  const cacheKey = `${idPrice}-${bookId}`;  
-
-  if (productRating && productRating.Review_Count > 0) {
-    if (reviewCache[cacheKey] && reviewCache[cacheKey].length > 0) {
-      // If reviews are cached, show the button and change its label to "Refresh Reviews"
-      viewReviewsBtn.style.display = 'block';
-      viewReviewsBtn.disabled = false;
-      viewReviewsBtn.textContent = 'Refresh Reviews🔄';
-     
-      displayCachedReviews(reviewCache[cacheKey]); // Display cached reviews
-
-      // On button click, fetch fresh reviews and update the cache
-      viewReviewsBtn.onclick = async () => {
-        viewReviewsBtn.disabled = true; // Disable button while fetching
-        const reviews = await loadAndDisplayReviews(bookId, idPrice);
-        if (reviews.length > 0) {         
-          reviewCache[cacheKey] = reviews; // Update cache
-          displayCachedReviews(reviews); // Display updated reviews
-        }
-        viewReviewsBtn.disabled = false; // Re-enable button
-      };
-    } else {
-      // If reviews are not cached, clear reviews and proceed as before
-      clearReviews();
-      viewReviewsBtn.style.display = 'block';
-      viewReviewsBtn.disabled = false;
-      viewReviewsBtn.textContent = 'View Reviews';
-
-      viewReviewsBtn.onclick = async () => {
-        viewReviewsBtn.disabled = true; // Disable button while fetching
-        const reviews = await loadAndDisplayReviews(bookId, idPrice);
-        if (reviews.length > 0) {         
-          reviewCache[cacheKey] = reviews; // Cache the reviews
-          displayCachedReviews(reviews);
-        }
-        viewReviewsBtn.disabled = false; // Re-enable button
+    if (productRating && productRating.Review_Count > 0) {
+      if (reviewCache[cacheKey] && reviewCache[cacheKey].length > 0) {
+        viewReviewsBtn.style.display = 'block';
+        viewReviewsBtn.disabled = false;
         viewReviewsBtn.textContent = 'Refresh Reviews🔄';
-      };
+        displayCachedReviews(reviewCache[cacheKey]);
+
+        viewReviewsBtn.onclick = async () => {
+          viewReviewsBtn.disabled = true;
+          viewReviewsBtn.textContent = 'Loading...';
+          const reviews = await loadAndDisplayReviews(bookId, idPrice);
+          if (reviews.length > 0) {
+            reviewCache[cacheKey] = reviews;
+            displayCachedReviews(reviews);
+          }
+          viewReviewsBtn.disabled = false;
+          viewReviewsBtn.textContent = 'Refresh Reviews🔄';
+        };
+      } else {
+        clearReviews();
+        viewReviewsBtn.style.display = 'block';
+        viewReviewsBtn.disabled = false;
+        viewReviewsBtn.textContent = 'View Reviews';
+
+        viewReviewsBtn.onclick = async () => {
+          viewReviewsBtn.disabled = true;
+          viewReviewsBtn.textContent = 'Loading...';
+          const reviews = await loadAndDisplayReviews(bookId, idPrice);
+          if (reviews.length > 0) {
+            reviewCache[cacheKey] = reviews;
+            displayCachedReviews(reviews);
+          }
+          viewReviewsBtn.disabled = false;
+          viewReviewsBtn.textContent = 'Refresh Reviews🔄';
+        };
+      }
+    } else {
+      clearReviews();
+      viewReviewsBtn.style.display = 'none';
     }
-  } else {
-    // Hide the button if no reviews are available
-    clearReviews();
-    viewReviewsBtn.style.display = 'none';
+  }
+
+  // Show the modal if it exists
+  if (modalElem) {
+    modalElem.style.display = 'block';
+    updateMenuVisibility()
+  }
+};
+
+// Scroll to section functionality
+document.querySelectorAll('.menu-item').forEach(div => {
+  div.addEventListener('click', function () {
+    // Remove active class from all menu items
+    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+
+    // Add active class to the clicked menu item
+    this.classList.add('active');
+
+    const targetId = this.getAttribute('data-target');
+    const targetElem = document.getElementById(targetId);
+    //console.log(targetId,targetElem)
+    if (targetElem) {
+      targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      targetElem.scrollTop -= 50;
+    }
+  });
+});
+
+// Update menu visibility based on content availability
+function updateMenuVisibility() {
+
+  document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+  // Ensure Main Info is always visible
+  const mainInfoMenu = document.querySelector('[data-target="Main Info"]');
+  if (mainInfoMenu) mainInfoMenu.style.display = 'inline-block';
+
+  // Update Details menu visibility based on description or tags
+  const detailsMenu = document.querySelector('[data-target="Details"]');
+  if (detailsMenu) {
+    const hasDetails = bookDescriptionElem?.textContent.trim() || bookOverTagsElem?.innerHTML.trim();
+    detailsMenu.style.display = hasDetails ? 'inline-block' : 'none';
+  }
+
+  // Update Reviews menu visibility based on reviews button state
+  const reviewsMenu = document.querySelector('[data-target="Reviews"]');
+  if (reviewsMenu) {
+    reviewsMenu.style.display = viewReviewsBtn?.style.display === 'block' ? 'inline-block' : 'none';
   }
 }
 
-
- // Show the modal if it exists
- if (modalElem) {
-  modalElem.style.display = 'block';
-}
-
-};
 
 // Load and display reviews with caching
 async function loadAndDisplayReviews(bookId, idPrice) {
@@ -867,7 +932,7 @@ async function fetchBooks() {
 
 // Helper function for rendering tags with default labels for size and color
 function renderTags(book, fieldState) {
-  const tagFields = ['size', 'color', 'tags1', 'tags2', 'tags3', 'tags4', 'tags5', 'tags6', 'tags7', 'tags8'];
+  const tagFields = ['tags1', 'tags2', 'tags3', 'tags4', 'tags5', 'tags6', 'tags7', 'tags8'];
   
   // Create colorRGB object for color mappings
   const colorRGB = fieldState.colorblock
@@ -1166,19 +1231,22 @@ function updateSortButtonsVisibility(filtersBooks) {
   catalogButton.style.display = 'inline-block';
 
 function sortBy(type) {  
-  sortedBooks = [...filtersBooks].sort((a, b) => {    
-    if (a.type === type && b.type !== type) return -1;
-    if (a.type !== type && b.type === type) return 1;
-    return 0; 
+  const sortedBooks = [...filtersBooks].sort((a, b) => {    
+    if (a.sorted == type && b.sorted != type) return -1; 
+    if (a.sorted != type && b.sorted == type) return 1;  
+    return 0;  
   });
+  
   displayBooks(sortedBooks, fieldState);
 }
+
 
 
 function sortByPrice(order) {  
   sortedBooks = [...filtersBooks].sort((a, b) => {
     return order === 'low' ? a.price - b.price : b.price - a.price;
   }); 
+
   displayBooks(sortedBooks, fieldState);
 }
 
