@@ -372,6 +372,38 @@ window.showMoreInfo = function (bookId) {
     }
   }
 
+//const imageGallery = document.querySelector('.image-gallery');
+const scrollRange = document.getElementById('scroll-range');
+
+// Function to update the scroll range and toggle visibility
+function updateScrollRange() {
+  scrollRange.style.display = 'none';
+  
+  const isOverflowing = imageGallery.scrollWidth > imageGallery.clientWidth;
+  if (isOverflowing) {
+      scrollRange.style.display = 'block';
+      scrollRange.max = imageGallery.scrollWidth - imageGallery.clientWidth;
+  }
+}
+
+// Sync the range slider with the gallery scroll position
+scrollRange.addEventListener('input', () => {
+    imageGallery.scrollLeft = scrollRange.value;
+});
+
+imageGallery.addEventListener('scroll', () => {
+    scrollRange.value = imageGallery.scrollLeft;
+});
+
+// Initial setup
+window.onload = () => {
+  updateScrollRange();
+};
+
+// Update on window resize
+window.addEventListener('resize', updateScrollRange);
+
+
   // Display rating and reviews
   const productRating = findProductRating(aggregatedData, fieldState.idprice, book.id);
   if (bookRatingElem) {

@@ -385,6 +385,8 @@ body {
     margin-top: 10px;
     overflow-x: auto;
     max-width: 80%;
+    scrollbar-width: none;
+    scroll-behavior: unset;
   }
 
   
@@ -561,7 +563,7 @@ p#book-tags {
   /* padding: 10px 20px; */
   background-color: var(--header-bg);
   border-radius: 50px;
-  margin-bottom: 5px;
+  margin-bottom: 7px;
   animation: bgToVideo 3s forwards 300s; 
 }
 
@@ -599,7 +601,7 @@ p#book-tags {
   height: 100%;
   object-fit: cover;
   /* border-radius: 15px; */
-  filter: blur(15px) brightness(50%); 
+  filter: blur(5px) brightness(50%); 
 }
 
 @keyframes bgToVideo {
@@ -800,11 +802,10 @@ p#book-tags {
 }
 
 .about-section,
-.social-icons,
 .contact-section {
   flex: 1;
   min-width: 250px;
-  padding: 10px;
+  padding-bottom: 10px;
 }
 
 .about-section h3,
@@ -874,14 +875,33 @@ p#book-tags {
   text-align: center;
   flex: 1;
   min-width: 250px;
-  padding: 10px;
+  padding-bottom: 10px;
 }
 
 .footer-logo {
   width: 70px; 
   box-shadow: var(--box-shadow);
   border-radius: 50%;
+  cursor: pointer;
+  translate: 0 -10px;
+  transition: transform 0.3s ease-in-out;
 }
+
+.footer-logo:hover { 
+  transform: rotate(30deg); 
+  animation: rotateBack 0.6s ease-in-out forwards; 
+} 
+@keyframes rotateBack { 
+  0% { 
+    transform: rotate(30deg); 
+  } 
+  50% { 
+    transform: rotate(-30deg); 
+  } 
+  100% {
+     transform: rotate(0deg); 
+    } 
+  }
 
 .footer-link {
   color: #00aaff;
@@ -891,12 +911,6 @@ p#book-tags {
 
 .footer-link:hover {
   text-decoration: underline;
-}
-
-/* Social Icons Section Styling */
-.social-icons {
-  text-align: center;
-  margin-top: 15px;
 }
 
 /* Contact Info Styling - Placed Under Social Icons */
@@ -919,6 +933,9 @@ p#book-tags {
   text-decoration: underline;
 }
 
+.social-icons-footer{
+  margin-top: 10px;
+}
 
 /* Scroll */
 #scroll-to-top-btn {
@@ -1807,10 +1824,47 @@ button:disabled {
 }
 
 
-#book-over-tags {
+/* #book-over-tags {
   display: flex;
   flex-flow: column;
   justify-content: center;
   align-items: flex-start;
+} */
+
+#book-over-tags {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 1rem; 
+  flex-direction: column; 
 }
 
+@media (min-width: 600px) { 
+  #book-over-tags {
+    flex-direction: row; 
+    justify-content: space-between; 
+  }
+}
+
+
+
+#scroll-range {
+  display: none; /* Hidden by default */
+  width: 100%;
+  margin: 15px 0;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: #ccc;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+#scroll-range::-webkit-slider-thumb,
+#scroll-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: rgba(202, 198, 191, 0.87);
+  border-radius: 50%;
+  cursor: pointer;
+}
