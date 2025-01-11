@@ -38,6 +38,7 @@ const bookPriceElem = document.getElementById('book-price');
 const bookTagsElem = document.getElementById('book-tags');
 const bookOverTagsElem = document.getElementById('book-over-tags');
 const imageGallery = document.getElementById('image-gallery');
+const scrollRange = document.getElementById('scroll-range');
 const bookModalImg = document.getElementById('book-modal-img');
 const modalElem = document.getElementById('modal');
 const bookID = document.getElementById('book-ID');
@@ -298,7 +299,7 @@ window.showMoreInfo = function (bookId) {
   
 
   // Update modal content elements
-  if (bookID) bookID.textContent = `ID: ${bookId}`;
+  if (bookID) bookID.textContent = `ID:${bookId}`;
   if (bookTitleElem) bookTitleElem.textContent = `${book.title || ''}`;
 
   // Display tags for size and color first
@@ -370,21 +371,8 @@ window.showMoreInfo = function (bookId) {
         this.src = 'img/imageNotFound.png';
       };
     }
+    updateScrollRange();
   }
-
-//const imageGallery = document.querySelector('.image-gallery');
-const scrollRange = document.getElementById('scroll-range');
-
-// Function to update the scroll range and toggle visibility
-function updateScrollRange() {
-  scrollRange.style.display = 'none';
-  
-  const isOverflowing = imageGallery.scrollWidth > imageGallery.clientWidth;
-  if (isOverflowing) {
-      scrollRange.style.display = 'block';
-      scrollRange.max = imageGallery.scrollWidth - imageGallery.clientWidth;
-  }
-}
 
 // Sync the range slider with the gallery scroll position
 scrollRange.addEventListener('input', () => {
@@ -395,13 +383,9 @@ imageGallery.addEventListener('scroll', () => {
     scrollRange.value = imageGallery.scrollLeft;
 });
 
-// Initial setup
-window.onload = () => {
-  updateScrollRange();
-};
 
 // Update on window resize
-window.addEventListener('resize', updateScrollRange);
+window.addEventListener('resize', debounce(updateScrollRange, 150));
 
 
   // Display rating and reviews
@@ -468,6 +452,17 @@ window.addEventListener('resize', updateScrollRange);
     updateMenuVisibility()
   }
 };
+
+// Function to update the scroll range and toggle visibility
+function updateScrollRange() {
+  scrollRange.style.display = 'none';
+  
+  const isOverflowing = imageGallery.scrollWidth > imageGallery.clientWidth;
+  if (isOverflowing) {
+      scrollRange.style.display = 'block';
+      scrollRange.max = imageGallery.scrollWidth - imageGallery.clientWidth;
+  }
+}
 
 // Scroll to section functionality
 document.querySelectorAll('.menu-item').forEach(div => {

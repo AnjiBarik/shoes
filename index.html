@@ -214,8 +214,7 @@
     <div id="Main Info">
      <div class="id-rating">     
       <span class="rating-stars" id="book-rating"></span>
-     </div>
-    
+     </div>    
      <img id="book-modal-img" src="" alt="Book Image" />
      <div id="fullscreen-btn" class="fullscreen-icon">
       <img src="img/icon/search.png" alt="Search" class="social-icon">
@@ -228,20 +227,24 @@
    </div>
 
     <div id="image-gallery" class="image-gallery"></div>
+    <label for="scroll-range" class="sr-only">Scroll Range</label>
     <input type="range" id="scroll-range" min="0" value="0" >
      <h2 class="book-name" id="book-title"></h2>
      <p id="book-tags"></p>
      <p id="book-author"></p>
      <p class="book-price" id="book-price"></p>
-     <p id="book-short-description"></p>
+     <p id="book-short-description" class="text-align-block"></p>
     </div>
     <div id="Details">
      <p id="book-over-tags"></p>
-     <p id="book-description"></p>
+     <p id="book-description" class="text-align-block"></p>
     </div>
-    <div id="Reviews"></div>
+    <div id="Reviews"></div>    
     <!-- Reviews Section -->
-    <button id="view-reviews-btn" class="show-more-btn shine-effect">View Reviews</button>
+    <button id="view-reviews-btn" class="show-more-btn shine-effect">
+      View Reviews      
+    </button>
+    
     <div id="reviews-section" class="hidden">
       <div class="sort-buttons">
         <button id="sort-newest" class="show-more-btn shine-effect">Sort by Newest</button>
