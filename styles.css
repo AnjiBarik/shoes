@@ -275,7 +275,7 @@ body {
     color: var(--modal-text);   
     padding: 20px;
     /* border: 1px solid #888; */
-    /* width: 80%; */
+    width: 80%;
     max-width: 700px;
     margin: 10px 1px 5% auto;
     border-radius: 15px;
@@ -334,7 +334,7 @@ body {
     padding: 10px 30px;
     border: none;
     cursor: pointer;
-    border-radius: 7px;
+    /* border-radius: 7px; */
     font-size: 16px;
     position: relative; 
     overflow: hidden; 
@@ -588,7 +588,7 @@ p#book-tags {
 
 /* Header Styling */
 
-.video-container {
+/* .video-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -598,17 +598,16 @@ p#book-tags {
   opacity: 0; 
   animation: fadeInVideo 1s forwards 1s; 
   border-radius: 30px;
-} 
+}  */
 
- #background-video {
+ /* #background-video {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  /* border-radius: 15px; */
-  filter: blur(5px) brightness(50%); 
-}
+  object-fit: cover;  
+  filter: blur(2px) brightness(80%); 
+} */
 
-@keyframes bgToVideo {
+/* @keyframes bgToVideo {
   0% {
     background-image: var(--background-image-url);
   }
@@ -621,7 +620,96 @@ p#book-tags {
   to {
     opacity: 1;
   }
+} */
+
+
+
+/* .video-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  border-radius: 30px;
 }
+
+
+.video-frame {
+  position: relative;
+  width: 50%;
+  height: 50%;
+  overflow: hidden;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(2px) brightness(80%);
+} */
+
+
+.video-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  border-radius: 30px;
+  background-color: #2b8a82;
+}
+
+/* Styling for each video frame */
+.video-frame {
+  position: absolute;
+  /* width: 50%;
+  height: 50%; */
+  overflow: hidden;
+}
+
+/* Radial positioning and adjusted clip-paths to fill all space */
+#video-frame-1 {
+  /* top: 0;
+  left: 0; */
+  clip-path: polygon(0% 0%, 100% 0%, 50% 50%);
+}
+
+#video-frame-2 {
+  top: 0;
+  right: 0;
+  clip-path: polygon(100% 0%, 100% 100%, 50% 50%);
+}
+
+#video-frame-3 {
+  /* bottom: 0;
+  right: 0; */
+  clip-path: polygon(100% 100%, 0% 100%, 50% 50%);
+}
+
+#video-frame-4 {
+  /* bottom: 0; */
+  left: 0;
+  clip-path: polygon(0% 100%, 0% 0%, 50% 50%);
+  width: 100%;
+}
+
+video {
+  width: 100%;
+  /* height: 100%;
+  object-fit: cover; */
+  filter: blur(2px) brightness(80%);
+}
+
+
+
+
+
+
+
+
+
 
 
 /* Header Content Styling */
@@ -713,8 +801,8 @@ p#book-tags {
   bottom: 150px;
   right: 20px;
   padding: 10px 20px;
-  background-color: #f6b92a;
-  color: #333;
+  background-color: #d46300;
+  color: white;
   font-size: 1em;
   font-weight: bold;
   border: none;
@@ -1304,7 +1392,8 @@ p#book-tags {
   display: flex;  
   z-index: 100;
   opacity: 0.9;
-  /* width: 600px; */
+  background: #2e403b85;
+  border-radius: 70px 300px 300px 70px;
 }
 
 .column-left {
@@ -1335,6 +1424,7 @@ p#book-tags {
 .position.active {
   color: #ff7a00;
   font-weight: bold; 
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 
@@ -1525,9 +1615,9 @@ p#book-tags {
   right: -20px;
   max-width: 250px;
   padding: 15px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: #2b8a8294;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+  border-radius: 17px;
   z-index: 5;
   font-family: 'Poppins', sans-serif;
   text-align: center;
@@ -1537,13 +1627,13 @@ p#book-tags {
   font-family: 'Cinzel', serif;
   font-size: 18px;
   margin-bottom: 10px;
-  color: #333;
+  color: white;
 }
 
 .description-container p {
   font-size: 14px;
   line-height: 1.5;
-  color: #555;
+  color: white;
 }
 
 .description-container a.btn {
@@ -1664,7 +1754,8 @@ p#book-tags {
   padding: 10px 15px;
   margin: 5px;
   cursor: pointer;
-  font-size: 14px;  
+  font-size: 14px; 
+  border-radius: 7px; 
 }
 
 .page-btn:hover {

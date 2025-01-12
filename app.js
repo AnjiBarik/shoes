@@ -242,11 +242,21 @@ document.addEventListener('DOMContentLoaded', initialize);
 // Open Closing a modal window 
 function openModal(modal) {
   modal.style.display = 'block';
+  history.pushState({ modalOpen: true }, '');  
 }
 
 function closeModal(modal) {
   modal.style.display = 'none';
+  //history.back();  
 }
+
+// Handler for the "Back" button
+window.addEventListener('popstate', (event) => {
+  if (!event.state || !event.state.modalOpen) {    
+    closeModal(catalogModal);
+    closeModal(modal);     
+  } 
+});
 
 function handleOutsideClick(event, modal) {
   if (event.target === modal) {
@@ -297,6 +307,7 @@ window.showMoreInfo = function (bookId) {
     return;
   }
   
+  history.pushState({ modalOpen: true }, '');
 
   // Update modal content elements
   if (bookID) bookID.textContent = `ID:${bookId}`;
@@ -384,9 +395,14 @@ imageGallery.addEventListener('scroll', () => {
 });
 
 
-// Update on window resize
-window.addEventListener('resize', debounce(updateScrollRange, 150));
+// Unified resize handler function
+function handleWindowResize() {
+  updateScrollRange();
+  handleResize();
+}
 
+// Attach the debounced event listener
+window.addEventListener('resize', debounce(handleWindowResize, 150));
 
   // Display rating and reviews
   const productRating = findProductRating(aggregatedData, fieldState.idprice, book.id);
@@ -475,7 +491,7 @@ document.querySelectorAll('.menu-item').forEach(div => {
 
     const targetId = this.getAttribute('data-target');
     const targetElem = document.getElementById(targetId);
-    //console.log(targetId,targetElem)
+    
     if (targetElem) {
       targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
       targetElem.scrollTop -= 50;
@@ -1056,9 +1072,6 @@ function handleResize() {
   }
 }
 
-// Debounce resize event
- window.addEventListener('resize', debounce(handleResize, 150));
-
 // First initialization
 previousItemsPerPage = calculateItemsPerPage(window.innerWidth);
 itemsPerPage = previousItemsPerPage;
@@ -1529,13 +1542,13 @@ contactForm.addEventListener('submit', async (e) => {
 // Toggle contact form visibility and open modal
 contactToggleButton.addEventListener('click', function() {
     contactModal.style.display = 'block';  // Show the modal
-    this.textContent = 'Hide Contact Form';    
+    this.textContent = 'Hide Contact Form';      
 });
 
 // Close the modal when clicking the close button (img inside span)
 closeModalContact.addEventListener('click', function() {
     contactModal.style.display = 'none';  // Hide the modal
-    contactToggleButton.textContent = 'Show Contact Form';    
+    contactToggleButton.textContent = 'Show Contact Form';      
 });
 
 // Close the modal if the user clicks anywhere outside the modal content
