@@ -88,7 +88,7 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 20px;   
+    gap: 5px;   
     padding: 5px;
   }
   
@@ -153,6 +153,7 @@ body {
     object-fit: cover;    
     width: 300px;
     border-radius: 7px;
+    cursor: pointer;
   }
   
   .book-name {
@@ -160,6 +161,7 @@ body {
     font-weight: bold;
     margin: 5px;
     text-align: center;
+    cursor: pointer;
   }
   
   .book-price {
@@ -686,6 +688,7 @@ video {
   /* bottom: 0;
   right: 0; */
   clip-path: polygon(100% 100%, 0% 100%, 50% 50%);
+  width: 100%;
 }
 
 #video-frame-4 {
@@ -703,7 +706,27 @@ video {
 }
 
 
-
+@media (max-width: 700px) {
+  .video-frame {
+    position: relative;    
+    overflow: hidden;
+  }
+  #video-frame-1 {    
+    clip-path:none;
+  }
+  
+  #video-frame-2 {    
+    clip-path: none;
+  }
+  
+  #video-frame-3 {    
+    clip-path: none;    
+  }
+  
+  #video-frame-4 {   
+    clip-path: none;    
+  }
+}
 
 
 
@@ -1386,6 +1409,7 @@ video {
   border-radius: 30px;
   width: 100%;
   height: 100vh;
+  min-height: 400px;
 }
 
 .header-lending { 
@@ -1911,7 +1935,18 @@ button:disabled {
 
 .menu-item.active {
   text-decoration: underline;
+  animation: removeUnderline 3s forwards;
 }
+
+@keyframes removeUnderline {
+  0% {
+    text-decoration: underline;
+  }
+  100% {
+    text-decoration: none;
+  }
+}
+
 
 
 /* Hidden Reviews Section */
@@ -1938,7 +1973,7 @@ button:disabled {
 
 #scroll-range {
   display: none; /* Hidden by default */
-  width: 100%;
+  width: 80%;
   margin: 15px 0;
   -webkit-appearance: none;
   appearance: none;

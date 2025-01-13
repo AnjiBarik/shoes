@@ -248,6 +248,7 @@ function openModal(modal) {
 function closeModal(modal) {
   modal.style.display = 'none';
   //history.back();  
+  history.pushState({ modalOpen: false }, '');
 }
 
 // Handler for the "Back" button
@@ -255,7 +256,7 @@ window.addEventListener('popstate', (event) => {
   if (!event.state || !event.state.modalOpen) {    
     closeModal(catalogModal);
     closeModal(modal);     
-  } 
+  }   
 });
 
 function handleOutsideClick(event, modal) {
@@ -395,14 +396,7 @@ imageGallery.addEventListener('scroll', () => {
 });
 
 
-// Unified resize handler function
-function handleWindowResize() {
-  updateScrollRange();
-  handleResize();
-}
 
-// Attach the debounced event listener
-window.addEventListener('resize', debounce(handleWindowResize, 150));
 
   // Display rating and reviews
   const productRating = findProductRating(aggregatedData, fieldState.idprice, book.id);
@@ -420,11 +414,25 @@ window.addEventListener('resize', debounce(handleWindowResize, 150));
     const idPrice = fieldState.idprice;
     const cacheKey = `${idPrice}-${bookId}`;
 
+    const addRatingToButton = () => {      
+      const existingRating = viewReviewsBtn.querySelector('.id-rating');
+      if (existingRating) {
+          existingRating.remove();
+      }
+      
+      if (bookRatingElem) {
+          const ratingCopy = bookRatingElem.cloneNode(true);
+          ratingCopy.style.display = 'inline-block'; 
+          viewReviewsBtn.appendChild(ratingCopy); 
+      }
+    };
+
     if (productRating && productRating.Review_Count > 0) {
       if (reviewCache[cacheKey] && reviewCache[cacheKey].length > 0) {
         viewReviewsBtn.style.display = 'block';
         viewReviewsBtn.disabled = false;
         viewReviewsBtn.textContent = 'Refresh Reviews🔄';
+        addRatingToButton();
         displayCachedReviews(reviewCache[cacheKey]);
 
         viewReviewsBtn.onclick = async () => {
@@ -437,12 +445,14 @@ window.addEventListener('resize', debounce(handleWindowResize, 150));
           }
           viewReviewsBtn.disabled = false;
           viewReviewsBtn.textContent = 'Refresh Reviews🔄';
+          addRatingToButton();
         };
       } else {
         clearReviews();
         viewReviewsBtn.style.display = 'block';
         viewReviewsBtn.disabled = false;
-        viewReviewsBtn.textContent = 'View Reviews';
+        viewReviewsBtn.textContent = 'View Reviews ';
+        addRatingToButton();
 
         viewReviewsBtn.onclick = async () => {
           viewReviewsBtn.disabled = true;
@@ -454,6 +464,7 @@ window.addEventListener('resize', debounce(handleWindowResize, 150));
           }
           viewReviewsBtn.disabled = false;
           viewReviewsBtn.textContent = 'Refresh Reviews🔄';
+          addRatingToButton();
         };
       }
     } else {
@@ -468,6 +479,15 @@ window.addEventListener('resize', debounce(handleWindowResize, 150));
     updateMenuVisibility()
   }
 };
+
+// Unified resize handler function
+function handleWindowResize() {
+  updateScrollRange();
+  handleResize();
+}
+
+// Attach the debounced event listener
+window.addEventListener('resize', debounce(handleWindowResize, 150));
 
 // Function to update the scroll range and toggle visibility
 function updateScrollRange() {
@@ -1105,9 +1125,12 @@ function displayBooks(books, fieldState) {
     const img = bookElement.querySelector('.img-container img');
     img.src = firstImage;
     img.alt = book.title;
+    img.setAttribute('onclick', `showMoreInfo(${book.id})`); // Add onclick for image
 
     // Set Title
-    bookElement.querySelector('.book-name').textContent = book.title;
+    const titleElement = bookElement.querySelector('.book-name');
+    titleElement.textContent = book.title;
+    titleElement.setAttribute('onclick', `showMoreInfo(${book.id})`); // Add onclick for title
 
     // Set Price
     const priceContainer = bookElement.querySelector('.book-price');
