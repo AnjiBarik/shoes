@@ -78,9 +78,18 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); 
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+  animation: rotate infinite 2s linear;
 }
-  
+
+@keyframes rotate {
+  0% { 
+    transform: rotate(0deg); 
+  } 
+  100% {
+    transform: rotate(360deg); 
+  } 
+}
     
   /* Book Card Styles */
   .book-list {
@@ -93,7 +102,6 @@ body {
   }
   
   .shelf-element {     
-    /* border-radius: 15px; */
     width: 100%;
     max-width: 340px;
     /* box-shadow: var(--box-shadow); */
@@ -275,8 +283,7 @@ body {
   .modal-content { 
     background-color: var(--modal-bg);
     color: var(--modal-text);   
-    padding: 20px;
-    /* border: 1px solid #888; */
+    padding: 20px;    
     width: 80%;
     max-width: 700px;
     margin: 10px 1px 5% auto;
@@ -335,8 +342,7 @@ body {
     color: white;
     padding: 10px 30px;
     border: none;
-    cursor: pointer;
-    /* border-radius: 7px; */
+    cursor: pointer;    
     font-size: 16px;
     position: relative; 
     overflow: hidden; 
@@ -385,8 +391,7 @@ body {
 
   /* Basic Image Gallery Style */
   .image-gallery {
-    display: flex;
-    /* flex-wrap: wrap; */
+    display: flex;    
     gap: 5px;
     margin-top: 10px;
     overflow-x: auto;
@@ -565,8 +570,7 @@ p#book-tags {
 .header-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  /* padding: 10px 20px; */
+  justify-content: space-between;  
   background-color: var(--header-bg);
   border-radius: 50px;
   margin-bottom: 7px;
@@ -587,71 +591,6 @@ p#book-tags {
   flex-wrap: wrap;
 }
 
-
-/* Header Styling */
-
-/* .video-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  opacity: 0; 
-  animation: fadeInVideo 1s forwards 1s; 
-  border-radius: 30px;
-}  */
-
- /* #background-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;  
-  filter: blur(2px) brightness(80%); 
-} */
-
-/* @keyframes bgToVideo {
-  0% {
-    background-image: var(--background-image-url);
-  }
-  100% {
-    background-image: none;
-  }
-}
-
-@keyframes fadeInVideo {
-  to {
-    opacity: 1;
-  }
-} */
-
-
-
-/* .video-container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  overflow: hidden;
-  border-radius: 30px;
-}
-
-
-.video-frame {
-  position: relative;
-  width: 50%;
-  height: 50%;
-  overflow: hidden;
-}
-
-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: blur(2px) brightness(80%);
-} */
-
-
 .video-container {
   position: absolute;
   width: 100%;
@@ -665,16 +604,12 @@ video {
 
 /* Styling for each video frame */
 .video-frame {
-  position: absolute;
-  /* width: 50%;
-  height: 50%; */
+  position: absolute;  
   overflow: hidden;
 }
 
 /* Radial positioning and adjusted clip-paths to fill all space */
-#video-frame-1 {
-  /* top: 0;
-  left: 0; */
+#video-frame-1 {  
   clip-path: polygon(0% 0%, 100% 0%, 50% 50%);
 }
 
@@ -684,32 +619,31 @@ video {
   clip-path: polygon(100% 0%, 100% 100%, 50% 50%);
 }
 
-#video-frame-3 {
-  /* bottom: 0;
-  right: 0; */
+#video-frame-3 {  
   clip-path: polygon(100% 100%, 0% 100%, 50% 50%);
   width: 100%;
 }
 
-#video-frame-4 {
-  /* bottom: 0; */
+#video-frame-4 {  
   left: 0;
   clip-path: polygon(0% 100%, 0% 0%, 50% 50%);
   width: 100%;
 }
 
 video {
-  width: 100%;
-  /* height: 100%;
-  object-fit: cover; */
+  width: 100%;  
   filter: blur(2px) brightness(80%);
 }
 
 
-@media (max-width: 700px) {
+@media (max-width: 1000px) {
   .video-frame {
     position: relative;    
     overflow: hidden;
+    height: 25vh;
+  }
+  video {    
+    filter: blur(1px) brightness(90%);
   }
   #video-frame-1 {    
     clip-path:none;
@@ -727,13 +661,6 @@ video {
     clip-path: none;    
   }
 }
-
-
-
-
-
-
-
 
 /* Header Content Styling */
 .header-content {
@@ -982,8 +909,6 @@ video {
       justify-content: center;
   }
 }
-
-
 
 /* Logo Section */
 .logo-section {
@@ -1685,7 +1610,7 @@ video {
       flex-direction: column;
       align-items: center;
       text-align: center;
-      border-radius: 7px;
+      border-radius: 50px;
   }
 
   .outer-circle {
@@ -1712,19 +1637,12 @@ video {
       position: relative;
       bottom: 40px;
       right: auto;
-      max-width: 90%; 
+      max-width: 100%; 
       padding: 10px;
       margin: 5px;
   }
 
-  .indicators {
-      /* position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      justify-content: center;
-      width: 100%; */      
+  .indicators {          
       display: none;
   }
 
@@ -1737,27 +1655,7 @@ video {
 
   .indicator {
     display: none;
-  }
-
-  /* .indicator {
-      position: relative;
-      transform: translate(-50%, -50%);
-      margin: 0 5px;
-  }
-
-  .indicator:nth-child(1) {
-      left: -50%; 
-  }
-
-  .indicator:nth-child(2) {
-    left: 0;
-    top: -50%; 
-  }
-
-  .indicator:nth-child(3) {
-    left: 50%;
-    bottom: 6px;
-  } */
+  }  
 }
 
 /* Pagination */
@@ -1846,8 +1744,6 @@ video {
   opacity: 1;
   animation: shine 0.6s ease forwards;
 }
-
-
 
 .hidden {
   display: none;
@@ -1947,8 +1843,6 @@ button:disabled {
   }
 }
 
-
-
 /* Hidden Reviews Section */
 .hidden {
   display: none;
@@ -1970,9 +1864,8 @@ button:disabled {
 }
 
 
-
 #scroll-range {
-  display: none; /* Hidden by default */
+  display: none; 
   width: 80%;
   margin: 15px 0;
   -webkit-appearance: none;
