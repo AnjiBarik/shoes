@@ -636,11 +636,12 @@ video {
 }
 
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
   .video-frame {
     position: relative;    
     overflow: hidden;
     height: 25vh;
+    width: 100vw;
   }
   video {    
     filter: blur(1px) brightness(90%);
@@ -1764,8 +1765,11 @@ button:disabled {
 #reviews-container {
   margin-top: 20px;
   margin-bottom: 20px;
-  border-top: 1px solid #ddd;
-  padding-top: 10px;
+  max-height: 20vh;
+  overflow-y: auto;
+  border: 2px solid;
+  border-radius: 17px;
+  padding: 10px;
 }
 
 .review {

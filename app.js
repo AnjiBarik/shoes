@@ -252,10 +252,11 @@ function closeModal(modal) {
 }
 
 // Handler for the "Back" button
-window.addEventListener('popstate', (event) => {
+window.addEventListener('popstate', (event) => {  
   if (!event.state || !event.state.modalOpen) {    
     closeModal(catalogModal);
-    closeModal(modal);     
+    closeModal(modal); 
+    closeFullscreen();    
   }   
 });
 
@@ -637,6 +638,13 @@ function changeImage(imageUrl) {
   }
 }
 
+function closeFullscreen() {
+  const fullscreenContainer = document.getElementById('fullscreen-container');
+  if (fullscreenContainer) {
+    document.body.removeChild(fullscreenContainer);    
+  }
+}
+
 // Function to display an image in fullscreen mode
 const fullscreenBtn = document.getElementById('fullscreen-btn');
 if (fullscreenBtn) {
@@ -651,11 +659,10 @@ if (fullscreenBtn) {
       const fullscreenImage = img.cloneNode();
       fullscreenImage.classList.add('fullscreen-image');      
       const closeButtonTemplate = document.getElementById('close-fullscreen-template');
-      const closeButton = closeButtonTemplate.firstElementChild.cloneNode(true);
+      const closeButton = closeButtonTemplate.firstElementChild.cloneNode(true);     
+
       // Attach click handler to the close button
-      closeButton.onclick = function() {
-        document.body.removeChild(fullscreenContainer); // Remove the fullscreen container
-      };
+      closeButton.onclick = closeFullscreen;
 
       // Add the image and close button to the container
       fullscreenContainer.appendChild(fullscreenImage);
