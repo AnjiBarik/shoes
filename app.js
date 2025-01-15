@@ -60,6 +60,7 @@ const reviewsContainer = document.getElementById('reviews-container');
 const sortButtonsContainer = document.querySelector('.sort-buttons');
 const sortNewestButton = document.getElementById('sort-newest');
 const sortOldestButton = document.getElementById('sort-oldest');
+const floatingButton = document.getElementById('floatingButton');
 
 let selectedSection = null;
 let selectedPartition = null; 
@@ -81,13 +82,8 @@ searchInput.value = '';
 
 let reviewCache = {};
 
-const floatingButton = document.createElement('button');
-floatingButton.classList.add('floating-button');
-floatingButton.textContent = 'GET FIRST DIBS!';
-document.body.appendChild(floatingButton); 
-
-floatingButton.addEventListener('click', () => {
-  window.location.href = globalURL; 
+floatingButton.addEventListener('click', () => {  
+  window.location.href = globalURL;
 });
 
 function updateActiveState(index) {

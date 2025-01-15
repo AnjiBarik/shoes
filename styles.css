@@ -1,27 +1,4 @@
-
-  /* .spinner {
-    position: fixed; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    font-size: 40px;
-  }
-  
-  .spinner::after {
-    content: "😺";
-    display: inline-block;
-    animation: tailWag 1s infinite linear; 
-  }
-  
-  @keyframes tailWag {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(15deg); }
-    50% { transform: rotate(-15deg); }
-    75% { transform: rotate(15deg); }
-    100% { transform: rotate(0deg); }
-  } */
-
-  /* Basic Styles */
+/* Basic Styles */
 :root {
   --header-bg: #f5f5f5;
   --background: #f0f0f0;
@@ -83,12 +60,11 @@ body {
 }
 
 @keyframes rotate {
-  0% { 
-    transform: rotate(0deg); 
-  } 
-  100% {
-    transform: rotate(360deg); 
-  } 
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+  100% { transform: rotate(0deg); }
 }
     
   /* Book Card Styles */
@@ -641,6 +617,7 @@ video {
     position: relative;    
     overflow: hidden;
     height: 25vh;
+
     width: 100vw;
   }
   video {    
@@ -661,46 +638,6 @@ video {
   #video-frame-4 {   
     clip-path: none;    
   }
-}
-
-/* Header Content Styling */
-.header-content {
-  background-color: rgba(255, 255, 255, 0.9); 
-  padding: 20px;
-  max-width: 500px;
-  border-radius: 8px;
-  transform: translateX(-100%);
-  opacity: 0;
-  animation: slideIn 1s ease forwards;
-}
-
-.header-title {
-  font-size: 2em;
-  font-weight: bold;
-  color: #f6b92a;
-  margin-bottom: 10px;
-}
-
-.header-description {
-  font-size: 1em;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.header-button {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #333;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-decoration: none;
-  margin-bottom: 20px;
-}
-
-.header-button:hover {
-  background-color: #555;
 }
 
 /* Social Icons */
@@ -735,15 +672,6 @@ video {
   box-shadow: var(--box-shadow); 
   transform: scale(1.1); 
   transition: box-shadow 0.3s ease, transform 0.3s ease; 
-}
-
-
-/* Slide-In Animation */
-@keyframes slideIn {
-  to {
-      opacity: 1;
-      transform: translateX(0);
-  }
 }
 
 /* "See More" button */
@@ -1261,9 +1189,7 @@ video {
   padding: 10px 15px;
   font-size: 14px;
   border-radius: 20px;
-  border: 2px solid #d4d4d4;
-  /* background-color: #ffffff;
-  color: #333333; */
+  border: 2px solid #d4d4d4;  
   background-color: var(--background);
   color: var(--text);
   box-shadow: var(--box-shadow);
@@ -1335,15 +1261,25 @@ video {
   border-radius: 30px;
   width: 100%;
   height: 100vh;
-  min-height: 400px;
+  min-height: 400px;  
 }
 
 .header-lending { 
   display: flex;  
   z-index: 100;
   opacity: 0.9;
+  transform: translateX(-100%);
   background: #2e403b85;
   border-radius: 70px 300px 300px 70px;
+  animation: slideIn 1s ease forwards;
+}
+
+ /* Slide-In Animation */
+@keyframes slideIn {
+  to {
+      opacity: 1;
+      transform: translateX(0);
+  }
 }
 
 .column-left {
@@ -1353,7 +1289,7 @@ video {
   gap: 20px; 
   max-width: 200px;
   height: 400px;
-  justify-content: space-between;
+  justify-content: space-between;  
 }
 
 .position {
@@ -1372,6 +1308,7 @@ video {
 }
 
 .position.active {
+  transform: scale(1.05);
   color: #ff7a00;
   font-weight: bold; 
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -1408,7 +1345,7 @@ video {
   align-items: flex-start;
   position: relative;
   gap: 20px;
-  max-width: 400px;
+  max-width: 400px;  
 }
 
 .outer-circle {
@@ -1437,8 +1374,7 @@ video {
   justify-content: center;
   align-items: center;
   transition: box-shadow 0.3s ease;
-  box-shadow: var(--main-circle-shadow);
-  /* box-shadow: 0 15px 15px rgb(199, 125, 30); */
+  box-shadow: var(--main-circle-shadow);  
 }
 
 .main-circle.shadow-down {
@@ -1813,8 +1749,7 @@ button:disabled {
   z-index: 1000;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  /* border-bottom: 1px solid #ddd; */
+  align-items: center;  
   padding: 10px 0 5px;
   color: var(--text);  
 }
