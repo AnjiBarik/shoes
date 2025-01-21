@@ -1086,17 +1086,21 @@ function renderFilterSections(uniqueTags) {
   const otherTagObjects = [];
 
   uniqueTags.forEach(tagObj => {
+
       if (preferredTagMap.has(tagObj.tagName)) {
-          preferredTagObjects[preferredTagMap.get(tagObj.tagName)] = tagObj;
+          //preferredTagObjects[preferredTagMap.get(tagObj.tagName)] = tagObj;
+          preferredTagObjects.push(tagObj);
       } else {
           otherTagObjects.push(tagObj);
       }
   });
 
+  preferredTagObjects.sort((a, b) => preferredTagMap.get(a.tagName) - preferredTagMap.get(b.tagName));
   const sortedTags = [...preferredTagObjects, ...otherTagObjects];
 
   sortedTags.forEach(tagObj => {
-      if (tagObj.values && tagObj.values.length > 0) {
+
+      if (tagObj && tagObj.values && tagObj.values.length > 0) {
           const fieldStateValue = fieldState && fieldState[tagObj.tagName];
           let sectionTitle = tagObj.tagName;
 
@@ -1144,6 +1148,7 @@ function renderFilterSections(uniqueTags) {
 }
 
 function togglePartitionsFilters(sectionItem, tagName) {
+  
   const toggle = sectionItem.querySelector('.toggle-icon');
   const existingPartitionList = sectionItem.querySelector('.partition-container');
 
@@ -1157,7 +1162,9 @@ function togglePartitionsFilters(sectionItem, tagName) {
       partitionList.classList.add('partition-container');
 
       const selectedTagValues = [...new Set(filteredBooks.map(book => book[tagName]).filter(value => value !== undefined))];
+      
       selectedTagValues.forEach(value => {
+       
           if (value) {
               const partitionItem = document.createElement('li');
               partitionItem.classList.add('partition-item');
@@ -1172,8 +1179,13 @@ function togglePartitionsFilters(sectionItem, tagName) {
               const label = partitionItem.querySelector('label');
 
               if (checkbox && label) {
-                  checkbox.checked = selectedFilters[tagName]?.includes(value) || false;
-
+                 let isChecked = false; 
+                 try {
+                   if (Array.isArray(selectedFilters[tagName])) { isChecked = selectedFilters[tagName].map(String).includes(String(value)) || false; } 
+                  } catch (error) {
+                     console.error('Error checking checkbox state:', error); 
+                  }                     
+               checkbox.checked = isChecked;
                   // Handle click on the partition item and prevent it from collapsing
                   partitionItem.addEventListener('click', (e) => {
                       if (e.target !== checkbox) {
@@ -1207,8 +1219,7 @@ function togglePartitionsFilters(sectionItem, tagName) {
                           if (selectedFilters[tag].length === 0) {
                               delete selectedFilters[tag];
                           }
-                      }
-
+                      }                      
                       filterBooksByTags(selectedFilters);
                       updateButtonStates();
                   });
@@ -1228,7 +1239,7 @@ function applyFilters() {
     if (Object.keys(selectedFilters).length > 0) {
          filtered = filteredBooks.filter(book => 
             Object.entries(selectedFilters).every(([tag, values]) =>
-                values.some(value => book[tag] === value)));
+                values.some(value => book[tag] == value)));
 
         if (filtered.length > 0) {           
             updateButtonStates();
@@ -1254,11 +1265,10 @@ function resetFilter() {
 }
 
 // Function to filter books by selected tags
-function filterBooksByTags(selectedFilters) {
+function filterBooksByTags(selectedFilters) {  
     filtered = filteredBooks.filter(book => 
         Object.entries(selectedFilters).every(([tag, values]) =>
-            values.some(value => book[tag] === value)));
-
+            values.some(value => book[tag] == value)));
     document.getElementById('filter-count').textContent = `Found: ${filtered.length}`;    
     updateButtonStates();
 }
@@ -1271,7 +1281,7 @@ function updateButtonStates() {
     const hasSelectedFilters = Object.keys(selectedFilters).length > 0 && Object.values(selectedFilters).some(arr => arr.length > 0);
     const filteredBooksLength = filteredBooks.filter(book => 
         Object.entries(selectedFilters).every(([tag, values]) =>
-            values.some(value => book[tag] === value))).length;
+            values.some(value => book[tag] == value))).length;
     applyFiltersButton.style.display = (hasSelectedFilters && filteredBooksLength > 0) ? 'block' : 'none';
     resetFiltersButton.style.display = hasSelectedFilters ? 'block' : 'none';
 }
