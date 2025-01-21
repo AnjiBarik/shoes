@@ -8,7 +8,6 @@
   --modal-bg: #fefefe; 
   --modal-text: #333333;
   --background-image-url: url('img/sneakersfon.jpg');
-
   --button-background: url('img/fon.png');
   --button-background-size: cover; 
   --button-background-position: center;
@@ -179,9 +178,15 @@ body {
   
   /* Filter styles */
   .filters {
-    display: flex;   
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    /* box-shadow: var(--box-shadow); */
+    border-radius: 15px;
+    background-color: var(--background);
+    /* display: flex; */
     padding: 10px;
-    justify-content: left;
+    justify-content: center;
     align-items: center;
     flex-wrap: wrap;
   }
@@ -711,7 +716,8 @@ video {
 /* Floating button */
 .floating-button {
   position: fixed;  
-  top:290px;
+  /* top:290px; */
+  top:310px;
   right: 20px;
   background-color: #0b8a259c;
   color: white;
@@ -722,6 +728,7 @@ video {
   cursor: pointer;
   box-shadow: var(--box-shadow);
   display: none; 
+  z-index: 200;
 }
 
 .floating-button:hover {
@@ -956,16 +963,7 @@ video {
   background-color:rgba(202, 198, 191, 0.87);
 }
 
-
-.filters {
-  position: sticky;
-  top: 0; 
-  z-index: 1000;  
-  /* box-shadow: var(--box-shadow);  */
-  border-radius: 15px;  
-  background-color: var(--background);
-}
-
+/* Catalog */
 .catalog-button {
   margin: 10px;
   padding: 10px 20px;
@@ -1053,15 +1051,15 @@ video {
   align-items: center;
 }
 
-#section-list,
-#partition-list {
+.section-list,
+.partition-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-#section-list li,
-#partition-list li {
+.section-list li,
+.partition-list li {
   padding: 10px;
   display: flex;
   justify-content: space-between;
@@ -1069,8 +1067,8 @@ video {
   cursor: pointer;
 }
 
-#section-list li.active,
-#partition-list li.active {
+.section-list li.active,
+.partition-list li.active {
   font-weight: bold;
   color: aqua;
   border-radius: 7px;
@@ -1082,8 +1080,8 @@ video {
   overflow: hidden; 
 }
 
-#section-list li.active::before,
-#partition-list li.active::before {
+.section-list li.active::before,
+.partition-list li.active::before {
   content: '';
   position: absolute;
   top: 0;
@@ -1093,15 +1091,17 @@ video {
   background: linear-gradient(45deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
   opacity: 0;
   transform: skewX(-45deg);
-  transition: opacity 0.3s ease; /* Removing animation conflict */
+  transition: opacity 0.3s ease; 
 }
 
 
-#section-list li.active:hover::before,
-#partition-list li.active:hover::before {
+.section-list li.active:hover::before,
+.partition-list li.active:hover::before {
   opacity: 1; 
   animation: shine 0.6s ease forwards; 
 }
+
+
 
 @keyframes shine {
   0% {
@@ -1177,6 +1177,7 @@ video {
   gap: 10px;
   margin: 5px 0;
   /* padding: 10px; */
+  width: auto;
 }
 
 .input-wrapper {
@@ -1586,7 +1587,7 @@ video {
   .see-more-button{
     bottom: 300px;
     right: 20px;
-    position: fixed;
+    /* position: fixed; */
     z-index: 100;
   }
 
@@ -1834,4 +1835,91 @@ button:disabled {
   border: 0;
   clip: rect(0, 0, 0, 0);
   overflow: hidden;
+}
+
+
+/* Filter modal */
+.filter-checkbox { 
+  accent-color: #fff; 
+}
+
+.filter-actions {
+  display: flex;
+}
+
+.partition-item label:hover{
+  cursor: pointer;
+  color: #00aaff;
+}  
+
+.filter-content-section{
+background-color: var(--modal-bg);
+  margin: 170px 5px auto auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 15px;
+}
+
+.basic-button{
+  border: 2px solid;
+  border-radius: 17px;
+  background-color: var(--button-background);
+  color: var(--text);
+  padding: 5px 15px;
+  margin: 5px;
+  box-shadow: var(--box-shadow);
+}
+
+.basic-button:hover{
+  border: none;
+  box-shadow: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Catalog filter button container */
+.catalog-filter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* Media query for screens larger than 500px */
+@media (min-width: 540px) {
+  .catalog-filter {
+    flex-direction: row;
+  }
+
+  .search-container {
+    order: 1; /* Move search container between catalog and filter buttons */
+  }
+
+  .catalog-filter > #catalog-button {
+    order: 0; /* Ensure catalog button is first */
+  }
+
+  .catalog-filter > #filters-button {
+    order: 2; /* Ensure filters button is last */
+  }
+}
+
+/* Media query for screens 500px or smaller */
+@media (max-width: 500px) {  
+
+  .search-container {
+    order: 2; 
+  }
+
+  .catalog-filter > #catalog-button,
+  .catalog-filter > #filters-button {
+    order: 1; 
+  }
+}
+
+.error-message { 
+  display: none; background-color: #f8d7da; color: #721c24; padding: 15px; margin: 15px; border: 1px solid #f5c6cb; border-radius: 5px; text-align: center; 
 }

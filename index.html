@@ -121,9 +121,9 @@
   </div>
 
   <!-- Sorting panel -->
-  <section class="filters">
+  <section id="catalog-filter-search-container" class="filters">
+   <div class="catalog-filter">
     <button id="catalog-button" class="sort-button shine-effect"><img class="social-icon" src="img/icon/category.png" alt="catalog">Categories</button>    
-
     <div class="search-container">
       <div class="input-wrapper">       
         <input type="text" id="search-input" class="search-input" required />
@@ -135,7 +135,10 @@
         <img src="img/icon/cancel.png" alt="Clear" class="social-icon">
       </button>
     </div>     
-    
+    <button id="filters-button" class="sort-button shine-effect">Filters<img class="social-icon" src="img/icon/filter.png" alt="catalog"></button>  
+  </div>
+
+    <!-- <button id="filters-button" class="sort-button shine-effect">Filters<img class="social-icon" src="img/icon/filter.png" alt="catalog"></button>   -->
     <div class="search-container">  
       <button class="sort-button shine-effect" data-type="new"><img class="social-icon" src="img/icon/new.png" alt="sort_by_new"></button>
       <button class="sort-button shine-effect" data-type="popular"><img class="social-icon" src="img/icon/popular.png" alt="favorite"></button>
@@ -167,6 +170,34 @@
     
     </div>
   </div>
+  
+  <div id="filter-modal" class="modal">
+    <div class="filter-content-section">
+      <div  class="modal-menu">       
+
+        <div class="filter-actions sort-buttons">
+            <p id="filter-count"></p>
+            <button id="apply-filters" class="basic-button" >Apply</button>
+            <button id="reset-filters" class="basic-button">Reset</button>
+        </div>
+        <span id="close-filters-modal" class="close">
+          <img src="img/icon/cancel.png" alt="Close" class="social-icon">
+      </span>
+      </div>
+        <div class="book-list">
+            <img class="social-icon" src="img/icon/filter.png" alt="filter">
+            <h2>Filters</h2>
+        </div>
+
+        <ul id="filters-section-list" class="section-list">
+            <!-- Dynamically populated tags -->
+        </ul>
+
+        <div id="filters-partition-list-container" class="partition-list-container">
+            <!-- Dynamically populated unique tag values -->
+        </div>
+    </div>
+</div>
 
   <!-- Template for the Toggle Icon in Sections -->
 <script type="text/template" id="toggle-icon-template">
@@ -287,6 +318,9 @@
    </div>
  </div>
 
+ <section id="error-message"  class="error-message">
+   <p>Something went wrong while loading data. Please try again later.</p> 
+ </section>
 
   <footer id="footer" class="footer">
     <div class="footer-content">

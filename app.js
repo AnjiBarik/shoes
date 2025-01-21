@@ -18,6 +18,7 @@ let sortedBooks = [];
 let searchBooks = [];
 
 const bookList = document.getElementById('book-list');
+const catalogFilterSearch = document.getElementById('catalog-filter-search-container');
 const paginationContainer = document.getElementById('pagination');
 const loadingSpinner = document.getElementById('loading-spinner');
 const themeToggle = document.getElementById('theme-toggle');
@@ -26,6 +27,7 @@ const mainHeader = document.getElementById('main-header');
 const filtersSection = document.querySelector('.filters');  
 const scrollToTopButton = document.getElementById('scroll-to-top-btn'); 
 const catalogButton = document.getElementById('catalog-button');
+const filtersButton = document.getElementById('filters-button');
 const catalogModal = document.getElementById('catalog-modal');
 const closeCatalogModal = document.getElementById('close-catalog-modal');
 const sectionList = document.getElementById('section-list');
@@ -47,7 +49,7 @@ const closeModalButton = document.getElementById('close-modal');
 const modal = document.getElementById('modal');
 const searchInput = document.getElementById('search-input');
 const noResultsMessage = document.getElementById('no-results-message');
-const sortButtons = document.querySelectorAll('.sort-button:not(#catalog-button)');
+const sortButtons = document.querySelectorAll('.sort-button:not(#catalog-button):not(#filters-button)');
 const clearButton = document.getElementById('clear-search-btn');
 const positions = document.querySelectorAll('.position');
 const indicators = document.querySelectorAll('.indicator');
@@ -61,6 +63,8 @@ const sortButtonsContainer = document.querySelector('.sort-buttons');
 const sortNewestButton = document.getElementById('sort-newest');
 const sortOldestButton = document.getElementById('sort-oldest');
 const floatingButton = document.getElementById('floatingButton');
+const filterModal = document.getElementById('filter-modal');
+const errorMessage = document.getElementById('error-message');
 
 let selectedSection = null;
 let selectedPartition = null; 
@@ -174,9 +178,11 @@ function setupSeeMoreButton() {
         floatingButton.style.display = 'block';
         updateSortButtonsVisibility(filteredBooks);
         removePositionListeners(); 
+        window.addEventListener('scroll', updateScrollProgress);
       })
       .catch((error) => {
         console.error('Error loading data:', error);
+        errorMessage.style.display = 'block';
       })
       .finally(() => {
         loadingSpinner.style.display = 'none'; 
@@ -195,7 +201,7 @@ function initialize() {
   updateActiveState(currentIndex); 
   startAutoRotate(); 
   setupPositionClicks(); 
-  setupSeeMoreButton(); 
+  setupSeeMoreButton();
 }
 
 // Function for smooth scrolling to the top of the page
@@ -209,10 +215,7 @@ function scrollToTop() {
 document.addEventListener('DOMContentLoaded', initialize);
   
   // Smooth scrolling up
-   scrollToTopButton.addEventListener('click', scrollToTop);  
-
-   // Scroll event handler
-   window.addEventListener('scroll', updateScrollProgress);
+   scrollToTopButton.addEventListener('click', scrollToTop);   
 
   // Function to update scrolling progress
   function updateScrollProgress() {
@@ -235,28 +238,57 @@ document.addEventListener('DOMContentLoaded', initialize);
     }
   } 
 
-// Open Closing a modal window 
-function openModal(modal) {
+
+
+// Object to store the current state
+const state = {
+  modalOpen: false,
+  fullscreenOpen: false
+};
+
+// Function to open a modal window
+function openModal(modal) { 
   modal.style.display = 'block';
-  history.pushState({ modalOpen: true }, '');  
+  state.modalOpen = true;  
+  history.pushState(null, null, location.href);
 }
 
-function closeModal(modal) {
+// Function to close a modal window
+function closeModal(modal) { 
   modal.style.display = 'none';
-  //history.back();  
-  history.pushState({ modalOpen: false }, '');
+  state.modalOpen = false;
+}
+
+// Function to open fullscreen mode
+function openFullscreen() {
+  const fullscreenContainer = document.getElementById('fullscreen-container');  
+  state.fullscreenOpen = true;
+  history.pushState(null, null, location.href);
+}
+
+// Function to close fullscreen mode
+function closeFullscreen() {  
+  const fullscreenContainer = document.getElementById('fullscreen-container');
+  if (fullscreenContainer) {
+    document.body.removeChild(fullscreenContainer);
+    state.fullscreenOpen = false;
+  }
 }
 
 // Handler for the "Back" button
-window.addEventListener('popstate', (event) => {  
-  if (!event.state || !event.state.modalOpen) {    
-    closeModal(catalogModal);
-    closeModal(modal); 
+window.addEventListener('popstate', (event) => {   
+  if (state.fullscreenOpen) {
     closeFullscreen();    
-  }   
-});
+  } else if (state.modalOpen) {
+    closeModal(catalogModal);
+    closeModal(modal);
+    closeModal(filterModal);
+    closeModal(contactModal);    
+  }
+}); 
 
-function handleOutsideClick(event, modal) {
+
+function handleOutsideClick(event, modal) { 
   if (event.target === modal) {
     closeModal(modal);
   }
@@ -266,6 +298,9 @@ function handleEscapeKey(event) {
   if (event.key === 'Escape') {
     closeModal(catalogModal);
     closeModal(modal);
+    closeModal(filterModal);
+    closeFullscreen();
+    closeModal(contactModal);
   }
 }
 
@@ -292,6 +327,8 @@ if (closeModalButton) {
 window.addEventListener('click', (e) => {
   handleOutsideClick(e, catalogModal);
   handleOutsideClick(e, modal);
+  handleOutsideClick(e, filterModal);
+  handleOutsideClick(e, contactModal);
 });
 
 window.addEventListener('keydown', handleEscapeKey);
@@ -305,7 +342,7 @@ window.showMoreInfo = function (bookId) {
     return;
   }
   
-  history.pushState({ modalOpen: true }, '');
+  openModal(modal)
 
   // Update modal content elements
   if (bookID) bookID.textContent = `ID:${bookId}`;
@@ -391,8 +428,6 @@ scrollRange.addEventListener('input', () => {
 imageGallery.addEventListener('scroll', () => {
     scrollRange.value = imageGallery.scrollLeft;
 });
-
-
 
 
   // Display rating and reviews
@@ -634,19 +669,13 @@ function changeImage(imageUrl) {
   }
 }
 
-function closeFullscreen() {
-  const fullscreenContainer = document.getElementById('fullscreen-container');
-  if (fullscreenContainer) {
-    document.body.removeChild(fullscreenContainer);    
-  }
-}
-
 // Function to display an image in fullscreen mode
 const fullscreenBtn = document.getElementById('fullscreen-btn');
 if (fullscreenBtn) {
-  fullscreenBtn.onclick = function() {
+  fullscreenBtn.onclick = function() {   
     const img = document.getElementById('book-modal-img');
     if (img) {
+      openFullscreen();      
       const fullscreenContainer = document.createElement('div');
       fullscreenContainer.id = 'fullscreen-container';
       fullscreenContainer.classList.add('fullscreen-overlay');
@@ -712,8 +741,9 @@ function updateCurrentFilterDisplay() {
 function resetFilters() {
   selectedSection = null;
   selectedPartition = null;
-  filteredBooks = books
+  filteredBooks = books; 
   displayBooks(filteredBooks, fieldState);
+  resetFiltersConst()
   clearSearch()
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
@@ -745,7 +775,7 @@ function renderSections() {
     const toggleIcon = li.querySelector('.toggle-icon');
     if (toggleIcon) {
       toggleIcon.addEventListener('click', (e) => {
-        e.stopPropagation();
+        e.stopPropagation();      
         togglePartitions(li, section);
       });
     }
@@ -753,7 +783,7 @@ function renderSections() {
     li.addEventListener('click', (event) => {
       if (event.target.classList.contains('toggle-icon')) return; 
       selectedSection = section;
-      selectedPartition = null;
+      selectedPartition = null;    
       filterBooksBySection(section);  
     });
     
@@ -791,7 +821,6 @@ function togglePartitions(liElement, section) {
     const partitions = [...new Set(
       books.filter(book => book.section === section).map(book => book.partition)
     )];
-
     partitions.forEach(partition => {
       const partitionLi = document.createElement('li');
       partitionLi.textContent = partition || 'Without subsection';
@@ -870,8 +899,9 @@ function filterBooksBySection(section) {
   selectedPartition = null;
   filteredBooks = books.filter(book => book.section === section);  
   updateSortButtonsVisibility(filteredBooks);
-  currentPage = 1;
+  currentPage = 1;  
   displayBooks(filteredBooks, fieldState);
+  resetFiltersConst()
   clearSearch()
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
@@ -884,8 +914,9 @@ function filterBooks(section, partition) {
     return book.section === section && (partition === 'Without subsection' ? !book.partition : book.partition === partition);
   });  
   updateSortButtonsVisibility(filteredBooks);
-  currentPage = 1;
+  currentPage = 1;  
   displayBooks(filteredBooks, fieldState);
+  resetFiltersConst()
   clearSearch()
   catalogModal.style.display = 'none';
   updateCurrentFilterDisplay();
@@ -953,7 +984,6 @@ async function fetchBooks() {
     showLoadingSpinner();
     const formData = new FormData();
     formData.append('isReviews', 10);
-
     const response = await fetch(URLAPI, {
       method: 'POST',
       body: formData
@@ -967,12 +997,11 @@ async function fetchBooks() {
     ? data.data.sheet1Data.filter((book) => book && book.Visibility !== '0')
     : [];
     fieldState = data.data.sheet2Data?.[0] || {};    
-    filteredBooks = books
+    filteredBooks = books;    
     if (fieldState.idprice) {
       const formDataReviews = new FormData();
       formDataReviews.append('isReviews', 1);
       formDataReviews.append('idPrice', fieldState.idprice);
-
       const responseReviews = await fetch(URLAPI, {
         method: 'POST',
         body: formDataReviews,
@@ -986,14 +1015,271 @@ async function fetchBooks() {
      
     }
 
-    document.querySelector('.filters').style.display = 'flex';
-
+    catalogFilterSearch.style.display = 'flex';
     displayBooks(filteredBooks, fieldState);
+
   } catch (error) {
     console.error('Error fetching books:', error);
   } finally {
     hideLoadingSpinner();
   }
+}
+
+if (filtersButton) {
+    filtersButton.addEventListener('click', () => {
+       showFilterModal();      
+    });
+}
+
+let selectedFilters = {};
+let filtered =[];
+
+function resetFiltersConst () { 
+  selectedFilters = {};
+  filtered =[];
+}
+
+
+document.getElementById('apply-filters').addEventListener('click', applyFilters);
+document.getElementById('reset-filters').addEventListener('click', resetFilter);
+document.getElementById('close-filters-modal').addEventListener('click', ()=> closeModal(filterModal));
+
+// Function to get unique tags and their values
+function getUniqueTags(books, selectedFilters = {}) {
+    const tagsMap = {};
+
+    books.forEach(book => {
+        Object.entries(book).forEach(([key, value]) => {
+            if ((key.startsWith('tags') || ['color', 'size', 'author'].includes(key)) && value) {
+                if (!selectedFilters[key]?.includes(value)) {
+                    tagsMap[key] = tagsMap[key] || new Set();
+                    tagsMap[key].add(value);
+                }
+            }
+        });
+    });
+
+    return Object.entries(tagsMap).map(([tagName, values]) => ({
+        tagName,
+        values: Array.from(values)
+    }));
+}
+
+// Function to show the filter modal
+function showFilterModal() {    
+    openModal(filterModal)
+
+    const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
+    renderFilterSections(uniqueTags);
+    updateButtonStates();
+}
+
+// Function to render sections and partitions for the filter modal
+function renderFilterSections(uniqueTags) {
+  const preferredTags = ['author', 'color', 'size'];
+  const sectionList = document.getElementById('filters-section-list');
+  sectionList.innerHTML = '';
+
+  const preferredTagMap = new Map(preferredTags.map((tag, index) => [tag, index]));
+
+  const preferredTagObjects = [];
+  const otherTagObjects = [];
+
+  uniqueTags.forEach(tagObj => {
+      if (preferredTagMap.has(tagObj.tagName)) {
+          preferredTagObjects[preferredTagMap.get(tagObj.tagName)] = tagObj;
+      } else {
+          otherTagObjects.push(tagObj);
+      }
+  });
+
+  const sortedTags = [...preferredTagObjects, ...otherTagObjects];
+
+  sortedTags.forEach(tagObj => {
+      if (tagObj.values && tagObj.values.length > 0) {
+          const fieldStateValue = fieldState && fieldState[tagObj.tagName];
+          let sectionTitle = tagObj.tagName;
+
+          if (fieldStateValue && fieldStateValue.includes(';')) {
+              const parts = fieldStateValue.split(';');
+              parts.forEach(part => {
+                  const [key, title] = part.split('~');
+                  if (key && title && selectedSection == key) {
+                      sectionTitle = title;
+                  }
+              });
+          } else {
+              sectionTitle = fieldStateValue || tagObj.tagName;
+          }
+
+          const sectionItem = document.createElement('li');
+          sectionItem.classList.add('section-item');
+
+          sectionItem.innerHTML = `
+              <div class="section-toggle">
+                  ${sectionTitle}
+                  ${tagObj.values.length > 0 ? getToggleIconHTML() : ''}
+              </div>`;
+
+          const toggleIcon = sectionItem.querySelector('.toggle-icon');
+          if (toggleIcon) {
+              toggleIcon.addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  togglePartitionsFilters(sectionItem, tagObj.tagName);
+              });
+          }
+
+          sectionItem.addEventListener('click', (event) => {
+              if (event.target !== toggleIcon && !event.target.classList.contains('filter-checkbox')) {
+                  togglePartitionsFilters(sectionItem, tagObj.tagName);
+              }
+          });
+
+          if (selectedFilters[tagObj.tagName] && selectedFilters[tagObj.tagName].length > 0) {
+              togglePartitionsFilters(sectionItem, tagObj.tagName);
+          }
+          sectionList.appendChild(sectionItem);
+      }
+  });
+}
+
+function togglePartitionsFilters(sectionItem, tagName) {
+  const toggle = sectionItem.querySelector('.toggle-icon');
+  const existingPartitionList = sectionItem.querySelector('.partition-container');
+
+  if (!toggle) return;
+
+  if (existingPartitionList) {
+      existingPartitionList.remove();
+      toggle.classList.remove('rotated');
+  } else {
+      const partitionList = document.createElement('ul');
+      partitionList.classList.add('partition-container');
+
+      const selectedTagValues = [...new Set(filteredBooks.map(book => book[tagName]).filter(value => value !== undefined))];
+      selectedTagValues.forEach(value => {
+          if (value) {
+              const partitionItem = document.createElement('li');
+              partitionItem.classList.add('partition-item');
+              partitionItem.innerHTML = `
+                  <label>
+                      <input type="checkbox" class="filter-checkbox" data-tag="${tagName}" value="${value}">
+                      ${value}
+                  </label>
+              `;
+
+              const checkbox = partitionItem.querySelector('.filter-checkbox');
+              const label = partitionItem.querySelector('label');
+
+              if (checkbox && label) {
+                  checkbox.checked = selectedFilters[tagName]?.includes(value) || false;
+
+                  // Handle click on the partition item and prevent it from collapsing
+                  partitionItem.addEventListener('click', (e) => {
+                      if (e.target !== checkbox) {
+                          checkbox.checked = !checkbox.checked;
+                      }
+                      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                  });
+
+                  // Prevent click on partition item from collapsing the partition
+                  label.addEventListener('click', (e) => {
+                      e.stopPropagation();
+                  });
+
+                  checkbox.addEventListener('change', (e) => {
+                      e.stopPropagation();
+
+                      const tag = e.target.dataset.tag;
+                      const value = e.target.value;
+                      if (!tag || value === undefined) {
+                          console.error('Tag or value is missing:', { tag, value });
+                          return;
+                      }                      
+
+                      if (e.target.checked) {
+                          selectedFilters[tag] = selectedFilters[tag] || [];
+                          if (!selectedFilters[tag].includes(value)) {
+                              selectedFilters[tag].push(value);
+                          }
+                      } else {
+                          selectedFilters[tag] = selectedFilters[tag].filter(val => val !== value);
+                          if (selectedFilters[tag].length === 0) {
+                              delete selectedFilters[tag];
+                          }
+                      }
+
+                      filterBooksByTags(selectedFilters);
+                      updateButtonStates();
+                  });
+              } else {
+                  console.error('Checkbox or label not found for value:', value);
+              }
+              partitionList.appendChild(partitionItem);
+          }
+      });
+      sectionItem.appendChild(partitionList);
+      toggle.classList.add('rotated');
+  }
+}
+
+// Function to apply filters
+function applyFilters() {
+    if (Object.keys(selectedFilters).length > 0) {
+         filtered = filteredBooks.filter(book => 
+            Object.entries(selectedFilters).every(([tag, values]) =>
+                values.some(value => book[tag] === value)));
+
+        if (filtered.length > 0) {           
+            updateButtonStates();
+            displayBooks(filtered, fieldState);
+            updateSortButtonsVisibility(filtered); 
+        }
+    }
+}
+
+// Function to reset filters
+function resetFilter() {
+    if (Object.keys(selectedFilters).length > 0) {
+        Object.keys(selectedFilters).forEach(tag => delete selectedFilters[tag]);
+        document.querySelectorAll('.filter-checkbox').forEach(checkbox => checkbox.checked = false);
+        document.getElementById('filter-count').textContent = '';
+
+        const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
+        renderFilterSections(uniqueTags);
+        updateButtonStates();        
+        displayBooks(filteredBooks, fieldState);
+        updateSortButtonsVisibility(filteredBooks);
+    }
+}
+
+// Function to filter books by selected tags
+function filterBooksByTags(selectedFilters) {
+    filtered = filteredBooks.filter(book => 
+        Object.entries(selectedFilters).every(([tag, values]) =>
+            values.some(value => book[tag] === value)));
+
+    document.getElementById('filter-count').textContent = `Found: ${filtered.length}`;    
+    updateButtonStates();
+}
+
+// Function to update the display state of buttons
+function updateButtonStates() {
+    const applyFiltersButton = document.getElementById('apply-filters');
+    const resetFiltersButton = document.getElementById('reset-filters');
+
+    const hasSelectedFilters = Object.keys(selectedFilters).length > 0 && Object.values(selectedFilters).some(arr => arr.length > 0);
+    const filteredBooksLength = filteredBooks.filter(book => 
+        Object.entries(selectedFilters).every(([tag, values]) =>
+            values.some(value => book[tag] === value))).length;
+    applyFiltersButton.style.display = (hasSelectedFilters && filteredBooksLength > 0) ? 'block' : 'none';
+    resetFiltersButton.style.display = hasSelectedFilters ? 'block' : 'none';
+}
+
+// Helper function to get the toggle icon HTML
+function getToggleIconHTML() {
+    const template = document.getElementById('toggle-icon-template');
+    return template ? template.innerHTML : '';
 }
 
 // Helper function for rendering tags with default labels for size and color
@@ -1054,7 +1340,6 @@ function renderTags(book, fieldState) {
     .join('');
 }
 
-
 // Helper function to capitalize any word (used for general tags if needed)
 function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1);
@@ -1087,8 +1372,8 @@ function handleResize() {
       
       let booksToDisplay = searchBooks.length ? searchBooks :
                           sortedBooks.length ? sortedBooks :
-                          filteredBooks.length ? filteredBooks : [];
-      
+                          filtered.length ? filtered :
+                          filteredBooks.length ? filteredBooks : [];                          
       displayBooks(booksToDisplay, fieldState);
       scrollToTop();
     }
@@ -1098,7 +1383,6 @@ function handleResize() {
 // First initialization
 previousItemsPerPage = calculateItemsPerPage(window.innerWidth);
 itemsPerPage = previousItemsPerPage;
-displayBooks(filteredBooks, fieldState);
 
 function displayBooks(books, fieldState) {
   const bookList = document.getElementById('book-list');
@@ -1223,7 +1507,7 @@ function renderPagination(books, fieldState) {
     if (i === currentPage) pageButton.classList.add('active');
 
     pageButton.addEventListener('click', () => {
-      currentPage = i;
+      currentPage = i;     
       displayBooks(books, fieldState);
       scrollToTop();     
     });
@@ -1237,7 +1521,7 @@ function renderPagination(books, fieldState) {
   showAllButton.classList.add('show-all-btn');
   showAllButton.addEventListener('click', () => {
     itemsPerPage = books.length;
-    currentPage = 1;
+    currentPage = 1;    
     displayBooks(filteredBooks, fieldState);
     paginationContainer.innerHTML = ''; 
     scrollToTop();
@@ -1269,7 +1553,7 @@ function renderSizeColorTags(book, fieldState) {
     .join('');
 }
 
-function updateSortButtonsVisibility(filtersBooks) {
+function updateSortButtonsVisibility(filtersBooks) {  
   if (!Array.isArray(filtersBooks) || filtersBooks === undefined || filtersBooks.length === 0) { 
     sortButtons.forEach(button => button.style.display = 'none'); 
     catalogButton.style.display = 'inline-block';
@@ -1294,25 +1578,22 @@ function updateSortButtonsVisibility(filtersBooks) {
   });
 
   // The "Categories" button is always visible
-  catalogButton.style.display = 'inline-block';
-
-function sortBy(type) {  
+  catalogButton.style.display = 'inline-block';  
+  filtersButton.style.display = 'inline-block';
+  
+function sortBy(type) {   
   const sortedBooks = [...filtersBooks].sort((a, b) => {    
     if (a.sorted == type && b.sorted != type) return -1; 
     if (a.sorted != type && b.sorted == type) return 1;  
     return 0;  
-  });
-  
+  });  
   displayBooks(sortedBooks, fieldState);
 }
-
-
 
 function sortByPrice(order) {  
   sortedBooks = [...filtersBooks].sort((a, b) => {
     return order === 'low' ? a.price - b.price : b.price - a.price;
-  }); 
-
+  });   
   displayBooks(sortedBooks, fieldState);
 }
 
@@ -1326,9 +1607,10 @@ sortButtons.forEach(button => {
       sortByPrice('low');
     } else if (type === 'high-price') {
       sortByPrice('high');
-    } else {
+    } else if (type != null) {      
       sortBy(type);
     }
+  
   });
 });
 }
@@ -1341,7 +1623,6 @@ function extractPrice(priceText) {
   // Return the price (if the price is not numeric, return 0)
   return isNaN(price) ? 0 : price;
 }
-
 
 // debounce function
 function debounce(func, delay) {
@@ -1360,7 +1641,6 @@ clearButton.addEventListener('click', () => {
   currentPage = previousPage;
   clearSearch();
 });
-
 
   function checkInput() {
     if (searchInput.value || searchInput === document.activeElement) {
@@ -1396,8 +1676,11 @@ clearButton.addEventListener('click', () => {
   
   function resetToPreviousState() {
     currentPage = previousPage;
-    displayBooks(filteredBooks, fieldState);
-    updateSortButtonsVisibility(filteredBooks);
+
+    let booksToDisplay = filtered.length ? filtered :
+                          filteredBooks.length ? filteredBooks : [];    
+    displayBooks(booksToDisplay, fieldState);
+    updateSortButtonsVisibility(booksToDisplay);
     noResultsMessage.style.display = 'none';
     bookList.style.display = 'flex';
     paginationContainer.style.display = 'flex';
@@ -1406,7 +1689,7 @@ clearButton.addEventListener('click', () => {
   
   function updateStateWithSearchResults(searchBooks) {
     previousPage = currentPage;
-    currentPage = 1;
+    currentPage = 1;    
     displayBooks(searchBooks, fieldState);
     noResultsMessage.style.display = 'none';
     bookList.style.display = 'flex';
@@ -1431,17 +1714,18 @@ clearButton.addEventListener('click', () => {
   // Function to reset search and display all books
   function clearSearch() {  
       searchInput.value = '';
-      searchBooks = [];  
-      displayBooks(filteredBooks, fieldState); 
+      searchBooks = []; 
+      let booksToDisplay = filtered.length ? filtered :
+                          filteredBooks.length ? filteredBooks : [];       
+      displayBooks(booksToDisplay, fieldState); 
       noResultsMessage.style.display = 'none';
       bookList.style.display = 'flex'; 
       paginationContainer.style.display = 'flex';        
-      updateSortButtonsVisibility(filteredBooks); 
+      updateSortButtonsVisibility(booksToDisplay); 
       clearButton.style.display = 'none'; 
       searchInput.classList.remove('active'); 
       currentFilter.style.display = 'block'; 
   }
-
 
 // Form elements
 const contactForm = document.getElementById('contactForm');
@@ -1452,6 +1736,17 @@ const submitBtn = document.getElementById('submitBtn');
 const contactModal = document.getElementById('contact-modal');
 const closeModalContact = document.getElementById('close-modal-contact');
 const contactToggleButton = document.querySelector('.contact-toggle');
+
+// Toggle contact form visibility and open modal
+contactToggleButton.addEventListener('click', function() {  
+        openModal(contactModal);
+        this.textContent = 'Hide Contact Form';   
+});
+
+closeModalContact.addEventListener('click', function() {
+    closeModal(contactModal);
+    contactToggleButton.textContent = 'Show Contact Form';
+});
 
 // Form Validation
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1562,25 +1857,5 @@ contactForm.addEventListener('submit', async (e) => {
     } finally {
         submitBtn.textContent = 'Send Message';
         submitBtn.disabled = false;
-    }
-});
-
-// Toggle contact form visibility and open modal
-contactToggleButton.addEventListener('click', function() {
-    contactModal.style.display = 'block';  // Show the modal
-    this.textContent = 'Hide Contact Form';      
-});
-
-// Close the modal when clicking the close button (img inside span)
-closeModalContact.addEventListener('click', function() {
-    contactModal.style.display = 'none';  // Hide the modal
-    contactToggleButton.textContent = 'Show Contact Form';      
-});
-
-// Close the modal if the user clicks anywhere outside the modal content
-window.addEventListener('click', function(event) {
-    if (event.target === contactModal) {
-        contactModal.style.display = 'none';
-        contactToggleButton.textContent = 'Show Contact Form';        
     }
 });
