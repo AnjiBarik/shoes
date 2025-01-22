@@ -1381,9 +1381,9 @@ function handleResize() {
       currentPage = 1;
       
       let booksToDisplay = searchBooks.length ? searchBooks :
-                          sortedBooks.length ? sortedBooks :
-                          filtered.length ? filtered :
-                          filteredBooks.length ? filteredBooks : [];                          
+      filtered.length ? filtered :
+      (sortedBooks.length == filteredBooks.length) ? sortedBooks :
+      filteredBooks.length ? filteredBooks : [];                         
       displayBooks(booksToDisplay, fieldState);
       scrollToTop();
     }
@@ -1592,7 +1592,7 @@ function updateSortButtonsVisibility(filtersBooks) {
   filtersButton.style.display = 'inline-block';
   
 function sortBy(type) {   
-  const sortedBooks = [...filtersBooks].sort((a, b) => {    
+  sortedBooks = [...filtersBooks].sort((a, b) => {    
     if (a.sorted == type && b.sorted != type) return -1; 
     if (a.sorted != type && b.sorted == type) return 1;  
     return 0;  
@@ -1674,7 +1674,7 @@ clearButton.addEventListener('click', () => {
       return;
     }
   
-    const searchBooks = books.filter(book =>
+    searchBooks = books.filter(book =>
       book.title.toLowerCase().includes(searchQuery) || 
       book.id.toLowerCase().includes(searchQuery)
     );
