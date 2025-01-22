@@ -1840,7 +1840,7 @@ button:disabled {
 
 /* Filter modal */
 .filter-checkbox { 
-  accent-color: #fff; 
+  accent-color: var(--modal-text);
 }
 
 .filter-actions {
@@ -1885,7 +1885,7 @@ background-color: var(--modal-bg);
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  width: 100%;
+  /* width: 100%; */
 }
 
 /* Media query for screens larger than 500px */

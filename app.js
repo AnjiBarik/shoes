@@ -1037,6 +1037,7 @@ let filtered =[];
 function resetFiltersConst () { 
   selectedFilters = {};
   filtered =[];
+  resetFilter();
 }
 
 
@@ -1251,17 +1252,15 @@ function applyFilters() {
 
 // Function to reset filters
 function resetFilter() {
-    if (Object.keys(selectedFilters).length > 0) {
-        Object.keys(selectedFilters).forEach(tag => delete selectedFilters[tag]);
-        document.querySelectorAll('.filter-checkbox').forEach(checkbox => checkbox.checked = false);
-        document.getElementById('filter-count').textContent = '';
+  selectedFilters={};
+  document.querySelectorAll('.filter-checkbox').forEach(checkbox => checkbox.checked = false);
+  document.getElementById('filter-count').textContent = '';
 
-        const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
-        renderFilterSections(uniqueTags);
-        updateButtonStates();        
-        displayBooks(filteredBooks, fieldState);
-        updateSortButtonsVisibility(filteredBooks);
-    }
+  const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
+  renderFilterSections(uniqueTags);
+  updateButtonStates();        
+  displayBooks(filteredBooks, fieldState);
+  updateSortButtonsVisibility(filteredBooks);
 }
 
 // Function to filter books by selected tags
@@ -1656,9 +1655,11 @@ clearButton.addEventListener('click', () => {
     if (searchInput.value || searchInput === document.activeElement) {
       searchInput.classList.add('active');
       clearButton.style.display = 'flex';
+      filtersButton.style.display = 'none';
     } else {
       searchInput.classList.remove('active');
       clearButton.style.display = 'none';
+      filtersButton.style.display = 'block';
     }
   } 
 
@@ -1706,6 +1707,7 @@ clearButton.addEventListener('click', () => {
     paginationContainer.style.display = 'flex';
     currentFilter.style.display = 'none';
     updateSortButtonsVisibility(searchBooks);
+    filtersButton.style.display = 'none';
   }
   
   function showNoResults() {
