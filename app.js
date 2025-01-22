@@ -1020,6 +1020,7 @@ async function fetchBooks() {
 
   } catch (error) {
     console.error('Error fetching books:', error);
+    errorMessage.style.display = 'block';
   } finally {
     hideLoadingSpinner();
   }
