@@ -257,6 +257,7 @@ function openModal(modal) {
 function closeModal(modal) { 
   modal.style.display = 'none';
   state.modalOpen = false;
+  //history.replaceState(null, null, location.href);
 }
 
 // Function to open fullscreen mode
@@ -1037,7 +1038,7 @@ let filtered =[];
 
 function resetFiltersConst () { 
   selectedFilters = {};
-  filtered =[];
+  //filtered =[];
   resetFilter();
 }
 
@@ -1254,6 +1255,9 @@ function applyFilters() {
 // Function to reset filters
 function resetFilter() {
   selectedFilters={};
+
+  filtered = [];
+
   document.querySelectorAll('.filter-checkbox').forEach(checkbox => checkbox.checked = false);
   document.getElementById('filter-count').textContent = '';
 
@@ -1368,6 +1372,25 @@ function calculateItemsPerPage(screenWidth) {
   }
 }
 
+function compareArrays(arr1, arr2) {
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
+  if (arr1.length !== arr2.length) return false;
+
+  const validId = id => id !== null && id !== undefined && id !== '';
+
+  const set1 = new Set(arr1.map(obj => validId(obj.id) ? obj.id : null));
+  const set2 = new Set(arr2.map(obj => validId(obj.id) ? obj.id : null));
+
+  if (set1.has(null) || set2.has(null)) return false;
+  if (set1.size !== set2.size) return false;
+
+  for (let id of set1) {
+    if (!set2.has(id)) return false;
+  }
+
+  return true;
+}
+
 function handleResize() {
   const currentWidth = window.innerWidth;
 
@@ -1378,14 +1401,21 @@ function handleResize() {
     if (newItemsPerPage !== previousItemsPerPage) {
       previousItemsPerPage = newItemsPerPage;
       itemsPerPage = newItemsPerPage;
-      currentPage = 1;
-      
-      let booksToDisplay = searchBooks.length ? searchBooks :
-      filtered.length ? filtered :
-      (sortedBooks.length == filteredBooks.length) ? sortedBooks :
-      filteredBooks.length ? filteredBooks : [];                         
-      displayBooks(booksToDisplay, fieldState);
-      scrollToTop();
+      currentPage = 1;      
+      try {
+        let booksToDisplay = searchBooks.length ? 
+          (compareArrays(sortedBooks, searchBooks) ? sortedBooks : searchBooks) :
+          filtered.length ? 
+          (compareArrays(sortedBooks, filtered) ? sortedBooks : filtered) :
+          filteredBooks.length ? 
+          (compareArrays(sortedBooks, filteredBooks) ? sortedBooks : filteredBooks) :
+          [];          
+       
+        displayBooks(booksToDisplay, fieldState);
+        scrollToTop();
+      } catch (error) {
+        console.error("An error occurred while processing the books: ", error);
+      }
     }
   }
 }
@@ -1590,6 +1620,11 @@ function updateSortButtonsVisibility(filtersBooks) {
   // The "Categories" button is always visible
   catalogButton.style.display = 'inline-block';  
   filtersButton.style.display = 'inline-block';
+  
+  // Add the selected style
+  filtersButton.classList.toggle('selected', filtered.length > 0);
+  catalogButton.classList.toggle('selected', selectedSection !== null || selectedPartition !== null);
+  
   
 function sortBy(type) {   
   sortedBooks = [...filtersBooks].sort((a, b) => {    
