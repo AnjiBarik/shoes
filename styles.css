@@ -1,11 +1,14 @@
 /* Basic Styles */
 :root {
-  --header-bg: #f5f5f5;
-  --background: #f0f0f0;
+  /* --header-bg: #f5f5f5;
+  --background: #f0f0f0; */
+  --header-bg: #c2dcb242;
+  --background: #edf1e4e3;
   --text: #333333;
   --button-bg: #008cba;
   --button-text: #ffffff;
-  --modal-bg: #fefefe; 
+  /* --modal-bg: #fefefe;  */
+  --modal-bg: #e2eade;
   --modal-text: #333333;
   --background-image-url: url('img/sneakersfon.jpg');
   --button-background: url('img/fon.png');
@@ -55,7 +58,7 @@ body {
   height: 100%;
   border-radius: 50%;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
-  animation: rotate infinite 2s linear;
+  animation: rotate infinite 1s linear;
 }
 
 @keyframes rotate {
@@ -471,10 +474,15 @@ body {
 p#book-tags {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
   padding: 5px;
 }
+
+p#book-tags p{
+  padding: 0 10px;
+}
+
 
 .rating-stars{
   display: flex;
@@ -863,7 +871,8 @@ video {
   transition: transform 0.3s ease-in-out;
 }
 
-.footer-logo:hover { 
+.footer-logo:hover, 
+.footer-logo:active { 
   transform: rotate(30deg); 
   animation: rotateBack 0.6s ease-in-out forwards; 
 } 
@@ -895,9 +904,10 @@ video {
   font-size: 14px;
 }
 
-.contact-info p {
+.contact-info, .about-section p {
   margin: 5px;
   text-align: left;
+  text-indent: 10px;
 }
 
 .contact-info a {
@@ -1374,20 +1384,23 @@ video {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.6s ease;
   box-shadow: var(--main-circle-shadow);  
 }
 
 .main-circle.shadow-down {
   --main-circle-shadow: 0 15px 15px rgba(255, 122, 0, 0.6);
+  transform: scale(0.9) rotate(30deg);
 }
 
 .main-circle.shadow-right {
   --main-circle-shadow: 15px 0 15px rgba(255, 122, 0, 0.6);
+  transform: scale(1) rotate(0deg);
 }
 
 .main-circle.shadow-up {
   --main-circle-shadow: 0 -15px 15px rgba(255, 122, 0, 0.6);
+  transform: scale(1.1) rotate(-30deg);
 }
 
 .main-circle img { 
@@ -1395,6 +1408,7 @@ video {
   width: 300px;
   height: 300px;
 }
+
 
 .description-container {
   max-width: 400px;
