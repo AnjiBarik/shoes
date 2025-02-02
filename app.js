@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', initialize);
     const progress = scrollToTopButton.querySelector('.scroll-progress');
     if (progress) {
       // Set progress color depending on scrolling
-      progress.style.background = `conic-gradient(#4caf50 ${scrollPercent}%, #ddd ${scrollPercent}% 100%)`;
+      progress.style.background = `conic-gradient(#4caf50 ${scrollPercent}%, var(--modal-bg) ${scrollPercent}% 100%)`;
     }
 
     // Show/hide the button depending on scrolling
