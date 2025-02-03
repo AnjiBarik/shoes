@@ -205,7 +205,7 @@ function initialize() {
 }
 
 // Function for smooth scrolling to the top of the page
-function scrollToTop() {
+function scrollToTop() { 
   window.scrollTo({
     top: 0,
     behavior: 'smooth',
@@ -917,6 +917,7 @@ function filterBooks(section, partition) {
   updateSortButtonsVisibility(filteredBooks);
   currentPage = 1;  
   displayBooks(filteredBooks, fieldState);
+  scrollToTop()
   resetFiltersConst()
   clearSearch()
   catalogModal.style.display = 'none';
@@ -1246,7 +1247,9 @@ function applyFilters() {
 
         if (filtered.length > 0) {           
             updateButtonStates();
+            currentPage = 1;
             displayBooks(filtered, fieldState);
+            scrollToTop()
             updateSortButtonsVisibility(filtered); 
         }
     }
@@ -1263,8 +1266,10 @@ function resetFilter() {
 
   const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
   renderFilterSections(uniqueTags);
-  updateButtonStates();        
+  updateButtonStates(); 
+  currentPage = 1;       
   displayBooks(filteredBooks, fieldState);
+  scrollToTop()
   updateSortButtonsVisibility(filteredBooks);
 }
 

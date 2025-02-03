@@ -6,11 +6,9 @@
   --background: #edf1e4e3;
   --text: #333333;
   --button-bg: #008cba;
-  --button-text: #ffffff;
-  /* --modal-bg: #fefefe;  */
+  --button-text: #ffffff;  
   --modal-bg: #e2eade;
-  --modal-text: #333333;
-  --background-image-url: url('img/sneakersfon.jpg');
+  --modal-text: #333333;  
   --button-background: url('img/fon.png');
   --button-background-size: cover; 
   --button-background-position: center;
@@ -183,11 +181,9 @@ body {
   .filters {
     position: sticky;
     top: 0;
-    z-index: 1000;
-    /* box-shadow: var(--box-shadow); */
+    z-index: 1000;    
     border-radius: 15px;
-    background-color: var(--background);
-    /* display: flex; */
+    background-color: var(--background);    
     padding: 10px;
     justify-content: center;
     align-items: center;
@@ -473,8 +469,7 @@ body {
 
 p#book-tags {
   display: flex;
-  flex-wrap: wrap;
-  /* justify-content: space-between; */
+  flex-wrap: wrap;  
   align-items: center;
   padding: 5px;
 }
@@ -991,8 +986,7 @@ video {
 .modal-content-section {
   background-color: var(--modal-bg);
   margin: 170px auto auto 5px;
-  padding: 20px;
-  /* border: 1px solid #888; */
+  padding: 20px;  
   width: 80%;
   max-width: 400px;
   border-radius: 15px;
@@ -1853,8 +1847,7 @@ button:disabled {
 
 
 /* Filter modal */
-.filter-checkbox { 
-  /* accent-color: var(--modal-text); */
+.filter-checkbox {   
   accent-color: #090909;
 }
 
@@ -1899,8 +1892,7 @@ background-color: var(--modal-bg);
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  /* width: 100%; */
+  flex-wrap: wrap;  
 }
 
 /* Media query for screens larger than 500px */
