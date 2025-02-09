@@ -1,8 +1,3 @@
-//const URLAPI = 'https://script.google.com/macros/s/AKfycbxFZwSOjMbKYn6J81HYdcK0Y8MM2YH4tYjBjRha_sLgPrmpjEOpjUYccq5zAJQVt1RD/exec';
-//const URLAPI = 'https://script.google.com/macros/s/AKfycbxGXnRt_9VFqY9K8-j3Jdx7uMOfbYxAg6ug5mt7Uim5i_wuDUg4I1J0iLpblKB9xp0zIQ/exec';
-//const URLAPI = 'https://script.google.com/macros/s/AKfycbwVXp6_F_VthBjLh0BW22W4Dvw_lfl90lWTQKjt6ltkqxPvlfUjW8QBru-nTLjF97Se/exec';
-//const globalURL = 'https://anjibarik.github.io/do/#/BookList/1';
-
 // Get the configuration element
 const configElement = document.getElementById('config');
 
@@ -179,6 +174,7 @@ function setupSeeMoreButton() {
         updateSortButtonsVisibility(filteredBooks);
         removePositionListeners(); 
         window.addEventListener('scroll', updateScrollProgress);
+        updateCurrencySymbols();
       })
       .catch((error) => {
         console.error('Error loading data:', error);
@@ -1038,8 +1034,7 @@ let selectedFilters = {};
 let filtered =[];
 
 function resetFiltersConst () { 
-  selectedFilters = {};
-  //filtered =[];
+  selectedFilters = {};  
   resetFilter();
 }
 
@@ -1072,6 +1067,8 @@ function getUniqueTags(books, selectedFilters = {}) {
 // Function to show the filter modal
 function showFilterModal() {    
     openModal(filterModal)
+
+    applyFilter(filteredBooks);
 
     const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
     renderFilterSections(uniqueTags);
@@ -1238,26 +1235,44 @@ function togglePartitionsFilters(sectionItem, tagName) {
   }
 }
 
-// Function to apply filters
 function applyFilters() {
-    if (Object.keys(selectedFilters).length > 0) {
-         filtered = filteredBooks.filter(book => 
-            Object.entries(selectedFilters).every(([tag, values]) =>
-                values.some(value => book[tag] == value)));
-
-        if (filtered.length > 0) {           
-            updateButtonStates();
-            currentPage = 1;
-            displayBooks(filtered, fieldState);
-            scrollToTop()
-            updateSortButtonsVisibility(filtered); 
-        }
-    }
+  let filtered = filteredBooks; 
+  
+  if (Object.keys(selectedFilters).length > 0) {
+      filtered = filteredBooks.filter(book => 
+          Object.entries(selectedFilters).every(([tag, values]) =>
+              values.some(value => book[tag] == value))
+      );
+  }
+  
+  if (minRangeValue !== undefined && maxRangeValue !== undefined) {
+      filtered = filtered.filter(book => {
+          let price = parsePrice(book.price);
+          return price !== undefined && price >= minRangeValue && price <= maxRangeValue;
+      });
+  } 
+  
+  if (filtered.length > 0) {
+      updateButtonStates();
+      currentPage = 1;
+      displayBooks(filtered, fieldState);
+      scrollToTop();
+      updateSortButtonsVisibility(filtered);      
+      minRangeValue = parseFloat(minRange.value);
+      maxRangeValue = parseFloat(maxRange.value);
+  } 
 }
+
 
 // Function to reset filters
 function resetFilter() {
   selectedFilters={};
+
+
+  minRangeValue = undefined;
+  maxRangeValue = undefined;
+  applyFilter(filteredBooks)
+
 
   filtered = [];
 
@@ -1278,21 +1293,43 @@ function filterBooksByTags(selectedFilters) {
     filtered = filteredBooks.filter(book => 
         Object.entries(selectedFilters).every(([tag, values]) =>
             values.some(value => book[tag] == value)));
+  applyFilter(filtered)
+
+if (minRangeValue !== undefined && maxRangeValue !== undefined) {
+  filtered = filtered.filter(book => {
+    let price = parsePrice(book.price);    
+    return price !== undefined && price >= minRangeValue && price <= maxRangeValue;
+  });
+}
     document.getElementById('filter-count').textContent = `Found: ${filtered.length}`;    
     updateButtonStates();
 }
 
-// Function to update the display state of buttons
 function updateButtonStates() {
-    const applyFiltersButton = document.getElementById('apply-filters');
-    const resetFiltersButton = document.getElementById('reset-filters');
-
-    const hasSelectedFilters = Object.keys(selectedFilters).length > 0 && Object.values(selectedFilters).some(arr => arr.length > 0);
-    const filteredBooksLength = filteredBooks.filter(book => 
-        Object.entries(selectedFilters).every(([tag, values]) =>
-            values.some(value => book[tag] == value))).length;
-    applyFiltersButton.style.display = (hasSelectedFilters && filteredBooksLength > 0) ? 'block' : 'none';
-    resetFiltersButton.style.display = hasSelectedFilters ? 'block' : 'none';
+  const applyFiltersButton = document.getElementById('apply-filters');
+  const resetFiltersButton = document.getElementById('reset-filters');
+  
+  const hasSelectedFilters = Object.keys(selectedFilters).length > 0 && 
+      Object.values(selectedFilters).some(arr => arr.length > 0);
+  
+  const isPriceFiltered = minRangeValue !== undefined && maxRangeValue !== undefined;
+  
+  let filteredBooksLength = filteredBooks.filter(book => 
+    Object.entries(selectedFilters).every(([tag, values]) =>
+      values.some(value => book[tag] == value))
+  );
+  
+  if (isPriceFiltered) {
+    filteredBooksLength = filteredBooksLength.filter(book => {
+      let price = parsePrice(book.price);
+      return price !== undefined && price >= minRangeValue && price <= maxRangeValue;
+    });
+  }
+  
+  const booksCount = filteredBooksLength.length;
+  
+  applyFiltersButton.style.display = (hasSelectedFilters || isPriceFiltered) && booksCount > 0 ? 'block' : 'none';
+  resetFiltersButton.style.display = hasSelectedFilters || isPriceFiltered ? 'block' : 'none';
 }
 
 // Helper function to get the toggle icon HTML
@@ -1912,3 +1949,216 @@ contactForm.addEventListener('submit', async (e) => {
         submitBtn.disabled = false;
     }
 });
+
+
+// Sort by price
+let minRangeValue = undefined;
+let maxRangeValue = undefined;
+
+
+const priceFilter = document.getElementById("price-filter");
+const minRange = document.getElementById("minRange");
+const maxRange = document.getElementById("maxRange");
+const minInput = document.getElementById("minInput");
+const maxInput = document.getElementById("maxInput");
+const applyButton = document.getElementById("applyButton");
+const resetButton = document.getElementById("resetButton");
+const minCurrencySpan = document.getElementById('minCurrency');
+const maxCurrencySpan = document.getElementById('maxCurrency');
+
+minRange.addEventListener("input", handleRangeChange);
+maxRange.addEventListener("input", handleRangeChange);
+minInput.addEventListener("input", () => handleInputChange(minInput));
+maxInput.addEventListener("input", () => handleInputChange(maxInput));
+minInput.addEventListener("blur", () => handleInputBlur(minInput, minRange, true));
+maxInput.addEventListener("blur", () => handleInputBlur(maxInput, maxRange, false));
+applyButton.addEventListener("click", handleApply);
+resetButton.addEventListener("click", handleReset);
+
+
+let minPrice = undefined;
+let maxPrice = undefined;
+
+
+function getPriceRange(filteredBooks) {
+  let min = Infinity;
+  let max = -Infinity;
+
+  filteredBooks.forEach(book => {
+    let price = parsePrice(book.price);    
+    if (price !== undefined) {
+      if (price < min) min = price;
+      if (price > max) max = price;
+    }
+  });
+  
+  if (min === Infinity || max === -Infinity || min == max) {
+    if (priceFilter) {
+      priceFilter.style.display = "none";
+    }
+    return { min: undefined, max: undefined };
+  }
+  
+  if (priceFilter) {
+    priceFilter.style.display = "block";
+  }
+  return { min, max };
+}
+
+function parsePrice(priceString) {
+  try {
+    // Convert number to string if a number is passed
+    if (priceString !== undefined && typeof priceString === 'number') {
+      return priceString;
+    }
+
+    if (!priceString || !priceString.trim() || priceString === 'null') return undefined;
+
+    // Remove all characters except digits, dots, and commas
+    priceString = priceString.replace(/[^\d.,-]/g, '');
+
+    // Handling cases with commas and dots
+    const commaCount = (priceString.match(/,/g) || []).length;
+    const dotCount = (priceString.match(/\./g) || []).length;
+
+    if (commaCount === 1 && dotCount === 0) {
+      // One comma, replace with dot
+      priceString = priceString.replace(',', '.');
+    } else if (commaCount > 0 && dotCount === 1) {
+      // Commas and one dot, remove all commas
+      priceString = priceString.replace(/,/g, '');
+    } else if (commaCount > 0 && dotCount === 0) {
+      // No dots, replace the last comma with a dot, remove the rest
+      const lastCommaIndex = priceString.lastIndexOf(',');
+      priceString = priceString.slice(0, lastCommaIndex).replace(/,/g, '') + '.' + priceString.slice(lastCommaIndex + 1).replace(/,/g, '');
+    }
+
+    // Convert the string to a number
+    const price = parseFloat(priceString);
+
+    return isNaN(price) ? undefined : price;
+  } catch (error) {    
+    return undefined;
+  }
+}
+
+// Function to update currency symbols
+function updateCurrencySymbols() {
+  if (typeof fieldState === 'undefined' || !fieldState.payment) {
+    return; 
+  }
+
+  const paymentCurrency = fieldState.payment;
+  if (!document.getElementById('minCurrency') || !document.getElementById('maxCurrency')) {
+    return; 
+  }
+
+  if (paymentCurrency && paymentCurrency !== 'null' && paymentCurrency !== '') {
+    const minCurrencySpan = document.getElementById('minCurrency');
+    const maxCurrencySpan = document.getElementById('maxCurrency');
+
+    minCurrencySpan.textContent = ` ${paymentCurrency}`;
+    maxCurrencySpan.textContent = ` ${paymentCurrency}`;
+  }
+}
+
+function applyFilter(filteredBooks) {  
+  const { min, max } = getPriceRange(filteredBooks);
+  
+  if (min === undefined || max === undefined) {
+    return;
+  }
+
+  minPrice = min;
+  maxPrice = max;
+
+  minRange.min = min;
+  minRange.max = max;
+  maxRange.min = min;
+  maxRange.max = max;
+  
+  minRange.value = (minRangeValue !== undefined ? minRangeValue : min).toFixed(2);
+  maxRange.value = (maxRangeValue !== undefined ? maxRangeValue : max).toFixed(2);  
+  minInput.value = minRange.value;  
+  maxInput.value = maxRange.value;
+
+  updateButtonVisibility();
+}
+
+function updateButtonVisibility() {
+  const isApplyVisible =
+    minRangeValue === undefined ||
+    maxRangeValue === undefined ||
+    minRangeValue != parseFloat(minInput.value) ||
+    maxRangeValue != parseFloat(maxInput.value);
+
+  const isResetVisible =
+    minRangeValue !== undefined &&
+    maxRangeValue !== undefined &&
+    minRangeValue == parseFloat(minInput.value) &&
+    maxRangeValue == parseFloat(maxInput.value);
+    
+  applyButton.style.display = isApplyVisible ? "block" : "none";
+  resetButton.style.display = isResetVisible ? "block" : "none";
+}
+
+function validateInput(value) {
+  return value === '' || /^[0-9]*\.?[0-9]*$/.test(value);
+}
+
+function handleRangeChange() {
+  if (parseFloat(minRange.value) > parseFloat(maxRange.value)) {
+    maxRange.value = minRange.value; 
+  }
+
+  minInput.value = minRange.value;  
+  maxInput.value = maxRange.value;
+
+  updateButtonVisibility();
+}
+
+function handleInputChange(input) {
+  if (!validateInput(input.value)) {
+    input.value = input.value.slice(0, -1); 
+  }
+
+  updateButtonVisibility();
+}
+
+function handleInputBlur(input, range, isMin) {
+  let value = parseFloat(input.value);
+  if (isNaN(value) || value < minPrice || value > maxPrice) {
+    input.value = isMin ? minPrice : maxPrice;
+    value = isMin ? minPrice : maxPrice;
+  }
+
+  if (isMin && value > parseFloat(maxInput.value)) {
+    value = parseFloat(maxInput.value);
+  }
+
+  if (!isMin && value < parseFloat(minInput.value)) {
+    value = parseFloat(minInput.value);
+  }
+  input.value = value;
+  range.value = value;
+}
+
+function handleApply() {  
+  minRangeValue = parseFloat(minRange.value);
+  maxRangeValue = parseFloat(maxRange.value);
+  filterBooksByTags(selectedFilters);
+  updateButtonVisibility();
+}
+
+function handleReset() {
+  minRange.value = minPrice;
+  maxRange.value = maxPrice;
+  minInput.value = minPrice;
+  maxInput.value = maxPrice;
+ 
+  minRangeValue = undefined;
+  maxRangeValue = undefined;
+  
+  filterBooksByTags(selectedFilters);
+  updateButtonVisibility();
+}

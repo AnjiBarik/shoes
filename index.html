@@ -185,7 +185,24 @@
         <div class="book-list">
             <img class="social-icon" src="img/icon/filter.png" alt="filter">
             <h2>Filters</h2>
+        </div>        
+
+      <div id="price-filter" class="price-filter">
+        <h3>Filter by Price</h3>
+        <div class="range-slider">
+         
+          <input type="range" id="minRange" class="slider" min="0" max="1000" step="0.01" title="Select minimum price range">
+          
+          <input type="range" id="maxRange" class="slider" min="0" max="1000" step="0.01" title="Select maximum price range">
+          <div class="range-values">
+            <span>Min: <input type="text" id="minInput" class="form-input" placeholder="Minimum price" title="Enter minimum price"><span id="minCurrency"></span></span>
+            <span>Max: <input type="text" id="maxInput" class="form-input" placeholder="Maximum price" title="Enter maximum price"><span id="maxCurrency"></span></span>
+             
+          </div>
         </div>
+        <button id="applyButton" class="form-input" title="Apply filter">Apply</button>
+        <button id="resetButton" class="form-input" title="Reset filter">Reset</button>
+      </div>
 
         <ul id="filters-section-list" class="section-list">
             <!-- Dynamically populated tags -->
@@ -341,9 +358,9 @@
           </div> 
             <!-- Contact Information -->
              <div class="contact-info">
-              <p><a href="tel:+1234567890">Phone: +1 (234) 567-890</a></p>
-              <p><a href="mailto:info@company.com">Email: info@company.com</a></p>
-              <p><a href="https://maps.google.com/?q=1234+Imaginary+St,+Imaginetown" target="_blank" rel="noopener">Address: 1234 Imaginary St, Imaginetown</a></p>
+              <p><img class="social-icon" src="img/icon/fone.png" alt="Fone"><a href="tel:+1234567890">Phone: +1 (234) 567-890</a></p>
+              <p><img class="social-icon" src="img/icon/email.png" alt="Email"><a href="mailto:info@company.com">Email: info@company.com</a></p>
+              <p><img class="social-icon" src="img/icon/location.png" alt="Location"><a href="https://maps.google.com/?q=1234+Imaginary+St,+Imaginetown" target="_blank" rel="noopener">Address: 1234 Imaginary St, Imaginetown</a></p>
              </div>
         </div>       
 
