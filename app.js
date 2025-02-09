@@ -2159,6 +2159,6 @@ function handleReset() {
   minRangeValue = undefined;
   maxRangeValue = undefined;
   
-  filterBooksByTags(selectedFilters);
+  //filterBooksByTags(selectedFilters);
   updateButtonVisibility();
 }

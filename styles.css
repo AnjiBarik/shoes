@@ -805,6 +805,10 @@ video {
   border-radius: 7px;
 }
 
+.contact-toggle:hover {
+  box-shadow: var(--box-shadow);  
+}
+
 .contact-form-section {
   margin-top: 40px;
   flex-direction: column;
@@ -901,7 +905,7 @@ video {
 
 .contact-info, .about-section p {
   margin: 5px;
-  text-align: left;
+  text-align: justify;
   text-indent: 10px;
 }
 
@@ -913,6 +917,12 @@ video {
 .contact-info a {
   color: #2ae0a4; 
   text-decoration: none;
+}
+
+.contact-icon {
+  width: 20px;
+  height: 20px;  
+  filter: invert(1);
 }
 
 .contact-info a:hover {
@@ -1867,7 +1877,8 @@ button:disabled {
 
 .filter-content-section{
 background-color: var(--modal-bg);
-  margin: 170px 5px auto auto;
+  /* margin: 170px 5px auto auto; */
+  margin: auto 5px auto auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
