@@ -60,6 +60,8 @@ const sortOldestButton = document.getElementById('sort-oldest');
 const floatingButton = document.getElementById('floatingButton');
 const filterModal = document.getElementById('filter-modal');
 const errorMessage = document.getElementById('error-message');
+const applyFiltersButton = document.getElementById('apply-filters');
+const resetFiltersButton = document.getElementById('reset-filters');
 
 let selectedSection = null;
 let selectedPartition = null; 
@@ -1305,13 +1307,11 @@ if (minRangeValue !== undefined && maxRangeValue !== undefined) {
     updateButtonStates();
 }
 
-function updateButtonStates() {
-  const applyFiltersButton = document.getElementById('apply-filters');
-  const resetFiltersButton = document.getElementById('reset-filters');
+function updateButtonStates() {  
   
   const hasSelectedFilters = Object.keys(selectedFilters).length > 0 && 
       Object.values(selectedFilters).some(arr => arr.length > 0);
-  
+ 
   const isPriceFiltered = minRangeValue !== undefined && maxRangeValue !== undefined;
   
   let filteredBooksLength = filteredBooks.filter(book => 
@@ -1326,8 +1326,7 @@ function updateButtonStates() {
     });
   }
   
-  const booksCount = filteredBooksLength.length;
-  
+  const booksCount = filteredBooksLength.length;  
   applyFiltersButton.style.display = (hasSelectedFilters || isPriceFiltered) && booksCount > 0 ? 'block' : 'none';
   resetFiltersButton.style.display = hasSelectedFilters || isPriceFiltered ? 'block' : 'none';
 }
@@ -2159,6 +2158,7 @@ function handleReset() {
   minRangeValue = undefined;
   maxRangeValue = undefined;
   
-  //filterBooksByTags(selectedFilters);
+  filterBooksByTags(selectedFilters);
   updateButtonVisibility();
+  applyFiltersButton.style.display = 'block';
 }

@@ -212,7 +212,7 @@ body {
   
 
   /* Icons: regular theme */
-.social-icon {
+.social-icon  {
   filter: none; /* No inversion for light theme */
 }
 
@@ -583,7 +583,8 @@ p#book-tags p{
   flex-wrap: wrap;
   overflow: hidden;
   border-radius: 30px;
-  background-color: #2b8a82;
+  /* background-color: #2b8a82; */
+  background: linear-gradient(135deg, #40dbce85 0%, #20997c 50%, #07504af0 100%);
 }
 
 /* Styling for each video frame */
@@ -651,7 +652,8 @@ video {
 /* Social Icons */
 .social-icons {
   display: flex;
-  gap: 10px;  
+  gap: 10px; 
+  justify-content: center; 
 }
 
 .social-icon {
@@ -763,8 +765,8 @@ video {
 
 /* Footer styles */
 .footer {
-  background-color: #333;
-  color: #fff; 
+  background-color: var(--header-bg);
+  color: var(--modal-text);
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -786,7 +788,7 @@ video {
 .contact-section {
   flex: 1;
   min-width: 250px;
-  padding-bottom: 10px;
+  /* padding-bottom: 10px; */
 }
 
 .about-section h3,
@@ -795,7 +797,7 @@ video {
 }
 
 .contact-toggle {
-  background-color: #444;
+  background-color: var(--button-bg);
   color: #fff;
   padding: 8px 12px;
   border: none;
@@ -859,6 +861,11 @@ video {
   flex: 1;
   min-width: 250px;
   padding-bottom: 10px;
+  margin: 5px;
+}
+
+.logo-section p{
+  margin: 5px;
 }
 
 .footer-logo {
@@ -866,12 +873,11 @@ video {
   box-shadow: var(--box-shadow);
   border-radius: 50%;
   cursor: pointer;
-  translate: 0 -10px;
+  translate: 0 -20px;
   transition: transform 0.3s ease-in-out;
 }
 
-.footer-logo:hover, 
-.footer-logo:active { 
+.footer-logo:hover, .logo:hover, .footer-logo:active, .logo:active { 
   transform: rotate(30deg); 
   animation: rotateBack 0.6s ease-in-out forwards; 
 } 
@@ -915,14 +921,14 @@ video {
 }
 
 .contact-info a {
-  color: #2ae0a4; 
+  color: #007bff; 
   text-decoration: none;
 }
 
 .contact-icon {
   width: 20px;
   height: 20px;  
-  filter: invert(1);
+  border-radius: 5px;
 }
 
 .contact-info a:hover {
@@ -930,7 +936,8 @@ video {
 }
 
 .social-icons-footer{
-  margin-top: 10px;
+  /* margin-top: 10px; */
+  margin: 5px;
 }
 
 /* Scroll */
