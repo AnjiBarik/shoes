@@ -1828,13 +1828,11 @@ const contactToggleButton = document.querySelector('.contact-toggle');
 
 // Toggle contact form visibility and open modal
 contactToggleButton.addEventListener('click', function() {  
-        openModal(contactModal);
-        this.textContent = 'Hide Contact Form';   
+        openModal(contactModal);          
 });
 
 closeModalContact.addEventListener('click', function() {
-    closeModal(contactModal);
-    contactToggleButton.textContent = 'Show Contact Form';
+    closeModal(contactModal);    
 });
 
 // Form Validation
@@ -2085,21 +2083,21 @@ function applyFilter(filteredBooks) {
 }
 
 function updateButtonVisibility() {
-  const isApplyVisible =
-    minRangeValue === undefined ||
-    maxRangeValue === undefined ||
-    minRangeValue != parseFloat(minInput.value) ||
-    maxRangeValue != parseFloat(maxInput.value);
+  const minRangeValueDefined = minRangeValue !== undefined;
+  const maxRangeValueDefined = maxRangeValue !== undefined;
 
-  const isResetVisible =
-    minRangeValue !== undefined &&
-    maxRangeValue !== undefined &&
-    minRangeValue == parseFloat(minInput.value) &&
-    maxRangeValue == parseFloat(maxInput.value);
-    
+  const isApplyVisible =
+    (!minRangeValueDefined && minInput.value != minPrice) ||
+    (minRangeValueDefined && minInput.value != parseFloat(minRangeValue)) ||
+    (!maxRangeValueDefined && maxInput.value != maxPrice) ||
+    (maxRangeValueDefined && maxInput.value != parseFloat(maxRangeValue));
+
+  const isResetVisible = minRangeValueDefined && maxRangeValueDefined;  
+
   applyButton.style.display = isApplyVisible ? "block" : "none";
   resetButton.style.display = isResetVisible ? "block" : "none";
 }
+
 
 function validateInput(value) {
   return value === '' || /^[0-9]*\.?[0-9]*$/.test(value);

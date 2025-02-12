@@ -263,7 +263,8 @@ body {
   .modal-content { 
     background-color: var(--modal-bg);
     color: var(--modal-text);   
-    padding: 20px;    
+    padding: 20px; 
+    padding-bottom: 30px;   
     width: 80%;
     max-width: 700px;
     margin: 10px 1px 5% auto;
