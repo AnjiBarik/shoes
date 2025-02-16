@@ -256,6 +256,9 @@ function closeModal(modal) {
   modal.style.display = 'none';
   state.modalOpen = false;
   //history.replaceState(null, null, location.href);
+  if (modal === filterModal && window.innerWidth > LARGE_SCREEN_WIDTH) {
+    document.body.classList.remove('wide-screen-filter');
+  }
 }
 
 // Function to open fullscreen mode
@@ -354,15 +357,18 @@ window.showMoreInfo = function (bookId) {
 
   // Display price information
   if (bookPriceElem) {
-    if (book.saleprice && book.saleprice.trim() !== '') {
+    const parsedPrice = parsePrice(book.price);
+    const parsedSalePrice = parsePrice(book.saleprice);
+  
+    if (parsedSalePrice !== undefined) {
       bookPriceElem.innerHTML = `
-        <span class="sale-price">${book.price} ${fieldState.payment || '$'}</span>
-        <span class="original-price">${book.saleprice} ${fieldState.payment || '$'}</span>
+        <span class="sale-price">${parsedPrice} ${fieldState.payment || '$'}</span>
+        <span class="original-price">${parsedSalePrice} ${fieldState.payment || '$'}</span>
       `;
     } else {
-      bookPriceElem.textContent = `Price: ${book.price ? `${book.price} ${fieldState.payment}` : 'Price not specified'}`;
+      bookPriceElem.textContent = `Price: ${parsedPrice !== undefined ? `${parsedPrice} ${fieldState.payment}` : 'Price not specified'}`;
     }
-  }
+  }  
 
   // Display short description
   if (bookshortDescriptionElem) {
@@ -729,7 +735,7 @@ function updateCurrentFilterDisplay() {
   if (selectedPartition) {
     const partitionLink = document.createElement('a');
     partitionLink.textContent = selectedPartition;
-    partitionLink.addEventListener('click', () => filterBooks(selectedSection, selectedPartition));
+    partitionLink.addEventListener('click', () => filterBooksBySectionPartition(selectedSection, selectedPartition));
     currentFilter.appendChild(document.createTextNode(' / '));
     currentFilter.appendChild(partitionLink);
   }
@@ -833,7 +839,7 @@ function togglePartitions(liElement, section) {
         e.stopPropagation();
         selectedSection = section;
         selectedPartition = partition || 'Without subsection';
-        filterBooks(section, partition);
+        filterBooksBySectionPartition(section, partition);
       });
 
       partitionContainer.appendChild(partitionLi);
@@ -906,7 +912,7 @@ function filterBooksBySection(section) {
   updateCurrentFilterDisplay();
 }
 
-function filterBooks(section, partition) {
+function filterBooksBySectionPartition(section, partition) {
   selectedSection = section;
   selectedPartition = partition;
   filteredBooks = books.filter(book => {
@@ -1034,6 +1040,7 @@ if (filtersButton) {
 
 let selectedFilters = {};
 let filtered =[];
+let expandedSections = new Set(); 
 
 function resetFiltersConst () { 
   selectedFilters = {};  
@@ -1045,25 +1052,161 @@ document.getElementById('apply-filters').addEventListener('click', applyFilters)
 document.getElementById('reset-filters').addEventListener('click', resetFilter);
 document.getElementById('close-filters-modal').addEventListener('click', ()=> closeModal(filterModal));
 
-// Function to get unique tags and their values
-function getUniqueTags(books, selectedFilters = {}) {
-    const tagsMap = {};
+function updateFilters(tag, value, isChecked) { 
+  if (!tag || value === undefined) {
+      console.error('Tag or value is missing:', { tag, value });
+      return;
+  }
 
-    books.forEach(book => {
-        Object.entries(book).forEach(([key, value]) => {
-            if ((key.startsWith('tags') || ['color', 'size', 'author'].includes(key)) && value) {
-                if (!selectedFilters[key]?.includes(value)) {
-                    tagsMap[key] = tagsMap[key] || new Set();
-                    tagsMap[key].add(value);
-                }
-            }
+  if (isChecked) {
+      selectedFilters[tag] = selectedFilters[tag] || [];
+      if (!selectedFilters[tag].includes(value)) {
+          selectedFilters[tag].push(value);
+      }
+  } else {
+      selectedFilters[tag] = selectedFilters[tag].filter(val => val !== value);
+      if (selectedFilters[tag].length === 0) {
+          delete selectedFilters[tag];
+      }
+  }
+  
+  filterBooksByTags(selectedFilters);
+  updateButtonStates();
+}
+
+function filterBooks(selectedFilters, books, minRangeValue, maxRangeValue) {
+  let filtered = books.filter(book => 
+      Object.entries(selectedFilters).every(([tag, values]) =>
+          values.some(value => book[tag] == value)
+      )
+  );
+  
+  if (minRangeValue !== undefined && maxRangeValue !== undefined) {
+      filtered = filtered.filter(book => {
+          let price = parsePrice(book.price);
+          return price !== undefined && price >= minRangeValue && price <= maxRangeValue;
+      });
+  }
+
+  return filtered;
+}
+
+function filterBooksByTags(selectedFilters) {
+  filtered = filterBooks(selectedFilters, filteredBooks, minRangeValue, maxRangeValue);
+
+  applyFilter(filtered);  
+  const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);  
+  renderFilterSections(uniqueTags);  
+  updateButtonStates();
+  document.getElementById('filter-count').textContent = `Found: ${filtered.length}`;
+}
+
+function applyFilters() {
+  let filtered = filterBooks(selectedFilters, filteredBooks, minRangeValue, maxRangeValue);
+
+  if (filtered.length > 0) {
+      updateButtonStates();
+      currentPage = 1;
+      displayBooks(filtered, fieldState);
+      scrollToTop();
+      updateSortButtonsVisibility(filtered);
+      minRangeValue = parseFloat(minRange.value);
+      maxRangeValue = parseFloat(maxRange.value);
+  } 
+}
+
+function updateButtonStates() {  
+  const hasSelectedFilters = Object.keys(selectedFilters).length > 0 && 
+      Object.values(selectedFilters).some(arr => arr.length > 0);
+
+  const isPriceFiltered = minRangeValue !== undefined && maxRangeValue !== undefined;
+
+  let filteredBooksLength = filterBooks(selectedFilters, filteredBooks, minRangeValue, maxRangeValue).length;
+
+  applyFiltersButton.style.display = (hasSelectedFilters || isPriceFiltered) && filteredBooksLength > 0 ? 'block' : 'none';
+  resetFiltersButton.style.display = hasSelectedFilters || isPriceFiltered ? 'block' : 'none';
+}
+
+function processTags(uniqueTags, preferredTags, fieldState) {
+  // Creating a map for priority tags
+  const preferredTagMap = new Map(preferredTags.map((tag, index) => [tag, index]));
+
+  const preferredTagObjects = [];
+  const otherTagObjects = [];
+  
+  uniqueTags.forEach(tagObj => {
+    if (preferredTagMap.has(tagObj.tagName)) {
+      preferredTagObjects.push(tagObj);
+    } else {
+      otherTagObjects.push(tagObj);
+    }
+  });
+  
+  preferredTagObjects.sort((a, b) => preferredTagMap.get(a.tagName) - preferredTagMap.get(b.tagName));
+  
+  const sortedTags = [...preferredTagObjects, ...otherTagObjects].map(tagObj => {
+    let sectionTitle = tagObj.tagName;    
+    const fieldStateValue = fieldState && fieldState[tagObj.tagName];
+    
+    if (fieldStateValue) {      
+      // If fieldState has several values ​​(separated by ;), split them
+      if (fieldStateValue.includes(';')) {
+        const parts = fieldStateValue.split(';').filter(Boolean);        
+        parts.forEach(part => {
+          const [key, title] = part.split('~');          
+          if (key && title && selectedSection == key) {
+            sectionTitle = title;
+          }
         });
-    });
+      } else {        
+        sectionTitle = fieldStateValue || tagObj.tagName;
+      }
+    }
+    return { ...tagObj, sectionTitle };
+  });
+  return sortedTags;
+}
 
-    return Object.entries(tagsMap).map(([tagName, values]) => ({
-        tagName,
-        values: Array.from(values)
-    }));
+
+// Function to get unique tags based on current filters
+function getUniqueTags(books, selectedFilters = {}) {
+  const tagsMap = {};
+
+  books.forEach(book => {
+      Object.entries(book).forEach(([key, value]) => {
+          if ((key.startsWith('tags') || ['color', 'size', 'author'].includes(key)) && value) {
+              
+              // If the tag is already selected, add ALL its values
+              if (selectedFilters[key]) {
+                  tagsMap[key] = tagsMap[key] || new Set();
+                  tagsMap[key].add(value);
+              } 
+              // ЕIf a tag is not selected, add only available ones
+              else {
+                  const booksWithSelected = books.filter(b => 
+                      Object.entries(selectedFilters).every(([tag, values]) =>
+                          values.some(v => b[tag] == v)
+                      )
+                  );
+
+                  const availableValues = booksWithSelected.map(b => b[key]).filter(v => v);
+                  if (availableValues.includes(value)) {
+                      tagsMap[key] = tagsMap[key] || new Set();
+                      tagsMap[key].add(value);
+                  }
+              }
+          }
+      });
+  });
+  
+  let uniqueTags = Object.entries(tagsMap).map(([tagName, values]) => ({
+    tagName,
+    values: Array.from(values)
+  }));
+  
+  const preferredTags = ['author', 'color', 'size'];
+  uniqueTags = processTags(uniqueTags, preferredTags, fieldState);  
+  return uniqueTags;  
 }
 
 // Function to show the filter modal
@@ -1075,56 +1218,25 @@ function showFilterModal() {
     const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
     renderFilterSections(uniqueTags);
     updateButtonStates();
+    if (window.innerWidth > LARGE_SCREEN_WIDTH) {
+      document.body.classList.add('wide-screen-filter');
+  }
 }
 
 // Function to render sections and partitions for the filter modal
-function renderFilterSections(uniqueTags) {
+function renderFilterSections(uniqueTags) {  
   const preferredTags = ['author', 'color', 'size'];
   const sectionList = document.getElementById('filters-section-list');
-  sectionList.innerHTML = '';
-
-  const preferredTagMap = new Map(preferredTags.map((tag, index) => [tag, index]));
-
-  const preferredTagObjects = [];
-  const otherTagObjects = [];
-
-  uniqueTags.forEach(tagObj => {
-
-      if (preferredTagMap.has(tagObj.tagName)) {
-          //preferredTagObjects[preferredTagMap.get(tagObj.tagName)] = tagObj;
-          preferredTagObjects.push(tagObj);
-      } else {
-          otherTagObjects.push(tagObj);
-      }
-  });
-
-  preferredTagObjects.sort((a, b) => preferredTagMap.get(a.tagName) - preferredTagMap.get(b.tagName));
-  const sortedTags = [...preferredTagObjects, ...otherTagObjects];
-
+  sectionList.innerHTML = '';  
+  const sortedTags = processTags(uniqueTags, preferredTags, fieldState);
   sortedTags.forEach(tagObj => {
-
-      if (tagObj && tagObj.values && tagObj.values.length > 0) {
-          const fieldStateValue = fieldState && fieldState[tagObj.tagName];
-          let sectionTitle = tagObj.tagName;
-
-          if (fieldStateValue && fieldStateValue.includes(';')) {
-              const parts = fieldStateValue.split(';');
-              parts.forEach(part => {
-                  const [key, title] = part.split('~');
-                  if (key && title && selectedSection == key) {
-                      sectionTitle = title;
-                  }
-              });
-          } else {
-              sectionTitle = fieldStateValue || tagObj.tagName;
-          }
-
+      if (tagObj && tagObj.values.length > 0) {
           const sectionItem = document.createElement('li');
           sectionItem.classList.add('section-item');
 
           sectionItem.innerHTML = `
               <div class="section-toggle">
-                  ${sectionTitle}
+                  ${tagObj.sectionTitle}
                   ${tagObj.values.length > 0 ? getToggleIconHTML() : ''}
               </div>`;
 
@@ -1132,26 +1244,29 @@ function renderFilterSections(uniqueTags) {
           if (toggleIcon) {
               toggleIcon.addEventListener('click', (e) => {
                   e.stopPropagation();
-                  togglePartitionsFilters(sectionItem, tagObj.tagName);
+                  togglePartitionsFilters(sectionItem, tagObj.tagName, uniqueTags);
               });
           }
 
           sectionItem.addEventListener('click', (event) => {
               if (event.target !== toggleIcon && !event.target.classList.contains('filter-checkbox')) {
-                  togglePartitionsFilters(sectionItem, tagObj.tagName);
+                  togglePartitionsFilters(sectionItem, tagObj.tagName, uniqueTags);
               }
           });
 
-          if (selectedFilters[tagObj.tagName] && selectedFilters[tagObj.tagName].length > 0) {
-              togglePartitionsFilters(sectionItem, tagObj.tagName);
-          }
           sectionList.appendChild(sectionItem);
+
+          // Auto-opening if the section was previously expanded
+          if (expandedSections.has(tagObj.tagName)) {
+              togglePartitionsFilters(sectionItem, tagObj.tagName, uniqueTags);
+          }
       }
   });
 }
 
-function togglePartitionsFilters(sectionItem, tagName) {
-  
+
+
+function togglePartitionsFilters(sectionItem, tagName, uniqueTags) {
   const toggle = sectionItem.querySelector('.toggle-icon');
   const existingPartitionList = sectionItem.querySelector('.partition-container');
 
@@ -1160,14 +1275,15 @@ function togglePartitionsFilters(sectionItem, tagName) {
   if (existingPartitionList) {
       existingPartitionList.remove();
       toggle.classList.remove('rotated');
+      expandedSections.delete(tagName); 
   } else {
       const partitionList = document.createElement('ul');
       partitionList.classList.add('partition-container');
 
-      const selectedTagValues = [...new Set(filteredBooks.map(book => book[tagName]).filter(value => value !== undefined))];
-      
-      selectedTagValues.forEach(value => {
-       
+      const tagObj = uniqueTags.find(tag => tag.tagName === tagName);
+      if (!tagObj) return;
+
+      tagObj.values.forEach(value => {
           if (value) {
               const partitionItem = document.createElement('li');
               partitionItem.classList.add('partition-item');
@@ -1180,91 +1296,37 @@ function togglePartitionsFilters(sectionItem, tagName) {
 
               const checkbox = partitionItem.querySelector('.filter-checkbox');
               const label = partitionItem.querySelector('label');
-
-              if (checkbox && label) {
-                 let isChecked = false; 
-                 try {
-                   if (Array.isArray(selectedFilters[tagName])) { isChecked = selectedFilters[tagName].map(String).includes(String(value)) || false; } 
-                  } catch (error) {
-                     console.error('Error checking checkbox state:', error); 
-                  }                     
-               checkbox.checked = isChecked;
-                  // Handle click on the partition item and prevent it from collapsing
-                  partitionItem.addEventListener('click', (e) => {
-                      if (e.target !== checkbox) {
-                          checkbox.checked = !checkbox.checked;
+              if (checkbox) {
+                  let isChecked = false;
+                  try {
+                      if (Array.isArray(selectedFilters[tagName])) {
+                          isChecked = selectedFilters[tagName].map(String).includes(String(value));
                       }
-                      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-                  });
-
-                  // Prevent click on partition item from collapsing the partition
-                  label.addEventListener('click', (e) => {
-                      e.stopPropagation();
-                  });
+                  } catch (error) {
+                      console.error('Error checking checkbox state:', error);
+                  }
+                  checkbox.checked = isChecked;
 
                   checkbox.addEventListener('change', (e) => {
                       e.stopPropagation();
-
-                      const tag = e.target.dataset.tag;
-                      const value = e.target.value;
-                      if (!tag || value === undefined) {
-                          console.error('Tag or value is missing:', { tag, value });
-                          return;
-                      }                      
-
-                      if (e.target.checked) {
-                          selectedFilters[tag] = selectedFilters[tag] || [];
-                          if (!selectedFilters[tag].includes(value)) {
-                              selectedFilters[tag].push(value);
-                          }
-                      } else {
-                          selectedFilters[tag] = selectedFilters[tag].filter(val => val !== value);
-                          if (selectedFilters[tag].length === 0) {
-                              delete selectedFilters[tag];
-                          }
-                      }                      
-                      filterBooksByTags(selectedFilters);
-                      updateButtonStates();
+                      updateFilters(e.target.dataset.tag, e.target.value, e.target.checked);
                   });
-              } else {
-                  console.error('Checkbox or label not found for value:', value);
+                  
+              label.addEventListener('click', (e) => {
+               e.stopPropagation();
+               checkbox.checked = !checkbox.checked;
+               checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+              });
               }
               partitionList.appendChild(partitionItem);
           }
       });
+
       sectionItem.appendChild(partitionList);
       toggle.classList.add('rotated');
+      expandedSections.add(tagName); // Remember the expanded section
   }
 }
-
-function applyFilters() {
-  let filtered = filteredBooks; 
-  
-  if (Object.keys(selectedFilters).length > 0) {
-      filtered = filteredBooks.filter(book => 
-          Object.entries(selectedFilters).every(([tag, values]) =>
-              values.some(value => book[tag] == value))
-      );
-  }
-  
-  if (minRangeValue !== undefined && maxRangeValue !== undefined) {
-      filtered = filtered.filter(book => {
-          let price = parsePrice(book.price);
-          return price !== undefined && price >= minRangeValue && price <= maxRangeValue;
-      });
-  } 
-  
-  if (filtered.length > 0) {
-      updateButtonStates();
-      currentPage = 1;
-      displayBooks(filtered, fieldState);
-      scrollToTop();
-      updateSortButtonsVisibility(filtered);      
-      minRangeValue = parseFloat(minRange.value);
-      maxRangeValue = parseFloat(maxRange.value);
-  } 
-}
-
 
 // Function to reset filters
 function resetFilter() {
@@ -1288,47 +1350,6 @@ function resetFilter() {
   displayBooks(filteredBooks, fieldState);
   scrollToTop()
   updateSortButtonsVisibility(filteredBooks);
-}
-
-// Function to filter books by selected tags
-function filterBooksByTags(selectedFilters) {  
-    filtered = filteredBooks.filter(book => 
-        Object.entries(selectedFilters).every(([tag, values]) =>
-            values.some(value => book[tag] == value)));
-  applyFilter(filtered)
-
-if (minRangeValue !== undefined && maxRangeValue !== undefined) {
-  filtered = filtered.filter(book => {
-    let price = parsePrice(book.price);    
-    return price !== undefined && price >= minRangeValue && price <= maxRangeValue;
-  });
-}
-    document.getElementById('filter-count').textContent = `Found: ${filtered.length}`;    
-    updateButtonStates();
-}
-
-function updateButtonStates() {  
-  
-  const hasSelectedFilters = Object.keys(selectedFilters).length > 0 && 
-      Object.values(selectedFilters).some(arr => arr.length > 0);
- 
-  const isPriceFiltered = minRangeValue !== undefined && maxRangeValue !== undefined;
-  
-  let filteredBooksLength = filteredBooks.filter(book => 
-    Object.entries(selectedFilters).every(([tag, values]) =>
-      values.some(value => book[tag] == value))
-  );
-  
-  if (isPriceFiltered) {
-    filteredBooksLength = filteredBooksLength.filter(book => {
-      let price = parsePrice(book.price);
-      return price !== undefined && price >= minRangeValue && price <= maxRangeValue;
-    });
-  }
-  
-  const booksCount = filteredBooksLength.length;  
-  applyFiltersButton.style.display = (hasSelectedFilters || isPriceFiltered) && booksCount > 0 ? 'block' : 'none';
-  resetFiltersButton.style.display = hasSelectedFilters || isPriceFiltered ? 'block' : 'none';
 }
 
 // Helper function to get the toggle icon HTML
@@ -1502,10 +1523,13 @@ function displayBooks(books, fieldState) {
 
     // Set Price
     const priceContainer = bookElement.querySelector('.book-price');
-    priceContainer.innerHTML = book.saleprice && book.saleprice.trim() !== ''
-      ? `<span class="sale-price">${book.price} ${fieldState.payment || '$'}</span>
-         <span class="original-price">${book.saleprice} ${fieldState.payment || '$'}</span>`
-      : `${book.price || 'Price not specified'} ${fieldState.payment || '$'}`;
+    const parsedPrice = parsePrice(book.price);
+    const parsedSalePrice = parsePrice(book.saleprice);
+
+    priceContainer.innerHTML = parsedSalePrice !== undefined
+     ? `<span class="sale-price">${parsedPrice} ${fieldState.payment || '$'}</span>
+        <span class="original-price">${parsedSalePrice} ${fieldState.payment || '$'}</span>`
+     : `${parsedPrice !== undefined ? parsedPrice : 'Price not specified'} ${fieldState.payment || '$'}`;    
 
     // Set Button Action
     const showMoreBtn = bookElement.querySelector('.show-more-btn');
@@ -1699,15 +1723,6 @@ sortButtons.forEach(button => {
   
   });
 });
-}
-
-// Helper function to extract a numeric value from a price string
-function extractPrice(priceText) {
-  // Remove all non-numeric characters (except the dot for decimals)
-  const price = parseFloat(priceText.replace(/[^\d.-]/g, ''));
-  
-  // Return the price (if the price is not numeric, return 0)
-  return isNaN(price) ? 0 : price;
 }
 
 // debounce function
