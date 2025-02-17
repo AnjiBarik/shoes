@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', initialize);
     modal.style.display = 'none';
     state.modalOpen = false;
   
-    if (modal === filterModal && window.innerWidth > LARGE_SCREEN_WIDTH && !isFilterPinned) {
+    if (modal === filterModal && window.innerWidth > LARGE_SCREEN_WIDTH && isFilterPinned) {
       document.body.classList.remove('wide-screen-filter');
     }
   }
