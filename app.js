@@ -62,6 +62,7 @@ const filterModal = document.getElementById('filter-modal');
 const errorMessage = document.getElementById('error-message');
 const applyFiltersButton = document.getElementById('apply-filters');
 const resetFiltersButton = document.getElementById('reset-filters');
+const pinButton = document.getElementById('pinFilterButton');
 
 let selectedSection = null;
 let selectedPartition = null; 
@@ -238,6 +239,60 @@ document.addEventListener('DOMContentLoaded', initialize);
 
 
 
+  let isFilterPinned = false;
+
+  function togglePinFilter() {
+    isFilterPinned = !isFilterPinned;
+    updatePinButtonState();
+  
+    if (isFilterPinned) {
+      document.body.classList.add('wide-screen-filter');
+    } else {
+      document.body.classList.remove('wide-screen-filter');
+    }
+  }
+  
+  function updatePinButtonState() {
+    
+    if (window.innerWidth > LARGE_SCREEN_WIDTH) {
+      pinButton.style.visibility = 'visible';
+      pinButton.style.border = isFilterPinned ? '2px solid' : 'none';
+    } else {
+      pinButton.style.visibility = 'hidden';      
+    }
+  }
+  
+  function showFilterModal() {    
+      openModal(filterModal);
+  
+      applyFilter(filteredBooks);
+  
+      const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
+      renderFilterSections(uniqueTags);
+      updateButtonStates();
+  
+      if (window.innerWidth > LARGE_SCREEN_WIDTH && isFilterPinned) {
+        document.body.classList.add('wide-screen-filter');
+      }
+  
+      updatePinButtonState();
+  }
+  
+  function closeModal(modal) { 
+    modal.style.display = 'none';
+    state.modalOpen = false;
+  
+    if (modal === filterModal && window.innerWidth > LARGE_SCREEN_WIDTH && !isFilterPinned) {
+      document.body.classList.remove('wide-screen-filter');
+    }
+  }
+  
+  
+  pinButton.addEventListener('click', togglePinFilter);
+  
+  updatePinButtonState();
+  
+
 // Object to store the current state
 const state = {
   modalOpen: false,
@@ -249,16 +304,6 @@ function openModal(modal) {
   modal.style.display = 'block';
   state.modalOpen = true;  
   history.pushState(null, null, location.href);
-}
-
-// Function to close a modal window
-function closeModal(modal) { 
-  modal.style.display = 'none';
-  state.modalOpen = false;
-  //history.replaceState(null, null, location.href);
-  if (modal === filterModal && window.innerWidth > LARGE_SCREEN_WIDTH) {
-    document.body.classList.remove('wide-screen-filter');
-  }
 }
 
 // Function to open fullscreen mode
@@ -521,6 +566,7 @@ imageGallery.addEventListener('scroll', () => {
 function handleWindowResize() {
   updateScrollRange();
   handleResize();
+  updatePinButtonState();
 }
 
 // Attach the debounced event listener
@@ -1207,20 +1253,6 @@ function getUniqueTags(books, selectedFilters = {}) {
   const preferredTags = ['author', 'color', 'size'];
   uniqueTags = processTags(uniqueTags, preferredTags, fieldState);  
   return uniqueTags;  
-}
-
-// Function to show the filter modal
-function showFilterModal() {    
-    openModal(filterModal)
-
-    applyFilter(filteredBooks);
-
-    const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
-    renderFilterSections(uniqueTags);
-    updateButtonStates();
-    if (window.innerWidth > LARGE_SCREEN_WIDTH) {
-      document.body.classList.add('wide-screen-filter');
-  }
 }
 
 // Function to render sections and partitions for the filter modal

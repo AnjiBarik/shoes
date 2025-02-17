@@ -1916,7 +1916,8 @@ background-color: var(--modal-bg);
   border-radius: 17px;
   background-color: var(--button-background);
   color: var(--text);
-  padding: 5px 15px;
+  /* padding: 5px 15px; */
+  padding: 5px;
   margin: 5px;
   box-shadow: var(--box-shadow);
 }
@@ -2065,3 +2066,12 @@ background-color: var(--modal-bg);
   padding-right: 0;
 }
 
+.pinFilter-button {
+  font-size: 0.9em;
+  color: var(--text);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  background: var(--modal-bg);
+}
