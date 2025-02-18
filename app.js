@@ -153,7 +153,7 @@ function removePositionListeners() {
   });
 }
 
-function setupSeeMoreButton() {
+function setupSeeMoreButton() { 
   seeMoreButton.addEventListener('click', (e) => {
     e.preventDefault();
 
@@ -168,25 +168,25 @@ function setupSeeMoreButton() {
 
     // Loading Data
     fetchBooks()
-      .then(() => {
-        mainHeader.style.display = 'none'; 
-        filtersSection.style.display = 'flex'; 
-        bookList.style.display = 'flex'; 
-        paginationContainer.style.display = 'flex'; 
-        floatingButton.style.display = 'block';
-        updateSortButtonsVisibility(filteredBooks);
-        removePositionListeners(); 
-        window.addEventListener('scroll', updateScrollProgress);
-        updateCurrencySymbols();
-      })
-      .catch((error) => {
-        console.error('Error loading data:', error);
-        errorMessage.style.display = 'block';
-      })
-      .finally(() => {
-        loadingSpinner.style.display = 'none'; 
-        isLoading = false; 
-      });
+  .then(() => {
+    mainHeader.style.display = 'none'; 
+    filtersSection.style.display = 'flex'; 
+    bookList.style.display = 'flex'; 
+    paginationContainer.style.display = 'flex'; 
+    floatingButton.style.display = 'block';
+    updateSortButtonsVisibility(filteredBooks);
+    removePositionListeners(); 
+    window.addEventListener('scroll', updateScrollProgress);
+    updateCurrencySymbols();
+  })
+  .catch((error) => {
+    console.error('Error loading data:', error);
+    errorMessage.style.display = 'block';
+  })
+  .finally(() => {
+    loadingSpinner.style.display = 'none'; 
+    isLoading = false; 
+  });    
   });
 }
 
@@ -196,7 +196,7 @@ function removeSeeMoreListener() {
 }
 
 // Initialization function
-function initialize() {
+function initialize() {  
   updateActiveState(currentIndex); 
   startAutoRotate(); 
   setupPositionClicks(); 
@@ -237,61 +237,59 @@ document.addEventListener('DOMContentLoaded', initialize);
     }
   } 
 
-
-
   let isFilterPinned = false;
 
   function togglePinFilter() {
     isFilterPinned = !isFilterPinned;
     updatePinButtonState();
+    updateFilterModalState();
+  }
   
-    if (isFilterPinned) {
+  function updatePinButtonState() {    
+    if (window.innerWidth > LARGE_SCREEN_WIDTH) {
+      pinButton.style.visibility = 'visible';
+      pinButton.style.border = isFilterPinned ? '2px solid' : 'none';
+    } else {
+      pinButton.style.visibility = 'hidden';
+      isFilterPinned = false; 
+    }
+  }
+  
+  function updateFilterModalState() {    
+    if (window.innerWidth > LARGE_SCREEN_WIDTH && isFilterPinned) {
       document.body.classList.add('wide-screen-filter');
     } else {
       document.body.classList.remove('wide-screen-filter');
     }
   }
   
-  function updatePinButtonState() {
-    
-    if (window.innerWidth > LARGE_SCREEN_WIDTH) {
-      pinButton.style.visibility = 'visible';
-      pinButton.style.border = isFilterPinned ? '2px solid' : 'none';
-    } else {
-      pinButton.style.visibility = 'hidden';      
-    }
-  }
-  
   function showFilterModal() {    
-      openModal(filterModal);
+    openModal(filterModal);
   
-      applyFilter(filteredBooks);
+    applyFilter(filteredBooks);
   
-      const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
-      renderFilterSections(uniqueTags);
-      updateButtonStates();
+    const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
+    renderFilterSections(uniqueTags);
+    updateButtonStates();
   
-      if (window.innerWidth > LARGE_SCREEN_WIDTH && isFilterPinned) {
-        document.body.classList.add('wide-screen-filter');
-      }
-  
-      updatePinButtonState();
+    updateFilterModalState();
+    updatePinButtonState();
   }
   
   function closeModal(modal) { 
     modal.style.display = 'none';
     state.modalOpen = false;
   
-    if (modal === filterModal && window.innerWidth > LARGE_SCREEN_WIDTH && isFilterPinned) {
+    if (modal === filterModal) {
       document.body.classList.remove('wide-screen-filter');
     }
-  }
+  } 
   
   
   pinButton.addEventListener('click', togglePinFilter);
   
   updatePinButtonState();
-  
+  updateFilterModalState();  
 
 // Object to store the current state
 const state = {
@@ -567,6 +565,7 @@ function handleWindowResize() {
   updateScrollRange();
   handleResize();
   updatePinButtonState();
+  updateFilterModalState();
 }
 
 // Attach the debounced event listener
@@ -1030,45 +1029,33 @@ function hideLoadingSpinner() {
   loadingSpinner.style.display = 'none';
 }
 
-// Function for getting data from API
 async function fetchBooks() {
-  try {
-    showLoadingSpinner();
+  try {    
+    showLoadingSpinner();    
+    
     const formData = new FormData();
     formData.append('isReviews', 10);
     const response = await fetch(URLAPI, {
       method: 'POST',
-      body: formData
+      body: formData,
+      redirect: 'follow'
     });
 
     const data = await response.json();
-
     if (!data.success) throw new Error(data.message || 'Error fetching combined data');
 
     books = data.data.sheet1Data
-    ? data.data.sheet1Data.filter((book) => book && book.Visibility !== '0')
-    : [];
+      ? data.data.sheet1Data.filter((book) => book && book.Visibility !== '0')
+      : [];
     fieldState = data.data.sheet2Data?.[0] || {};    
-    filteredBooks = books;    
-    if (fieldState.idprice) {
-      const formDataReviews = new FormData();
-      formDataReviews.append('isReviews', 1);
-      formDataReviews.append('idPrice', fieldState.idprice);
-      const responseReviews = await fetch(URLAPI, {
-        method: 'POST',
-        body: formDataReviews,
-      });
-
-      const dataReviews = await responseReviews.json();
-
-      if (!dataReviews.success) throw new Error(dataReviews.message || 'Failed to fetch review data');
-      
-      aggregatedData = dataReviews.data || [];     
-     
-    }
-
+    filteredBooks = books;  
+    
     catalogFilterSearch.style.display = 'flex';
     displayBooks(filteredBooks, fieldState);
+    
+    if (fieldState.idprice) {
+      fetchReviews(fieldState.idprice);
+    }
 
   } catch (error) {
     console.error('Error fetching books:', error);
@@ -1077,6 +1064,46 @@ async function fetchBooks() {
     hideLoadingSpinner();
   }
 }
+
+// function for downloading reviews
+async function fetchReviews(idPrice) {
+  try {
+    const formDataReviews = new FormData();
+    formDataReviews.append('isReviews', 1);
+    formDataReviews.append('idPrice', idPrice);
+    const responseReviews = await fetch(URLAPI, {
+      method: 'POST',
+      body: formDataReviews,
+      redirect: 'follow'
+    });
+
+    const dataReviews = await responseReviews.json();
+    if (!dataReviews.success) throw new Error(dataReviews.message || 'Failed to fetch review data');
+
+    aggregatedData = dataReviews.data || [];    
+    
+    updateBooksWithReviews(aggregatedData);
+
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+  }
+}
+
+// Book update function after downloading reviews
+function updateBooksWithReviews(reviews) {
+  books = books.map(book => {
+    const bookReviews = reviews.find(review => review.bookId === book.id);
+    return {
+      ...book,
+      reviews: bookReviews ? bookReviews.reviews : [],
+      rating: bookReviews ? bookReviews.rating : null
+    };
+  });
+  
+  displayBooks(books, fieldState);
+}
+
+
 
 if (filtersButton) {
     filtersButton.addEventListener('click', () => {
