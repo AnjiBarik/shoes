@@ -75,8 +75,11 @@ let isLoading = false;
 const ITEMS_PER_PAGE_LARGE_SCREEN = 10;
 const ITEMS_PER_PAGE_MEDIUM_SCREEN = 7;
 const ITEMS_PER_PAGE_SMALL_SCREEN = 5;
+const Widescreenfilter_SCREEN_WIDTH = 1600;
 const LARGE_SCREEN_WIDTH = 1200;
 const MEDIUM_SCREEN_WIDTH = 700;
+const tagFields = ['tags1', 'tags2', 'tags3', 'tags4', 'tags5', 'tags6', 'tags7', 'tags8'];
+const preferredTags = ['author', 'color', 'size'];
 let currentPage = 1; 
 let itemsPerPage = 1;
  
@@ -232,10 +235,42 @@ document.addEventListener('DOMContentLoaded', initialize);
     // Show/hide the button depending on scrolling
     if (scrollTop > 100) {
       scrollToTopButton.style.display = 'flex';
+      catalogBtn.style.display = 'flex';
+      searchBtn.style.display = 'flex';
+      filterBtn.style.display = 'flex';
     } else {
       scrollToTopButton.style.display = 'none';
+      catalogBtn.style.display = 'none';
+      searchBtn.style.display = 'none';
+      filterBtn.style.display = 'none';
     }
   } 
+
+  
+    // Получаем элементы кнопок по их id
+    const catalogBtn = document.getElementById("scroll-catalog-btn");
+    const searchBtn  = document.getElementById("scroll-search-btn");
+    const filterBtn  = document.getElementById("scroll-filter-btn");
+  
+    // Назначаем обработчики кликов
+    catalogBtn.addEventListener("click", function() {
+      // Функция для открытия модального окна каталога
+      renderSections();
+      highlightActiveSelection();
+      openModal(catalogModal);
+    });
+  
+    searchBtn.addEventListener("click", function() {
+      searchInput.classList.add("active");
+      searchInput.focus();
+    });
+  
+    filterBtn.addEventListener("click", function() {
+      // Функция для открытия модального окна фильтра
+      showFilterModal();
+    });
+ 
+  
 
   let isFilterPinned = false;
 
@@ -246,7 +281,7 @@ document.addEventListener('DOMContentLoaded', initialize);
   }
   
   function updatePinButtonState() {    
-    if (window.innerWidth > LARGE_SCREEN_WIDTH) {
+    if (window.innerWidth > Widescreenfilter_SCREEN_WIDTH) {
       pinButton.style.visibility = 'visible';
       pinButton.style.border = isFilterPinned ? '2px solid' : 'none';
     } else {
@@ -256,7 +291,7 @@ document.addEventListener('DOMContentLoaded', initialize);
   }
   
   function updateFilterModalState() {    
-    if (window.innerWidth > LARGE_SCREEN_WIDTH && isFilterPinned) {
+    if (window.innerWidth > Widescreenfilter_SCREEN_WIDTH && isFilterPinned) {
       document.body.classList.add('wide-screen-filter');
     } else {
       document.body.classList.remove('wide-screen-filter');
@@ -398,6 +433,7 @@ window.showMoreInfo = function (bookId) {
 
   if (bookAuthorElem) bookAuthorElem.textContent = `Author: ${book.author || ''}`;
 
+  
   // Display price information
   if (bookPriceElem) {
     const parsedPrice = parsePrice(book.price);
@@ -405,11 +441,11 @@ window.showMoreInfo = function (bookId) {
   
     if (parsedSalePrice !== undefined) {
       bookPriceElem.innerHTML = `
-        <span class="sale-price">${parsedPrice} ${fieldState.payment || '$'}</span>
-        <span class="original-price">${parsedSalePrice} ${fieldState.payment || '$'}</span>
+        <span class="sale-price">${parsedSalePrice} ${fieldState.payment || '$'}</span>
+        <span class="original-price">${parsedPrice !== undefined ? parsedPrice : 'N/A'} ${fieldState.payment || '$'}</span>
       `;
     } else {
-      bookPriceElem.textContent = `Price: ${parsedPrice !== undefined ? `${parsedPrice} ${fieldState.payment}` : 'Price not specified'}`;
+      bookPriceElem.textContent = `Price: ${parsedPrice !== undefined ? `${parsedPrice} ${fieldState.payment || '$'}` : 'N/A'}`;
     }
   }  
 
@@ -1277,14 +1313,14 @@ function getUniqueTags(books, selectedFilters = {}) {
     values: Array.from(values)
   }));
   
-  const preferredTags = ['author', 'color', 'size'];
+  //const preferredTags = ['author', 'color', 'size'];
   uniqueTags = processTags(uniqueTags, preferredTags, fieldState);  
   return uniqueTags;  
 }
 
 // Function to render sections and partitions for the filter modal
 function renderFilterSections(uniqueTags) {  
-  const preferredTags = ['author', 'color', 'size'];
+  //const preferredTags = ['author', 'color', 'size'];
   const sectionList = document.getElementById('filters-section-list');
   sectionList.innerHTML = '';  
   const sortedTags = processTags(uniqueTags, preferredTags, fieldState);
@@ -1419,7 +1455,7 @@ function getToggleIconHTML() {
 
 // Helper function for rendering tags with default labels for size and color
 function renderTags(book, fieldState) {
-  const tagFields = ['tags1', 'tags2', 'tags3', 'tags4', 'tags5', 'tags6', 'tags7', 'tags8'];
+  //const tagFields = ['tags1', 'tags2', 'tags3', 'tags4', 'tags5', 'tags6', 'tags7', 'tags8'];
   
   // Create colorRGB object for color mappings
   const colorRGB = fieldState.colorblock
@@ -1586,9 +1622,10 @@ function displayBooks(books, fieldState) {
     const parsedSalePrice = parsePrice(book.saleprice);
 
     priceContainer.innerHTML = parsedSalePrice !== undefined
-     ? `<span class="sale-price">${parsedPrice} ${fieldState.payment || '$'}</span>
-        <span class="original-price">${parsedSalePrice} ${fieldState.payment || '$'}</span>`
-     : `${parsedPrice !== undefined ? parsedPrice : 'Price not specified'} ${fieldState.payment || '$'}`;    
+     ? `<span class="sale-price">${parsedSalePrice} ${fieldState.payment || '$'}</span>
+     <span class="original-price">${parsedPrice !== undefined ? parsedPrice : 'N/A'} ${fieldState.payment || '$'}</span>`
+    : `${parsedPrice !== undefined ? parsedPrice : 'N/A'} ${fieldState.payment || '$'}`;
+    
 
     // Set Button Action
     const showMoreBtn = bookElement.querySelector('.show-more-btn');
@@ -1696,7 +1733,7 @@ function renderPagination(books, fieldState) {
 
 // Helper function for rendering only size and color tags
 function renderSizeColorTags(book, fieldState) {
-  const tagFields = ['size', 'color'];
+  const tagFieldsRender = ['size', 'color'];
   const colorRGB = fieldState.colorblock
     ? fieldState.colorblock
         .split(';')
@@ -1704,7 +1741,7 @@ function renderSizeColorTags(book, fieldState) {
         .reduce((acc, [colorName, rgb]) => ({ ...acc, [colorName.trim()]: rgb.trim().slice(1, -1) }), {})
     : {};
 
-  return tagFields
+  return tagFieldsRender
     .filter(tagKey => book[tagKey]) 
     .map(tagKey => {
       if (tagKey === 'color' && book[tagKey] && colorRGB[book[tagKey].trim()]) {
@@ -1759,9 +1796,15 @@ function sortBy(type) {
   displayBooks(sortedBooks, fieldState);
 }
 
-function sortByPrice(order) {  
+function sortByPrice(order) {
   sortedBooks = [...filtersBooks].sort((a, b) => {
-    return order === 'low' ? a.price - b.price : b.price - a.price;
+    const priceA = parsePrice(a.price);
+    const priceB = parsePrice(b.price);
+    
+    if (priceA === undefined) return 1;
+    if (priceB === undefined) return -1;
+    
+    return order === 'low' ? priceA - priceB : priceB - priceA;
   });   
   displayBooks(sortedBooks, fieldState);
 }
@@ -1793,8 +1836,11 @@ function debounce(func, delay) {
   };
 }
 
+const toggleIcon = document.getElementById("toggle-search-options");
+const searchOptions = document.getElementById("search-options");
+const checkboxes = document.querySelectorAll("#search-options input");
+
 searchInput.addEventListener('input', checkInput);
-searchInput.addEventListener('focus', checkInput);
 searchInput.addEventListener('blur', checkInput);
 // Restore the previous page before clearing the search
 clearButton.addEventListener('click', () => {
@@ -1803,10 +1849,12 @@ clearButton.addEventListener('click', () => {
 });
 
   function checkInput() {
-    if (searchInput.value || searchInput === document.activeElement) {
+    if (searchInput.value || searchInput === document.activeElement
+       || toggleIcon === document.activeElement) {
       searchInput.classList.add('active');
       clearButton.style.display = 'flex';
       filtersButton.style.display = 'none';
+      //closeModal(filterModal)
     } else {
       searchInput.classList.remove('active');
       clearButton.style.display = 'none';
@@ -1814,27 +1862,62 @@ clearButton.addEventListener('click', () => {
     }
   } 
 
-  let previousPage = currentPage;   
+  let previousPage = currentPage; 
+  
 
-  function searchBooksBy() {
-    const searchQuery = searchInput.value ? searchInput.value.trim().toLowerCase() : '';
-  
-    if (!searchQuery || searchQuery === "") {
-      resetToPreviousState();
-      return;
-    }
-  
-    searchBooks = books.filter(book =>
-      book.title.toLowerCase().includes(searchQuery) || 
-      book.id.toLowerCase().includes(searchQuery)
-    );
-  
-    if (searchBooks.length > 0) {
-      updateStateWithSearchResults(searchBooks);
-    } else {
-      showNoResults();
-    }
+
+
+toggleIcon.addEventListener("click", () => {
+  toggleIcon.classList.toggle("rotated");
+  searchOptions.classList.toggle("show-options");
+});
+
+// Search
+function searchBooksBy() {
+  const searchQuery = searchInput.value.trim().toLowerCase();
+  if (!searchQuery) {
+    resetToPreviousState();
+    return;
   }
+
+  const searchByIdTitle = document.getElementById("search-by-id-title").checked;
+  const searchByTags = document.getElementById("search-by-tags").checked;
+  const searchByDescription = document.getElementById("search-by-description").checked;
+
+  // const tagFields = ['tags1', 'tags2', 'tags3', 'tags4', 'tags5', 'tags6', 'tags7', 'tags8'];
+  // const preferredTags = ['author', 'color', 'size'];
+
+  let searchBooks = books.filter(book => {
+    let match = false;
+
+    if (searchByIdTitle) {
+      match = book.title?.toLowerCase().includes(searchQuery) || book.id?.toLowerCase().includes(searchQuery);
+    }
+
+    if (searchByTags) {
+      match = match || tagFields.some(tag => book[tag] && String(book[tag]).toLowerCase().includes(searchQuery)) || 
+                     preferredTags.some(tag => book[tag] && String(book[tag]).toLowerCase().includes(searchQuery));
+    }
+
+    if (searchByDescription) {
+      match = match || book.shortDescription?.toLowerCase().includes(searchQuery) ||
+                     book.description?.toLowerCase().includes(searchQuery);
+    }
+
+    return match;
+  });
+
+  if (searchBooks.length > 0) {
+    updateStateWithSearchResults(searchBooks);
+  } else {
+    showNoResults();
+  }
+}
+
+
+checkboxes.forEach(checkbox => {
+  checkbox.addEventListener("change", searchBooksBy);
+});  
   
   function resetToPreviousState() {
     currentPage = previousPage;

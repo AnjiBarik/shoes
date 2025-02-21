@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Promo site showcasing our products and services.">
+  <meta name="keywords" content="promo, site, products, services, discounts">
   <title>Promo Site</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="img/favicon.png">
@@ -124,18 +126,29 @@
   <!-- Sorting panel -->
   <section id="catalog-filter-search-container" class="filters">
    <div class="catalog-filter">
-    <button id="catalog-button" class="sort-button shine-effect"><img class="social-icon" src="img/icon/category.png" alt="catalog">Categories</button>    
+    <button id="catalog-button" class="sort-button shine-effect"><img class="social-icon" src="img/icon/category.png" alt="catalog">Categories</button>     
+
     <div class="search-container">
-      <div class="input-wrapper">       
+      <div class="input-wrapper">
         <input type="text" id="search-input" class="search-input" required />
-        <label for="search-input" class="search-placeholder" translate="no">
-          <img src="img/icon/search.png" alt="Search" class="social-icon"> Search by ID or title
+        <label for="search-input" class="search-placeholder">
+          <img src="img/icon/search.png" alt="Search" class="social-icon"> Search by ...
         </label>
+        <img src="img/icon/upmenu.png" alt="Toggle" class="toggle-icon toggle-icon-search social-icon" id="toggle-search-options">
       </div>
       <button id="clear-search-btn" class="clear-search-btn">
         <img src="img/icon/cancel.png" alt="Clear" class="social-icon">
       </button>
-    </div>     
+    
+      <!-- Search-options -->
+      <div id="search-options" class="search-options">
+        <label><input type="checkbox" id="search-by-id-title" checked class="filter-checkbox"> Search by id/title</label>
+        <label><input type="checkbox" id="search-by-tags" class="filter-checkbox"> Search by tags</label>
+        <label><input type="checkbox" id="search-by-description" class="filter-checkbox"> Search by description</label>
+      </div>
+    </div>
+    
+
     <button id="filters-button" class="sort-button shine-effect">Filters<img class="social-icon" src="img/icon/filter.png" alt="filter"></button>  
   </div>   
     <div class="search-container">  
@@ -336,6 +349,14 @@
     </svg>   
    </div>
  </div>
+
+ <!-- Floating buttons -->
+<div id ="floating-buttons" class="floating-buttons">
+  <img id="scroll-catalog-btn" class="social-icon" src="img/icon/category.png" alt="catalog">
+  <img id="scroll-search-btn" class="social-icon" src="img/icon/search.png" alt="Search">
+  <img id="scroll-filter-btn" class="social-icon" src="img/icon/filter.png" alt="filter">
+</div>
+
 
  <section id="error-message"  class="error-message">
    <p>Something went wrong while loading data. Please try again later.</p> 
