@@ -63,6 +63,12 @@ const errorMessage = document.getElementById('error-message');
 const applyFiltersButton = document.getElementById('apply-filters');
 const resetFiltersButton = document.getElementById('reset-filters');
 const pinButton = document.getElementById('pinFilterButton');
+const catalogBtn = document.getElementById("scroll-catalog-btn");
+const searchBtn  = document.getElementById("scroll-search-btn");
+const filterBtn  = document.getElementById("scroll-filter-btn");
+const toggleIcon = document.getElementById("toggle-search-options");
+const searchOptions = document.getElementById("search-options");
+const checkboxes = document.querySelectorAll("#search-options input");
 
 let selectedSection = null;
 let selectedPartition = null; 
@@ -244,17 +250,10 @@ document.addEventListener('DOMContentLoaded', initialize);
       searchBtn.style.display = 'none';
       filterBtn.style.display = 'none';
     }
-  } 
-
+  }      
   
-    // Получаем элементы кнопок по их id
-    const catalogBtn = document.getElementById("scroll-catalog-btn");
-    const searchBtn  = document.getElementById("scroll-search-btn");
-    const filterBtn  = document.getElementById("scroll-filter-btn");
-  
-    // Назначаем обработчики кликов
-    catalogBtn.addEventListener("click", function() {
-      // Функция для открытия модального окна каталога
+    // Assigning click handlers
+    catalogBtn.addEventListener("click", function() {      
       renderSections();
       highlightActiveSelection();
       openModal(catalogModal);
@@ -265,8 +264,7 @@ document.addEventListener('DOMContentLoaded', initialize);
       searchInput.focus();
     });
   
-    filterBtn.addEventListener("click", function() {
-      // Функция для открытия модального окна фильтра
+    filterBtn.addEventListener("click", function() {      
       showFilterModal();
     });
  
@@ -1202,7 +1200,6 @@ function filterBooks(selectedFilters, books, minRangeValue, maxRangeValue) {
 
 function filterBooksByTags(selectedFilters) {
   filtered = filterBooks(selectedFilters, filteredBooks, minRangeValue, maxRangeValue);
-
   applyFilter(filtered);  
   const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);  
   renderFilterSections(uniqueTags);  
@@ -1311,16 +1308,14 @@ function getUniqueTags(books, selectedFilters = {}) {
   let uniqueTags = Object.entries(tagsMap).map(([tagName, values]) => ({
     tagName,
     values: Array.from(values)
-  }));
+  }));  
   
-  //const preferredTags = ['author', 'color', 'size'];
   uniqueTags = processTags(uniqueTags, preferredTags, fieldState);  
   return uniqueTags;  
 }
 
 // Function to render sections and partitions for the filter modal
-function renderFilterSections(uniqueTags) {  
-  //const preferredTags = ['author', 'color', 'size'];
+function renderFilterSections(uniqueTags) {    
   const sectionList = document.getElementById('filters-section-list');
   sectionList.innerHTML = '';  
   const sortedTags = processTags(uniqueTags, preferredTags, fieldState);
@@ -1427,11 +1422,9 @@ function togglePartitionsFilters(sectionItem, tagName, uniqueTags) {
 function resetFilter() {
   selectedFilters={};
 
-
   minRangeValue = undefined;
   maxRangeValue = undefined;
-  applyFilter(filteredBooks)
-
+  applyFilter(filteredBooks);
 
   filtered = [];
 
@@ -1454,8 +1447,7 @@ function getToggleIconHTML() {
 }
 
 // Helper function for rendering tags with default labels for size and color
-function renderTags(book, fieldState) {
-  //const tagFields = ['tags1', 'tags2', 'tags3', 'tags4', 'tags5', 'tags6', 'tags7', 'tags8'];
+function renderTags(book, fieldState) {  
   
   // Create colorRGB object for color mappings
   const colorRGB = fieldState.colorblock
@@ -1836,10 +1828,6 @@ function debounce(func, delay) {
   };
 }
 
-const toggleIcon = document.getElementById("toggle-search-options");
-const searchOptions = document.getElementById("search-options");
-const checkboxes = document.querySelectorAll("#search-options input");
-
 searchInput.addEventListener('input', checkInput);
 searchInput.addEventListener('blur', checkInput);
 // Restore the previous page before clearing the search
@@ -1863,9 +1851,6 @@ clearButton.addEventListener('click', () => {
   } 
 
   let previousPage = currentPage; 
-  
-
-
 
 toggleIcon.addEventListener("click", () => {
   toggleIcon.classList.toggle("rotated");
@@ -1883,9 +1868,7 @@ function searchBooksBy() {
   const searchByIdTitle = document.getElementById("search-by-id-title").checked;
   const searchByTags = document.getElementById("search-by-tags").checked;
   const searchByDescription = document.getElementById("search-by-description").checked;
-
-  // const tagFields = ['tags1', 'tags2', 'tags3', 'tags4', 'tags5', 'tags6', 'tags7', 'tags8'];
-  // const preferredTags = ['author', 'color', 'size'];
+  
 
   let searchBooks = books.filter(book => {
     let match = false;
@@ -2109,7 +2092,6 @@ contactForm.addEventListener('submit', async (e) => {
 let minRangeValue = undefined;
 let maxRangeValue = undefined;
 
-
 const priceFilter = document.getElementById("price-filter");
 const minRange = document.getElementById("minRange");
 const maxRange = document.getElementById("maxRange");
@@ -2129,10 +2111,8 @@ maxInput.addEventListener("blur", () => handleInputBlur(maxInput, maxRange, fals
 applyButton.addEventListener("click", handleApply);
 resetButton.addEventListener("click", handleReset);
 
-
 let minPrice = undefined;
 let maxPrice = undefined;
-
 
 function getPriceRange(filteredBooks) {
   let min = Infinity;

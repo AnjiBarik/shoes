@@ -37,9 +37,7 @@ body {
   transition: background-color 0.5s ease, color 0.5s ease;
   text-align: center;
   min-height: 100vh;
-  overflow-x: hidden;
-  /* display: flex;
-  flex-direction: column; */
+  overflow-x: hidden;  
 }
   
 .spinner {
@@ -80,8 +78,7 @@ body {
   
   .shelf-element {     
     width: 100%;
-    max-width: 340px;
-    /* box-shadow: var(--box-shadow); */
+    max-width: 340px;    
     overflow: hidden;
     transition: transform 0.3s ease;
     padding: 5px;
@@ -395,7 +392,7 @@ body {
     margin-top: 10px;
     overflow-x: auto;
     max-width: 80%;
-    scrollbar-width: none;
+    /* scrollbar-width: none; */
     scroll-behavior: unset;
   }
 
@@ -496,14 +493,6 @@ p#book-tags {
 p#book-tags p{
   padding: 0 10px;
 }
-
-
-/* .rating-stars{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-} */
 
 .star {
   font-size: 20px;
@@ -738,7 +727,6 @@ video {
 /* Floating button */
 .floating-button {
   position: fixed;  
-  /* top:290px; */
   top:310px;
   right: 20px;
   background-color: #0b8a259c;
@@ -804,8 +792,7 @@ video {
 .about-section,
 .contact-section {
   flex: 1;
-  min-width: 250px;
-  /* padding-bottom: 10px; */
+  min-width: 250px;  
 }
 
 .about-section h3,
@@ -821,7 +808,7 @@ video {
   cursor: pointer;
   font-size: 1rem;
   margin-top: 10px;
-  border-radius: 7px;
+  border-radius: 17px;
 }
 
 .contact-toggle:hover {
@@ -846,14 +833,21 @@ video {
   padding: 8px;
   font-size: 1rem;  
   max-width: 340px;
+  border-radius: 7px;
+  border-color: var(--modal-text);
+  outline: none;
+  background: var(--background);
+  color: var(--modal-text);
 }
 
 .contact-form-section button {
-  background-color: #5cb85c;
-  color: #fff;
+  background-color: #d46300;
+  color: white;
   padding: 10px;
   border: none;
   cursor: pointer;
+  font-size: 16px;
+  border-radius: 7px;
 }
 
 .contact-form-section button:disabled {
@@ -964,14 +958,12 @@ video {
   right: 20px;
   width: 60px;
   height: 60px;
-  border-radius: 50%;
-  /* border: 2px solid #333 ; */
+  border-radius: 50%;  
   background-color: transparent;
   display: none;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
-  /* box-shadow: var(--box-shadow); */
+  cursor: pointer;  
 }
 
 #scroll-to-top-btn:hover {
@@ -1029,15 +1021,9 @@ video {
   transform: translateY(-80px);
 }
 
-/* #scroll-search-btn {
-  transform: rotate(120deg) translateY(-80px);
-} */
-
 #scroll-filter-btn {
-  transform: rotate(-45deg) translateY(-80px);
+  transform: rotate(-45deg) translateY(-80px) translateX(-20px);
 }
-
-
 
 
 /* Catalog */
@@ -1252,9 +1238,7 @@ video {
   font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
-  position: relative;
-  /* background: #fdf7f2; */
-  /* color: #333; */
+  position: relative;  
   justify-content: center;
   display: flex;
   align-items: center;
@@ -1589,8 +1573,7 @@ video {
 
   .see-more-button{
     bottom: 300px;
-    right: 20px;
-    /* position: fixed; */
+    right: 20px;    
     z-index: 100;
   }
 
@@ -1857,8 +1840,7 @@ button:disabled {
 }  
 
 .filter-content-section{
-background-color: var(--modal-bg);
-  /* margin: 170px 5px auto auto; */
+background-color: var(--modal-bg);  
   margin: auto 5px auto auto;
   padding: 20px;
   border: 1px solid #888;
@@ -1871,8 +1853,7 @@ background-color: var(--modal-bg);
   border: 2px solid;
   border-radius: 17px;
   background-color: var(--button-background);
-  color: var(--text);
-  /* padding: 5px 15px; */
+  color: var(--text);  
   padding: 5px;
   margin: 5px;
   box-shadow: var(--box-shadow);
@@ -1943,8 +1924,7 @@ background-color: var(--modal-bg);
   position: relative;
 }
 
-.slider {
-  /* -webkit-appearance: none; */
+.slider {  
   appearance: none;
   width: 100%;
   height: 1px;
@@ -1961,8 +1941,7 @@ background-color: var(--modal-bg);
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
-  height: 16px;
-  /* background: #4CAF50; */
+  height: 16px;  
   background: rgba(202, 198, 191, 0.87);
   cursor: pointer;
   border-radius: 50%;
@@ -2126,14 +2105,13 @@ background-color: var(--modal-bg);
   display: none;
   flex-direction: column;
   gap: 5px;
-  font-size: 14px;
-  padding: 5px 0;
+  font-size: 14px;  
   position: absolute;
   top: 40px;
   left: 10px;
   background: var(--background);
   box-shadow: var(--box-shadow);
-  border-radius: 5px;
+  border-radius: 7px;
   padding: 10px;
   z-index: 10;
 }
