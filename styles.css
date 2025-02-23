@@ -1737,7 +1737,7 @@ button:disabled {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;  
+  align-items: baseline;  
   padding: 10px 0 5px;
   color: var(--text);  
 }
@@ -1854,7 +1854,7 @@ background-color: var(--modal-bg);
   border-radius: 17px;
   background-color: var(--button-background);
   color: var(--text);  
-  padding: 5px;
+  padding: 5px 7px;
   margin: 5px;
   box-shadow: var(--box-shadow);
 }
@@ -1980,21 +1980,23 @@ background-color: var(--modal-bg);
   border-radius: 15px;
   z-index: 100;  
   width: 20vw;
-  height: 100vh;
+  position: fixed;
+  top: 140px;
+  overflow-y: auto;
+  height: calc(100vh - 150px);  
 }
 
 .wide-screen-filter .filter-content-section {
   margin: 0;
   width: auto;
   border: none;
+  margin-bottom: 20px;
 }
 
 .wide-screen-filter #current-filter,
 .wide-screen-filter .book-list,
 .wide-screen-filter .pagination,
-.wide-screen-filter .footer,
-.wide-screen-filter .filters,
-.wide-screen-filter header {  
+.wide-screen-filter .footer {  
   width: 79vw;
   margin-left: 20vw;
   padding-left: 0;
@@ -2009,6 +2011,7 @@ background-color: var(--modal-bg);
   height: 30px;
   cursor: pointer;
   background: var(--modal-bg);
+  margin: 0 5px 0 auto;
 }
 
 /* search */
