@@ -342,7 +342,7 @@ body {
   }
 
   .shelf-element .show-more-btn {
-    width: 50%;
+    width: 80%;
   }
 
   .show-more-btn:hover {
@@ -472,7 +472,8 @@ body {
 }
 
 .book-id {
-  font-weight: bold;  
+  font-weight: bold; 
+  padding: 4px; 
 }
 
 .id-rating {
