@@ -1014,7 +1014,7 @@ const setTheme = (theme) => {
   try {
       localStorage.setItem('theme', theme);
   } catch (error) {
-      console.error("Error writing theme to localStorage:", error.message);
+    //  console.error("Error writing theme to localStorage:", error.message);
   }
   
   const sunIcon = themeToggle.querySelector('.icon-sun');
@@ -1040,7 +1040,7 @@ const initTheme = () => {
   try {
       savedTheme = localStorage.getItem('theme');
   } catch (error) {
-      console.error("Error reading theme from localStorage:", error.message);
+    //  console.error("Error reading theme from localStorage:", error.message);
       savedTheme = null; 
   }
 
@@ -2014,7 +2014,7 @@ function safeReadStorage(key) {
     try {
         return JSON.parse(localStorage.getItem(key)) || [];
     } catch (error) {
-        console.error("Error reading from localStorage:", error.message);
+       // console.error("Error reading from localStorage:", error.message);
         return [];
     }
 }
@@ -2024,7 +2024,7 @@ function safeWriteStorage(key, value) {
     try {
         localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-        console.error("Error writing to localStorage:", error.message);
+      //  console.error("Error writing to localStorage:", error.message);
     }
 }
 
