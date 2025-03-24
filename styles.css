@@ -209,7 +209,7 @@ body {
   }
   
 
-  /* Icons: regular theme */
+/* Icons: regular theme */
 .social-icon  {
   filter: none; /* No inversion for light theme */
 }
@@ -563,8 +563,7 @@ p#book-tags p{
 .header-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;  
-  background-color: var(--header-bg);
+  justify-content: space-evenly;  
   border-radius: 50px;
   margin-bottom: 7px;
   animation: bgToVideo 3s forwards 300s; 
@@ -576,12 +575,14 @@ p#book-tags p{
   border-radius: 50%;
 }
 
-
 .social-icons-header {
-  display: flex; 
+  display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  padding: 5px 10px;
+  background-color: var(--header-bg);
+  border-radius: 50px;
 }
 
 .video-container {
