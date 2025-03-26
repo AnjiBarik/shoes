@@ -69,6 +69,7 @@ const filterBtn  = document.getElementById("scroll-filter-btn");
 const toggleIcon = document.getElementById("toggle-search-options");
 const searchOptions = document.getElementById("search-options");
 const checkboxes = document.querySelectorAll("#search-options input");
+const goToStoreBtn = document.getElementById('go-to-store-btn');
 
 let selectedSection = null;
 let selectedPartition = null; 
@@ -446,7 +447,13 @@ window.showMoreInfo = function (bookId) {
       bookPriceElem.textContent = `Price: ${parsedPrice !== undefined ? `${parsedPrice} ${fieldState.payment || '$'}` : 'N/A'}`;
     }
   }  
-
+  
+  // Display goToStore
+  if (goToStoreBtn) {
+    goToStoreBtn.onclick = function() {
+      window.location.href = `${globalURL}/${bookId}`;
+    };
+  }
   // Display short description
   if (bookshortDescriptionElem) {
     bookshortDescriptionElem.textContent = book.shortDescription || '';
