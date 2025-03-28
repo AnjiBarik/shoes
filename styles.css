@@ -593,7 +593,7 @@ p#book-tags p{
   flex-wrap: wrap;
   overflow: hidden;
   border-radius: 30px;  
-  background: linear-gradient(135deg, #40dbce85 0%, #20997c 50%, #07504af0 100%);
+  /* background: linear-gradient(135deg, #40dbce85 0%, #20997c 50%, #07504af0 100%); */
 }
 
 /* Styling for each video frame */
@@ -660,7 +660,7 @@ video {
 /* Social Icons */
 .social-icons {
   display: flex;
-  gap: 10px; 
+  gap: 15px; 
   justify-content: center; 
 }
 
@@ -778,8 +778,8 @@ video {
   justify-content: space-between;
   flex-wrap: wrap;
   border-radius: 15px;
-  padding: 5px;
-  margin-top: auto;
+  /* padding: 5px; */
+  /* margin-top: auto; */
 }
 
 .footer-content {
@@ -789,6 +789,7 @@ video {
   max-width: 1200px;
   margin: 0 auto;
   flex-wrap: wrap;
+  font-family: 'Poppins', sans-serif;
 }
 
 .about-section,
@@ -875,6 +876,7 @@ video {
   min-width: 250px;
   padding-bottom: 10px;
   margin: 5px;
+  translate: 0 -20px;
 }
 
 .logo-section p{
@@ -886,7 +888,7 @@ video {
   box-shadow: var(--box-shadow);
   border-radius: 50%;
   cursor: pointer;
-  translate: 0 -20px;
+  /* translate: 0 -20px; */
   transition: transform 0.3s ease-in-out;
 }
 
@@ -918,19 +920,24 @@ video {
 
 /* Contact Info Styling - Placed Under Social Icons */
 .contact-info {
-  margin-top: 10px;
+  margin-top: 20px;
   font-size: 14px;
 }
 
 .contact-info, .about-section p {
-  margin: 5px;
   text-align: justify;
-  text-indent: 10px;
+  text-indent: 7px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  padding: 0 5px;
 }
 
 .contact-info p {
   display: flex;  
   align-items: center;
+  margin: 8px 0;
 }
 
 .contact-info a {
@@ -942,6 +949,7 @@ video {
   width: 20px;
   height: 20px;  
   border-radius: 5px;
+  padding-right: 5px;
 }
 
 .contact-info a:hover {
@@ -949,8 +957,7 @@ video {
 }
 
 .social-icons-footer{
-  /* margin-top: 10px; */
-  margin: 5px;
+  margin-top: 10px;  
 }
 
 /* Scroll */
