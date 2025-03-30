@@ -1074,6 +1074,15 @@ video {
   text-decoration: none;
 }
 
+.modal-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 10px;
+}
 
 #catalog-modal {
   position: fixed;
