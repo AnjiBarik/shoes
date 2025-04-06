@@ -153,7 +153,7 @@ body {
     font-size: 1.1em;
   }
 
-  .sale-price {
+  .original-price {
     font-weight: bold;
     margin-right: 8px;
     text-shadow: 0 0 5px #21ce6da8;
@@ -170,7 +170,7 @@ body {
   }
   
   
-  .original-price {
+  .sale-price {
     text-decoration: line-through;
     color: gray;
   }  
