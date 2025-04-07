@@ -1851,6 +1851,8 @@ button:disabled {
 
 .filter-actions {
   display: flex;
+  margin:10px 0; 
+  gap:10px;
 }
 
 .partition-item label:hover{
