@@ -1167,6 +1167,11 @@ document.getElementById('reset-filters').addEventListener('click', resetFilter);
 document.getElementById('close-filters-modal').addEventListener('click', ()=> closeModal(filterModal));
 
 function updateFilters(tag, value, isChecked) { 
+  
+  if (!selectedFilters[tag]) {
+    selectedFilters[tag] = [];
+  }
+
   if (!tag || value === undefined) {
       console.error('Tag or value is missing:', { tag, value });
       return;
@@ -1379,15 +1384,34 @@ function togglePartitionsFilters(sectionItem, tagName, uniqueTags) {
 
       const tagObj = uniqueTags.find(tag => tag.tagName === tagName);
       if (!tagObj) return;
+  // color-circle
+      let colorRGB = {};
+    if (fieldState?.colorblock) {
+      colorRGB = fieldState.colorblock
+        .split(';')
+        .map(colorItem => colorItem.split(':'))
+        .reduce((acc, [colorName, rgb]) => {
+          if (colorName && rgb) {
+            acc[colorName.trim()] = rgb.trim().slice(1, -1);
+          }
+          return acc;
+        }, {});
+    }
 
-      tagObj.values.forEach(value => {
+      tagObj.values.forEach(value => {        
           if (value) {
+            const isColor = tagName.toLowerCase() === 'color';            
+            const trimmedValue = typeof value === 'string' ? value.trim() : String(value).trim();
+
+            const rgbValue = isColor && colorRGB[trimmedValue] ? `rgb(${colorRGB[trimmedValue]})` : null;
+
               const partitionItem = document.createElement('li');
               partitionItem.classList.add('partition-item');
               partitionItem.innerHTML = `
                   <label>
                       <input type="checkbox" class="filter-checkbox" data-tag="${tagName}" value="${value}">
                       ${value}
+                      ${rgbValue ? `<span class='circle' style='background-color: ${rgbValue}'></span>` : ''}
                   </label>
               `;
 
@@ -1405,7 +1429,7 @@ function togglePartitionsFilters(sectionItem, tagName, uniqueTags) {
                   checkbox.checked = isChecked;
 
                   checkbox.addEventListener('change', (e) => {
-                      e.stopPropagation();
+                      e.stopPropagation();                      
                       updateFilters(e.target.dataset.tag, e.target.value, e.target.checked);
                   });
                   
