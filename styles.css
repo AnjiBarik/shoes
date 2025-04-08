@@ -1806,7 +1806,7 @@ button:disabled {
 @media (min-width: 600px) { 
   #book-over-tags {
     flex-direction: row; 
-    justify-content: space-between; 
+    /* justify-content: space-between;  */
   }
 }
 
