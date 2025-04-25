@@ -78,6 +78,8 @@ let userInteracted = false;
 const delay = 3000;
 let autoRotateInterval;
 let isLoading = false;
+let forceShowApply = false;
+
 
 const ITEMS_PER_PAGE_LARGE_SCREEN = 10;
 const ITEMS_PER_PAGE_MEDIUM_SCREEN = 7;
@@ -1231,6 +1233,7 @@ function applyFilters() {
   let filtered = filterBooks(selectedFilters, filteredBooks, minRangeValue, maxRangeValue);
 
   if (filtered.length > 0) {
+      forceShowApply = false;
       updateButtonStates();
       currentPage = 1;
       displayBooks(filtered, fieldState);
@@ -1242,13 +1245,17 @@ function applyFilters() {
 }
 
 function updateButtonStates() {
-  const hasSelectedFilters = Object.values(selectedFilters).some(arr => Array.isArray(arr) && arr.length > 0);
-  const isPriceFiltered = minRangeValue !== undefined && maxRangeValue !== undefined;
-  const shouldShowReset = hasSelectedFilters || isPriceFiltered;  
+  const hasSelectedFilters = Object.values(selectedFilters).some(arr => arr.length);
+  const isPriceFiltered = minRangeValue != null && maxRangeValue != null;
+  const filteredBooksList = filterBooks(selectedFilters, filteredBooks, minRangeValue, maxRangeValue);
 
-  applyFiltersButton.style.display =  'block';
+  const shouldShowApply = forceShowApply || ((hasSelectedFilters || isPriceFiltered) && filteredBooksList.length > 0);
+  const shouldShowReset = hasSelectedFilters || isPriceFiltered;
+
+  applyFiltersButton.style.display = shouldShowApply ? 'block' : 'none';
   resetFiltersButton.style.display = shouldShowReset ? 'block' : 'none';
 }
+
 
 function processTags(uniqueTags, preferredTags, fieldState) {
   // Creating a map for priority tags
@@ -1469,6 +1476,7 @@ function resetFilter() {
 
   const uniqueTags = getUniqueTags(filteredBooks, selectedFilters);
   renderFilterSections(uniqueTags);
+  forceShowApply = false;
   updateButtonStates(); 
   currentPage = 1;       
   displayBooks(filteredBooks, fieldState);
@@ -2332,4 +2340,5 @@ function handleReset() {
   filterBooksByTags(selectedFilters);
   updateButtonVisibility();
   applyFiltersButton.style.display = 'block';
+  forceShowApply = true;
 }
