@@ -1238,15 +1238,13 @@ function applyFilters() {
       currentPage = 1;
       displayBooks(filtered, fieldState);
       scrollToTop();
-      updateSortButtonsVisibility(filtered);
-      minRangeValue = parseFloat(minRange.value);
-      maxRangeValue = parseFloat(maxRange.value);
+      updateSortButtonsVisibility(filtered);      
   } 
 }
 
 function updateButtonStates() {
   const hasSelectedFilters = Object.values(selectedFilters).some(arr => arr.length);
-  const isPriceFiltered = minRangeValue != null && maxRangeValue != null;
+  const isPriceFiltered = minRangeValue != undefined && maxRangeValue != undefined;
   const filteredBooksList = filterBooks(selectedFilters, filteredBooks, minRangeValue, maxRangeValue);
 
   const shouldShowApply = forceShowApply || ((hasSelectedFilters || isPriceFiltered) && filteredBooksList.length > 0);
