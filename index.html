@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XN9J4NL8ZC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XN9J4NL8ZC');
+</script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Promo site showcasing our products and services.">
   <meta name="keywords" content="promo, site, products, services, discounts">
+  <meta name="robots" content="index, follow">
   <title>Promo Site</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="img/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="styles.css">
   <!-- Define elements with data attributes for URLs -->
   <div id="config"    
@@ -186,19 +201,23 @@
   <!-- Filter Modal window -->
   <div id="filter-modal" class="modal-filter">
     <div class="filter-content-section">
+      <span id="close-filters-modal" class="close">
+        <img src="img/icon/cancel.png" alt="Close" class="social-icon">
+      </span>
       <div  class="modal-menu">       
 
         <div class="filter-actions">
             <p id="filter-count"></p>
-            <button id="apply-filters" class="basic-button" >Apply</button>
-            <button id="reset-filters" class="basic-button">Reset</button>
+            <button id="apply-filters" class="basic-button" >
+              <img class="social-icon" src="img/icon/filter.png" alt="filter">
+              Apply</button>
+            <button id="reset-filters" class="basic-button">
+              <img class="social-icon" src="img/icon/filterremove.png" alt="filter">
+              Reset</button>
         </div>
 
         <button id="pinFilterButton" class="pinFilter-button">📌</button>
-
-        <span id="close-filters-modal" class="close">
-          <img src="img/icon/cancel.png" alt="Close" class="social-icon">
-      </span>
+        
       </div>
         <div class="modal-header">
             <img class="social-icon" src="img/icon/filter.png" alt="filter">
@@ -218,8 +237,10 @@
              
           </div>
         </div>
-        <button id="applyButton" class="form-input" title="Apply filter">Filter by price</button>
-        <button id="resetButton" class="form-input" title="Reset filter">Clear price filter</button>
+        <div class="range-values">
+        <button id="applyButton" class="basic-button" title="Apply filter">Filter by price</button>
+        <button id="resetButton" class="basic-button" title="Reset filter">Clear price filter</button>
+      </div>
       </div>
       <h4>Filter by #Tag</h4>
         <ul id="filters-section-list" class="section-list">
@@ -278,18 +299,16 @@
   <div class="modal-content">
 
     <!-- Sticky Navigation Menu -->
+    <span id="close-modal" class="close">
+      <img src="img/icon/cancel.png" alt="Close" class="social-icon">
+    </span>  
   <div id="modal-menu" class="modal-menu">
 
     <div id="book-ID" class="book-id"></div>
 
     <div class="menu-item" data-target="Main Info">Main Info</div>    
     <div class="menu-item" data-target="Details">Details</div>    
-    <div class="menu-item" data-target="Reviews">Reviews</div>
-  
-
-    <span id="close-modal" class="close">
-      <img src="img/icon/cancel.png" alt="Close" class="social-icon">
-    </span>      
+    <div class="menu-item" data-target="Reviews">Reviews</div>       
 
   </div>
 
@@ -403,12 +422,15 @@
   <!-- Modal for Contact Form -->
   <div id="contact-modal" class="modal">
       <div class="modal-content-center">
-          <!-- Close button with image -->
-          <span id="close-modal-contact" class="close">
-              <img src="img/icon/cancel.png" alt="Close" class="social-icon">
-          </span>
-          <div class="contact-form-section">
-              <h4>Contact Me</h4>
+               <!-- Close button with image -->
+               <span id="close-modal-contact" class="close">
+                <img src="img/icon/cancel.png" alt="Close" class="social-icon">
+               </span>
+          
+          <div class="contact-form-section">          
+
+              <h3>Contact Me</h3>
+          
               <form id="contactForm">
                   <label for="email">Your Email:</label>
                   <input type="email" id="email" name="email" minlength="5" maxlength="256" required autocomplete="email">

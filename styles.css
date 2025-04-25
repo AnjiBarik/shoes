@@ -281,6 +281,11 @@ body {
     border-radius: 15px;
   }
 
+  p{
+    line-height: 1.2;
+    text-indent: 7px;
+  }
+
   .modal-content-center{
     background-color: var(--modal-bg);
     color: var(--modal-text); 
@@ -296,10 +301,12 @@ body {
   }
 
   .close {
-    color: #aaa;
-    float: right;
+    color: #aaa;  
     font-size: 28px;
     font-weight: bold;
+    cursor: pointer;
+    justify-content: right;
+    display: flex;
   }
   
   .close:hover,
@@ -819,8 +826,7 @@ video {
   box-shadow: var(--box-shadow);  
 }
 
-.contact-form-section {
-  margin-top: 40px;
+.contact-form-section { 
   flex-direction: column;
   display: flex;
 }
@@ -926,7 +932,7 @@ video {
 }
 
 .contact-info, .about-section p {
-  text-align: justify;
+  text-align: left;
   text-indent: 7px;
   font-weight: 400;
   font-size: 14px;
@@ -1060,20 +1066,6 @@ video {
   border-radius: 15px;
 }
 
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-}
-
 .modal-header {
   display: flex;
   justify-content: center;
@@ -1097,15 +1089,25 @@ video {
   z-index: 1000;
 }
 
+.section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #current-filter {  
-  text-decoration: underline;
+  /* text-decoration: underline; */
   cursor: pointer;
   padding: 5px 30px; 
   text-align: left;
   font-size: 1.4em;
 }
 
-#current-filter:hover {
+#current-filter a{
+  text-decoration: underline;
+}
+
+#current-filter a:hover {
   color: #00aaff; 
 }
 
@@ -1220,9 +1222,11 @@ video {
 }
 
 /* Add the filter: invert(1) when the parent <li> has the 'active' class */
-.section-item.active .toggle-icon {
+.section-item.active .toggle-icon,
+.section-item.active .social-icon {
   filter: invert(1);
 }
+
 
 .toggle-icon.rotated {
   transform: rotate(360deg); /* Rotated state for expanded sections */
@@ -1856,6 +1860,12 @@ button:disabled {
   gap:10px;
 }
 
+.partition-item label {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
 .partition-item label:hover{
   cursor: pointer;
   color: #00aaff;
@@ -1882,9 +1892,9 @@ background-color: var(--modal-bg);
 }
 
 .basic-button:hover{
-  border: none;
+  /* border: none; */
   box-shadow: none;
-  font-weight: bold;
+  /* font-weight: bold; */
   cursor: pointer;
 }
 
@@ -1943,6 +1953,7 @@ background-color: var(--modal-bg);
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
+  margin-left: 10px;
   position: relative;
 }
 
@@ -1957,6 +1968,7 @@ background-color: var(--modal-bg);
   position: absolute;
   top: 0;
   color:#f0f0f0;
+  cursor: w-resize;
 }
 
 .slider::-webkit-slider-thumb {

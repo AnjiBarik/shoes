@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://anjibarik.github.io/shoes/sitemap.xml

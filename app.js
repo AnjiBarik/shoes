@@ -853,12 +853,20 @@ function renderSections() {
   sectionList.appendChild(showAllItem);
 
   const uniqueSections = [...new Set(books.map(book => book.section))];
-
   uniqueSections.forEach(section => {
     const li = document.createElement('li');
+    const sectionKey = `section:${section}`;    
     li.innerHTML = `
       <div class="section-toggle">
-        ${section}
+      <div class="section">
+      <img 
+        class="social-icon" 
+        src="${fieldState[sectionKey] || 'img/icon/category.png'}"  
+        alt="Section Icon"
+        onerror="this.onerror=null;this.src='img/icon/category.png'"
+      />
+        <p>${section}</p>
+      </div>
         ${hasPartitions(section) ? getToggleIconHTML() : ''}
       </div>`;
     li.classList.add('section-item');
@@ -1233,16 +1241,13 @@ function applyFilters() {
   } 
 }
 
-function updateButtonStates() {  
-  const hasSelectedFilters = Object.keys(selectedFilters).length > 0 && 
-      Object.values(selectedFilters).some(arr => arr.length > 0);
-
+function updateButtonStates() {
+  const hasSelectedFilters = Object.values(selectedFilters).some(arr => Array.isArray(arr) && arr.length > 0);
   const isPriceFiltered = minRangeValue !== undefined && maxRangeValue !== undefined;
+  const shouldShowReset = hasSelectedFilters || isPriceFiltered;  
 
-  let filteredBooksLength = filterBooks(selectedFilters, filteredBooks, minRangeValue, maxRangeValue).length;
-
-  applyFiltersButton.style.display = (hasSelectedFilters || isPriceFiltered) && filteredBooksLength > 0 ? 'block' : 'none';
-  resetFiltersButton.style.display = hasSelectedFilters || isPriceFiltered ? 'block' : 'none';
+  applyFiltersButton.style.display =  'block';
+  resetFiltersButton.style.display = shouldShowReset ? 'block' : 'none';
 }
 
 function processTags(uniqueTags, preferredTags, fieldState) {
